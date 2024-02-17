@@ -4,5 +4,5 @@ export default {
 	theme: {
 		extend: {}
 	},
-	plugins: [require('preline/plugin')]
+	plugins: [require('@tailwindcss/forms'), require('preline/plugin')]
 };
