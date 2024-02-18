@@ -1,2 +1,7 @@
-<h1 class="bg-red-600">Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<script>
+	import { hello } from '$lib/index.ts';
+</script>
+
+<div>
+	<h1 class="bg-background">{hello}</h1>
+</div>

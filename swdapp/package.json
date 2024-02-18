@@ -36,6 +36,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@preline/collapse": "^2.0.2",
 		"apexcharts": "^3.46.0",
 		"lodash": "^4.17.21",
 		"preline": "^2.0.3"

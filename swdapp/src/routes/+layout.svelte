@@ -1,11 +1,10 @@
 <script>
-  import {afterNavigate} from "svelte-navigator";
   import "../app.css";
-
-
-  afterNavigate(() => {
-    window.HSStaticMethods.autoInit();
-  });
+  import Header from "./components/header.svelte";
 </script>
+
+<nav>
+  <Header />
+</nav>
 
 <slot />

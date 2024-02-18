@@ -3,6 +3,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
+		"allowImportingTsExtensions": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"resolveJsonModule": true,
