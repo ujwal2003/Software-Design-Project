@@ -4,7 +4,7 @@
 <header class="absolute top-0 z-10 w-screen bg-transparent">
 	<div class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4">
 		<nav
-			class="max-w-full w-full mx-auto px-6 sm:flex sm:items-center sm:justify-between"
+			class="max-w-full w-full mx-auto px-10 sm:flex sm:items-center sm:justify-between"
 			aria-label="Global"
 		>
 			<div class="flex items-center justify-between">
@@ -63,7 +63,12 @@
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/">Account</a>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
 					<!-- TODO: CHAGE TO BUTTON AFTER CHECKPOINT -->
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/register">Register</a>
+					<button
+						type="button"
+						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+					>
+						<a href="/register">Register</a>
+					</button>
 				</div>
 			</div>
 		</nav>

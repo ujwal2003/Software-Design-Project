@@ -1,8 +1,8 @@
 <script>
 </script>
 
-<footer class="w-screen z-10 bg-opacity-0">
-	<div class="w-full max-w-[85rem] py-4 px-4 sm:px-6 lg:px-8 mx-auto">
+<footer class="relative w-screen z-10">
+	<div class="w-full max-w-[85rem] py-4 px-4 sm:px-6 lg:px-8 mx-auto bg-transparent">
 		<!-- Grid -->
 		<div class="text-center">
 			<div>
@@ -31,7 +31,7 @@
 			<!-- Github Link -->
 			<div class="mt-3 space-x-2">
 				<a
-					class="inline-flex justify-center items-center size-10 text-center text-gray-500 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition dark:text-gray-500 dark:hover:text-gray-200 dark:hover:bg-gray-800"
+					class="inline-flex justify-center items-center size-10 text-center text-gray-500 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition"
 					href="https://github.com/ujwal2003/Software-Design-Project"
 				>
 					<svg
