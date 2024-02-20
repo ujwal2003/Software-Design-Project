@@ -13,7 +13,9 @@ export default {
 				primary: '#f77373',
 				secondary: '#f8be7c',
 				accent: '#86abc1',
-				logo: '#4a88c2'
+				logo: '#4a88c2',
+				bgblack: '#282828',
+				
 			}
 		}
 	},
