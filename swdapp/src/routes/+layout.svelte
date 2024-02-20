@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
 	import '../app.css';
 	import { afterNavigate } from '$app/navigation';
 
 	afterNavigate(() => {
-		window.HSStaticMethods.autoInit();
+		(window as any).HSStaticMethods.autoInit();
 	});
 </script>
 
