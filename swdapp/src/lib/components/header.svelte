@@ -1,4 +1,6 @@
 <script>
+	export let buttonColor = 'bg-blue-600';
+	export let buttonTextColor = 'text-white';
 </script>
 
 <header class="absolute top-0 z-10 w-screen bg-transparent">
@@ -11,6 +13,7 @@
 				<a class="flex-none text-3xl font-modak text-pretty" href="/">
 					<h1>FUEL<span class="text-logo">FINDER</span></h1>
 				</a>
+				<!-- Navbar for Mobile -->
 				<div class="sm:hidden">
 					<button
 						type="button"
@@ -51,6 +54,7 @@
 						>
 					</button>
 				</div>
+				<!-- End Navbar for Mobile -->
 			</div>
 			<div
 				id="navbar-collapse-with-animation"
@@ -59,13 +63,14 @@
 				<div
 					class="flex flex-col text-lg gap-5 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5"
 				>
-					<a class="font-medium text-blue-500" href="/" aria-current="page">Home</a>
+					<a class="font-medium text-gray-600 hover:text-gray-400" href="/" aria-current="page"
+						>Home</a
+					>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/">Account</a>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
-					<!-- TODO: CHAGE TO BUTTON AFTER CHECKPOINT -->
 					<button
 						type="button"
-						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
 					>
 						<a href="/register">Register</a>
 					</button>
