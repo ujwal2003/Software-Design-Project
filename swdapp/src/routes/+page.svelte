@@ -1,7 +1,11 @@
 <script>
-	import { hello } from '$lib/index.ts';
+	import Header from '$lib/components/header.svelte';
 </script>
 
 <div>
-	<h1 class="bg-background">{hello}</h1>
+	<nav class="">
+		<Header />
+	</nav>
+
+	<h1 class="bg-background">HH</h1>
 </div>
