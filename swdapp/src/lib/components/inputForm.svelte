@@ -15,6 +15,8 @@
         focusRing: TailwindString,
         text: TailwindString
     };
+
+    type FormColorProperties = Omit<LabelColorProperties, "text">;
     
     export let darkMode: boolean = false;
     export let labels: string[];
@@ -27,7 +29,7 @@
     };
 
     let inputValues: string[] = [];
-    
+
     const dispatch = createEventDispatcher();
     export let formInputValues: InputValue[] = [];
 
@@ -50,10 +52,15 @@
 
     export let inputColor: InputColorProperties = {
         border: "border-gray-200",
-        background: "",
+        background: "bg-slate-100",
         focusBorder: "border-blue-500",
         focusRing: "ring-blue-500",
         text: ""
+    }
+
+    export let formColor: FormColorProperties = {
+        border: "border-gray-200",
+        background: "bg-[#FFFFFF]"
     }
 
     let darkModeLabel = "dark:bg-gray-700 dark:border-gray-700 dark:text-gray-400";
@@ -64,7 +71,11 @@
     `;
 
     let inputStyle = `
-        py-2 px-3 pe-11 block w-full ${inputColor.border} shadow-sm rounded-e-lg text-sm focus:z-10 focus:${inputColor.focusBorder} focus:${inputColor.focusRing} disabled:opacity-50 disabled:pointer-events-none ${inputColor.text}
+        py-2 px-3 pe-11 block w-full ${inputColor.border} shadow-sm rounded-e-lg text-sm focus:z-10 focus:${inputColor.focusBorder} focus:${inputColor.focusRing} disabled:opacity-50 disabled:pointer-events-none ${inputColor.text} ${inputColor.background}
+    `;
+
+    let formBorderStyle = `
+        flex flex-col gap-2 border-solid ${formColor.border} border-spacing-1 p-4 rounded-lg ${formColor.background} shadow-sm rounded-e-lg
     `;
 
     if(darkMode) {
@@ -73,7 +84,7 @@
     }
 </script>
 
-<div class="flex flex-col gap-2">
+<div class={formBorderStyle}>
     {#each Array(numInputs) as _, index}
         <div class="flex rounded-lg shadow-sm">
             <span class={labelStyle}>

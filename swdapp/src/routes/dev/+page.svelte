@@ -20,7 +20,7 @@
     </nav>
 
     <main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap items-center justify-center mt-14 h-full bg-[#F0F5F8]">
-        <InputForm numInputs={2} labels={["label1", "label2"]} bind:formInputValues={inputVals} on:inputChange={handleInputChange} />
+        <InputForm numInputs={3} labels={["label1 ", "label2", "third  "]} bind:formInputValues={inputVals} on:inputChange={handleInputChange} />
     </main>
 
     <footer>
