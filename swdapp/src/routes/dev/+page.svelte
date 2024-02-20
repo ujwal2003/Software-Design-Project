@@ -10,7 +10,7 @@
     </nav>
 
     <main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap items-center justify-center mt-14 h-full bg-[#F0F5F8]">
-        <InputForm />
+        <InputForm numInputs={1} labels={["new"]} />
     </main>
 
     <footer>

@@ -16,7 +16,9 @@
     };
     
     export let darkMode: boolean = false;
-    
+    export let labels: string[];
+    export let numInputs: number;
+
     export let labelColor: LabelColorProperties = {
         border: "border-gray-200",
         background: "bg-gray-50",
@@ -48,10 +50,17 @@
     }
 </script>
 
-<div>
+<div class="flex flex-col gap-2">
     <div class="flex rounded-lg shadow-sm">
         <span class={labelStyle}>
-            Small
+            {labels[0]}
+        </span>
+        <input type="text" class={inputStyle}>
+    </div>
+
+    <div class="flex rounded-lg shadow-sm">
+        <span class={labelStyle}>
+            {labels[0]}
         </span>
         <input type="text" class={inputStyle}>
     </div>
