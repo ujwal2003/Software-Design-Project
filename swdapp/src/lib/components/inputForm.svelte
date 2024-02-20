@@ -1,5 +1,6 @@
 <script lang="ts">
-    
+    import { createEventDispatcher } from 'svelte';
+
     type TailwindString = string | "";
     interface LabelColorProperties {
         border: TailwindString,
@@ -18,6 +19,28 @@
     export let darkMode: boolean = false;
     export let labels: string[];
     export let numInputs: number;
+
+    
+    interface InputValue {
+        inputLabel: string,
+        inputValue: string
+    };
+
+    let inputValues: string[] = [];
+    
+    const dispatch = createEventDispatcher();
+    export let formInputValues: InputValue[] = [];
+
+    function handleChange(e: any, index: number) {
+        inputValues[index] = e.target.value;
+
+        formInputValues[index] = {
+            inputLabel: labels[index],
+            inputValue: inputValues[index]
+        };
+
+        dispatch('inputChange', formInputValues);
+    }
 
     export let labelColor: LabelColorProperties = {
         border: "border-gray-200",
@@ -51,17 +74,12 @@
 </script>
 
 <div class="flex flex-col gap-2">
-    <div class="flex rounded-lg shadow-sm">
-        <span class={labelStyle}>
-            {labels[0]}
-        </span>
-        <input type="text" class={inputStyle}>
-    </div>
-
-    <div class="flex rounded-lg shadow-sm">
-        <span class={labelStyle}>
-            {labels[0]}
-        </span>
-        <input type="text" class={inputStyle}>
-    </div>
+    {#each Array(numInputs) as _, index}
+        <div class="flex rounded-lg shadow-sm">
+            <span class={labelStyle}>
+                {labels[index]}
+            </span>
+            <input type="text" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}>
+        </div>
+    {/each}
 </div>
