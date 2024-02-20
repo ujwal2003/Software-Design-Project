@@ -9,7 +9,7 @@
 	</nav>
 
 	<!-- <h1 class="bg-background">HH</h1> -->
-	<div class="relative overflow-hidden pt-[25rem]">
+	<div class="relative overflow-hidden pt-[15rem] lg:pt-[25rem] bg-gray-300">
 		<!-- Hero -->
 
 		<!-- Background Gradients -->
@@ -30,21 +30,23 @@
 		</div>
 		<!-- End Gradients -->
 
-		<div class="relative z-10 h-[70rem]">
-			<div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
-				<div class="max-w-2xl text-center mx-auto">
+		<div class="relative z-10 h-screen lg:h-[70rem]">
+			<div class="max-w-[100rem] mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+				<div class="max-w-3xl lg:max-w-[150rem] text-center mx-auto">
 					<!-- Title -->
-					<div class="mt-5 max-w-2xl">
-						<h1 class="block font-semibold text-gray-700 text-4xl md:text-5xl lg:text-6xl">
+					<div class="mt-5 max-w-3xl lg:max-w-[150rem]">
+						<h1
+							class="block font-semibold text-gray-300 text-4xl text-pretty md:text-5xl lg:text-[6rem]"
+						>
 							Quotes for The Best Fuel in The <span
-								class="bg-gradient-to-l bg-clip-text from-accent to-violet-400 text-transparent"
+								class="bg-gradient-to-l bg-clip-text from-violet-500 to-accent text-transparent"
 								>Galaxy</span
 							>
 						</h1>
 					</div>
 					<!-- End Title -->
 
-					<div class="mt-5 max-w-3xl">
+					<div class="mt-5 max-w-3xl lg:max-w-[150rem] text-center">
 						<p class="text-lg text-gray-100">
 							Built by CS students, for finding the best prices in fuel.
 						</p>
