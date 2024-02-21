@@ -18,6 +18,10 @@
         { id: "3", date: "2/18/2024", time: "4:30pm", gallons: 10, price: 550.10 },
         { id: "4", date: "2/17/2024", time: "9:301am", gallons: 9, price: 250.10 },
     ];
+
+    function getQuoteDetailsFromCard(e: any) {
+        console.log(e.detail);
+    }
 </script>
 
 <div class="flex flex-col h-screen">
@@ -48,7 +52,7 @@
             <div>
                 <!-- TODO: Quote Cards -->
                 <div class="w-1/3 pl-7 pt-4">
-                    <QuoteCards quoteCards={quotes} />
+                    <QuoteCards quoteCards={quotes} on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)} />
                 </div>
 
                 <!-- TODO: Quote Detail -->
