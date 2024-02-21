@@ -1,4 +1,8 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+
     interface QuoteCardDetail {
         date: string,
         location: string,
@@ -38,7 +42,7 @@
         <dt class="sm:col-span-1 font-semibold">Total</dt>
         <dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">${details.total}</dd>
     </dl>
-    <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none">
+    <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none" on:click={() => {dispatch('quotePurchaseClick')}}>
         Purchase Quote
     </button>
 </div>

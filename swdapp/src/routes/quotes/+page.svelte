@@ -51,6 +51,7 @@
         };
     });
 
+    // replace code in function with actual data from db
     function getQuoteDetailsFromCard(e: any) {
         console.log(e.detail);
         let dummyData = dummyQuoteData.find(obj => obj._id === e.detail.quoteID);
@@ -65,6 +66,10 @@
         } else {
             selectedQuoteDetails = {date: "-", location: "-", deliveryDate: "-", gallons: 0, price: 0.00, tax: 0.00, total: 0.00};
         }
+    }
+
+    function handleQuotePurchase() {
+        console.log("Purchase Button Clicked!");
     }
 </script>
 
@@ -99,7 +104,7 @@
                 </div>
 
                 <div class="w-2/3 ml-6 mr-6 mt-4">
-                    <QuoteDetail details={selectedQuoteDetails} />
+                    <QuoteDetail details={selectedQuoteDetails} on:quotePurchaseClick={handleQuotePurchase} />
                 </div>
             </div>
         </div>
