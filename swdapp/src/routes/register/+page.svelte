@@ -45,6 +45,7 @@
                 <InputForm 
                     numInputs={3}
                     labels={["Email", "Username", "Password"]}
+                    inputTypes={["email", "text", "password"]}
                     fromDescription={{title: "Create Account", button: "Register", top: regTopDescription, bottom: regBottomDescription}}
                     bind:formInputValues={registrationVals}
                     on:inputChange={handleRegInputChange}

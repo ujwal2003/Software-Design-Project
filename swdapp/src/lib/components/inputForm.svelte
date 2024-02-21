@@ -24,6 +24,7 @@
     };
 
     type FormColorProperties = Omit<LabelColorProperties, "text">;
+    type FormInputType = "text" | "password" | "email";
     
     /**
      * basic settings: labels, number of inputs, descriptions & title
@@ -32,6 +33,8 @@
     export let labels: string[];
     export let numInputs: number;
     export let fromDescription: FormDescriptionProperties;
+
+    export let inputTypes: FormInputType[] = Array(numInputs).fill("text");
     
     interface InputValue {
         inputLabel: string,
@@ -105,12 +108,20 @@
         {@html fromDescription.top}
     </p>
 
-    {#each Array(numInputs) as _, index}
+    {#each inputTypes as inputType, index}
         <div class="flex rounded-lg shadow-sm">
             <span class={labelStyle}>
                 {labels[index]}
             </span>
-            <input type="text" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}>
+            <!-- <input type="text" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}> -->
+
+            {#if inputType === "text"}
+                <input type="text" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}>
+            {:else if inputType === "email"}
+                <input type="email" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}>
+            {:else if inputType === "password"}
+                <input type="password" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}>
+            {/if}
         </div>
     {/each}
 
