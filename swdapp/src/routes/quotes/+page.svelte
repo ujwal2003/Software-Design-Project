@@ -11,6 +11,7 @@
         price: number
     };
 
+    // dummy data, get actual from database
     let quotes: QuoteCard[] = [
         { id: "1", date: "2/21/2024", time: "1:59pm", gallons: 5, price: 200.55 },
         { id: "2", date: "2/20/2024", time: "11:35am", gallons: 3, price: 150.45 },
