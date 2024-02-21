@@ -3,8 +3,8 @@
     import Footer from "$lib/components/footer.svelte";
     import InputForm from "$lib/components/inputForm.svelte";
 
-    const loginTopDescription = "Once you login you can create new quotes, and set your quote search settings!";
-    const loginBottomDescription = "Don't have an account? <a href=\"/register\"><u>Register here.</u></a>";
+    const loginTopDescription = "Once you login, you can create new quotes, and set your quote search settings!";
+    const loginBottomDescription = "";
 
     interface InputValue {
         inputLabel: string,
@@ -46,7 +46,7 @@
                     numInputs={2}
                     labels={["Username or Email", "Password"]}
                     inputTypes={["text", "password"]}
-                    fromDescription={{title: "Login to An Existing Account", button: "Login", top: loginTopDescription, bottom: loginBottomDescription}}
+                    fromDescription={{title: "Log In to Verify Your Brand New Account", button: "Login", top: loginTopDescription, bottom: loginBottomDescription}}
                     bind:formInputValues={loginVals}
                     on:inputChange={handleLoginInputChange}
                     on:formSubmit={handleLoginSubmit}
