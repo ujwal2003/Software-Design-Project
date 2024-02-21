@@ -44,7 +44,7 @@
 			<InputForm
 				numInputs={2}
 				labels={['Username or Email', 'Password']}
-				inputTypes={['email', 'password']}
+				inputTypes={['text', 'password']}
 				fromDescription={{
 					title: 'Login to An Existing Account',
 					button: 'Login',
