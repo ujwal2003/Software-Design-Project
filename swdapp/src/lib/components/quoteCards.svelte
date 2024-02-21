@@ -61,7 +61,6 @@
     <!-- scrollbar -->
     <div class={scrollBarStyle}>
         {#each quoteCards as quote }
-            <!-- card -->
             <div class={cardBackgroundStyle}>
                 <h3 class={cardTitleStyle}>
                     {`${quote.date} at ${quote.time}`}

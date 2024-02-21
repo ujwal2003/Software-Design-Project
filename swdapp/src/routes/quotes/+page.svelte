@@ -50,7 +50,7 @@
             </p>
 
             <div>
-                <!-- TODO: Quote Cards -->
+                
                 <div class="w-1/3 pl-7 pt-4">
                     <QuoteCards quoteCards={quotes} on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)} />
                 </div>
