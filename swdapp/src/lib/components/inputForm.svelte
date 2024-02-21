@@ -103,7 +103,7 @@
     </p>
 
     <p class="text-[#64748B] text-sm">
-        {fromDescription.top}
+        {@html fromDescription.top}
     </p>
 
     {#each Array(numInputs) as _, index}
@@ -124,6 +124,6 @@
     </div>
 
     <p class="text-[#64748B] text-sm">
-        {fromDescription.bottom}
+        {@html fromDescription.bottom}
     </p>
 </div>
