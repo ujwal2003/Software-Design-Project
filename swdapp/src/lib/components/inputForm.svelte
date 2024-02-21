@@ -32,7 +32,6 @@
     export let labels: string[];
     export let numInputs: number;
     export let fromDescription: FormDescriptionProperties;
-
     
     interface InputValue {
         inputLabel: string,
