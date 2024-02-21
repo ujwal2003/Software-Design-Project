@@ -16,12 +16,19 @@
         text: TailwindString
     };
 
+    interface FormDescriptionProperties {
+        title: string,
+        button: string,
+        top: string,
+        bottom: string
+    };
+
     type FormColorProperties = Omit<LabelColorProperties, "text">;
     
     export let darkMode: boolean = false;
     export let labels: string[];
     export let numInputs: number;
-    export let btnLabel: string;
+    export let fromDescription: FormDescriptionProperties;
 
     
     interface InputValue {
@@ -86,6 +93,14 @@
 </script>
 
 <div class={formBorderStyle}>
+    <p class="font-medium text-2xl text-[#0F172A]">
+        {fromDescription.title}
+    </p>
+
+    <p class="text-[#64748B] text-sm">
+        {fromDescription.top}
+    </p>
+
     {#each Array(numInputs) as _, index}
         <div class="flex rounded-lg shadow-sm">
             <span class={labelStyle}>
@@ -96,8 +111,14 @@
     {/each}
 
     <div class="flex justify-end">
-        <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-            {btnLabel}
+        <button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600" on:click={() => {
+            dispatch('formSubmit')
+        }}>
+            {fromDescription.button}
         </button>
     </div>
+
+    <p class="text-[#64748B] text-sm">
+        {fromDescription.bottom}
+    </p>
 </div>
