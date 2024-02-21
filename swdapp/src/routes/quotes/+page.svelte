@@ -2,6 +2,7 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
     import QuoteCards from "$lib/components/quoteCards.svelte";
+    import QuoteDetail from "$lib/components/quoteDetail.svelte";
 
     interface QuoteCard {
         id: string,
@@ -11,16 +12,59 @@
         price: number
     };
 
-    // dummy data, get actual from database
-    let quotes: QuoteCard[] = [
-        { id: "1", date: "2/21/2024", time: "1:59pm", gallons: 5, price: 200.55 },
-        { id: "2", date: "2/20/2024", time: "11:35am", gallons: 3, price: 150.45 },
-        { id: "3", date: "2/18/2024", time: "4:30pm", gallons: 10, price: 550.10 },
-        { id: "4", date: "2/17/2024", time: "9:301am", gallons: 9, price: 250.10 },
+    interface QuoteCardDetail {
+        date: string,
+        location: string,
+        deliveryDate: string,
+        gallons: number,
+        price: number,
+        tax: number,
+        total: number
+    };
+
+    let selectedQuoteDetails: QuoteCardDetail = {
+        date: "-",
+        location: "-",
+        deliveryDate: "-",
+        gallons: 0,
+        price: 0.00,
+        tax: 0.00,
+        total: 0.00
+    };
+
+    // dummy data get actual data and format it from database
+    interface DummyData {_id: string, quoteDate: string, quoteTime: string, loc: string, deliveryDate: string, gallons: number, price: number, tax: number};
+    let dummyQuoteData: DummyData[] = [
+        {_id: "da95101afa3ecfda46d1", quoteDate: "2/21/2024", quoteTime: "1:59pm", loc: "houston", deliveryDate: "2/24/2024", gallons: 5, price: 2.86, tax: 3.14},
+        {_id: "09075d1659108ae43ea4", quoteDate: "2/20/2024", quoteTime: "11:35am", loc: "houston", deliveryDate: "2/23/2024", gallons: 3, price: 3.86, tax: 1.59},
+        {_id: "1042af652e115fc669f3", quoteDate: "2/18/2024", quoteTime: "4:30pm", loc: "houston", deliveryDate: "2/21/2024", gallons: 10, price: 5.86, tax: 2.65},
+        {_id: "c69380778bd5ed7be644", quoteDate: "2/17/2024", quoteTime: "9:30am", loc: "houston", deliveryDate: "2/18/2024", gallons: 9, price: 4.86, tax: 3.58},
     ];
+
+    let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
+        return {
+            id: dat._id,
+            date: dat.quoteDate,
+            time: dat.quoteTime,
+            gallons: dat.gallons,
+            price: dat.price
+        };
+    });
 
     function getQuoteDetailsFromCard(e: any) {
         console.log(e.detail);
+        let dummyData = dummyQuoteData.find(obj => obj._id === e.detail.quoteID);
+        if(dummyData != undefined) {
+            selectedQuoteDetails.date = dummyData.quoteDate;
+            selectedQuoteDetails.location = dummyData.loc;
+            selectedQuoteDetails.deliveryDate = dummyData.deliveryDate;
+            selectedQuoteDetails.gallons = dummyData.gallons;
+            selectedQuoteDetails.price = dummyData.price;
+            selectedQuoteDetails.tax = dummyData.tax;
+            selectedQuoteDetails.total = (dummyData.price * dummyData.gallons) + dummyData.tax;
+        } else {
+            selectedQuoteDetails = {date: "-", location: "-", deliveryDate: "-", gallons: 0, price: 0.00, tax: 0.00, total: 0.00};
+        }
     }
 </script>
 
@@ -49,13 +93,14 @@
                 Fuel Quote History
             </p>
 
-            <div>
-                
+            <div class="flex">
                 <div class="w-1/3 pl-7 pt-4">
-                    <QuoteCards quoteCards={quotes} on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)} />
+                    <QuoteCards quoteCards={dummyQuotes} on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)} />
                 </div>
 
-                <!-- TODO: Quote Detail -->
+                <div class="w-2/3 ml-6 mr-6 mt-4">
+                    <QuoteDetail details={selectedQuoteDetails} />
+                </div>
             </div>
         </div>
     </main>
