@@ -25,6 +25,9 @@
 
     type FormColorProperties = Omit<LabelColorProperties, "text">;
     
+    /**
+     * basic settings: labels, number of inputs, descriptions & title
+     */
     export let darkMode: boolean = false;
     export let labels: string[];
     export let numInputs: number;
@@ -38,6 +41,7 @@
 
     let inputValues: string[] = [];
 
+    // for getting the values from inputs
     const dispatch = createEventDispatcher();
     export let formInputValues: InputValue[] = [];
 
@@ -52,6 +56,7 @@
         dispatch('inputChange', formInputValues);
     }
 
+    // Default color settings
     export let labelColor: LabelColorProperties = {
         border: "border-gray-200",
         background: "bg-gray-50",
