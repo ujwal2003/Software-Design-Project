@@ -1,6 +1,22 @@
-<script>
+<script lang="ts">
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
+    import QuoteCards from "$lib/components/quoteCards.svelte";
+
+    interface QuoteCard {
+        id: string,
+        date: string,
+        time: string,
+        gallons: number,
+        price: number
+    };
+
+    let quotes: QuoteCard[] = [
+        { id: "1", date: "2/21/2024", time: "1:59pm", gallons: 5, price: 200.55 },
+        { id: "2", date: "2/20/2024", time: "11:35am", gallons: 3, price: 150.45 },
+        { id: "3", date: "2/18/2024", time: "4:30pm", gallons: 10, price: 550.10 },
+        { id: "4", date: "2/17/2024", time: "9:301am", gallons: 9, price: 250.10 },
+    ];
 </script>
 
 <div class="flex flex-col h-screen">
@@ -30,6 +46,10 @@
 
             <div>
                 <!-- TODO: Quote Cards -->
+                <div class="w-1/3 pl-7 pt-4">
+                    <QuoteCards quoteCards={quotes} />
+                </div>
+
                 <!-- TODO: Quote Detail -->
             </div>
         </div>
