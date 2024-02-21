@@ -1,9 +1,17 @@
-<script>
-	export let buttonColor = 'bg-blue-600';
-	export let buttonTextColor = 'text-white';
+<script lang="ts">
+	// Variable to control the header transparency for home
+	export let homeHeader: boolean = false;
+	export let buttonColor: string = 'bg-blue-600';
+	export let buttonTextColor: string = 'text-white';
+
+	let headerStyles: string = '';
+
+	homeHeader
+		? (headerStyles = 'absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden')
+		: (headerStyles = 'relative bg-white w-screen bg-orange overflow-hidden');
 </script>
 
-<header class="absolute top-0 z-10 w-screen bg-transparent">
+<header class={headerStyles}>
 	<div class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4">
 		<nav
 			class="max-w-full w-full mx-auto px-10 sm:flex sm:items-center sm:justify-between"

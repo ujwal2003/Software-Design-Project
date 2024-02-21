@@ -3,13 +3,13 @@
 	import Footer from '$lib/components/footer.svelte';
 </script>
 
-<div>
+<div class="">
 	<nav class="">
-		<Header />
+		<Header homeHeader={true} />
 	</nav>
 
 	<!-- <h1 class="bg-background">HH</h1> -->
-	<div class="relative overflow-hidden pt-[15rem] lg:pt-[25rem] bg-gray-300">
+	<div class="relative overflow-hidden pt-[15rem] lg:pt-[15rem] bg-gray-300">
 		<!-- Hero -->
 
 		<!-- Background Gradients -->

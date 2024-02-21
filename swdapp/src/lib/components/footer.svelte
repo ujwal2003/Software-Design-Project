@@ -2,7 +2,7 @@
 	export let textColor = 'text-gray-500';
 </script>
 
-<footer class="relative w-screen z-10">
+<footer class="relative w-screen z-10 overflow-hidden">
 	<div class="w-full max-w-[85rem] py-4 px-4 sm:px-6 lg:px-8 mx-auto bg-transparent">
 		<!-- Grid -->
 		<div class="text-center">
