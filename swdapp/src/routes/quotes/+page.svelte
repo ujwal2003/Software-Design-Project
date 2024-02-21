@@ -24,7 +24,7 @@
 
         <!-- main content -->
         <div class="w-5/6 bg-[#F0F5F8] flex flex-col flex-wrap">
-            <p class="text-4xl pl-8 pt-4">
+            <p class="text-3xl pl-8 pt-4">
                 Fuel Quote History
             </p>
 
