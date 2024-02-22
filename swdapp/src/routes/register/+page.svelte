@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Header from '$lib/components/header.svelte';
-	import Footer from '$lib/components/footer.svelte';
-	import InputForm from '$lib/components/inputForm.svelte';
+	import Header from "$lib/components/header.svelte";
+	import Footer from "$lib/components/footer.svelte";
+	import InputForm from "$lib/components/inputForm.svelte";
 
-	const regTopDescription = 'Make a new account to access gas savings you could only dream of!';
+	const regTopDescription = "Make a new account to access gas savings you could only dream of!";
 	const regBottomDescription = 'Already have an account? <a href="/login"><u>Log in here.</u></a>';
 
 	interface InputValue {
@@ -17,7 +17,7 @@
 	}
 
 	function handleRegistrationSubmit() {
-		console.log('Registration Submission Clicked!');
+		console.log("Registration Submission Clicked!");
 	}
 </script>
 
@@ -41,11 +41,11 @@
 		<div class="w-1/2">
 			<InputForm
 				numInputs={3}
-				labels={['Email', 'Username', 'Password']}
-				inputTypes={['email', 'text', 'password']}
+				labels={["Email", "Username", "Password"]}
+				inputTypes={["email", "text", "password"]}
 				fromDescription={{
-					title: 'Create Account',
-					button: 'Register',
+					title: "Create Account",
+					button: "Register",
 					top: regTopDescription,
 					bottom: regBottomDescription
 				}}

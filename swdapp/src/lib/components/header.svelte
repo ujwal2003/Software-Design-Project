@@ -1,14 +1,14 @@
 <script lang="ts">
 	// Variable to control the header transparency for home
 	export let homeHeader: boolean = false;
-	export let buttonColor: string = 'bg-blue-600';
-	export let buttonTextColor: string = 'text-white';
+	export let buttonColor: string = "bg-blue-600";
+	export let buttonTextColor: string = "text-white";
 
-	let headerStyles: string = '';
+	let headerStyles: string = "";
 
 	homeHeader
-		? (headerStyles = 'absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden')
-		: (headerStyles = 'relative bg-white w-screen bg-orange overflow-hidden');
+		? (headerStyles = "absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden")
+		: (headerStyles = "relative bg-white z-10 w-screen bg-orange overflow-hidden");
 </script>
 
 <header class={headerStyles}>
@@ -74,7 +74,7 @@
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/" aria-current="page"
 						>Home</a
 					>
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/">Account</a>
+					<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
 					<button
 						type="button"
