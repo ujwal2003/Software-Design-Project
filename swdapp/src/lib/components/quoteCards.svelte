@@ -60,7 +60,7 @@
 <style>
     .cards-max-h {
         /* max-height: calc(100vh - 25%); */
-        max-height: calc(100vh - 19rem);
+        max-height: calc(100vh - 18.7rem);
     }
 </style>
 
