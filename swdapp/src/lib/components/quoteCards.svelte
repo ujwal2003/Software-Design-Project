@@ -16,7 +16,7 @@
     
     let scrollBarStyle = `
         flex flex-col gap-3
-        max-h-96 overflow-y-auto
+        cards-max-h overflow-y-auto
         [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar-track]:rounded-full
         [&::-webkit-scrollbar-track]:bg-gray-100
@@ -56,6 +56,13 @@
     }
 
 </script>
+
+<style>
+    .cards-max-h {
+        /* max-height: calc(100vh - 25%); */
+        max-height: calc(100vh - 19rem);
+    }
+</style>
 
 <!-- <div class="columns-1"> -->
     <!-- scrollbar -->
