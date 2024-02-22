@@ -57,7 +57,7 @@
 		<Header />
 	</nav>
 
-	<main class="overflow-auto max-w-full h-screen flex flex-wrap mt-0">
+	<main class="overflow-auto max-w-full flex flex-wrap">
 		<!-- * Sidebar -->
 		<aside class="w-1/6 bg-[#282828] flex grow justify-left pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
@@ -213,7 +213,6 @@
 				</div>
 			</div>
 		</div>
-
 		<!-- * End Main Content -->
 	</main>
 	<footer>
