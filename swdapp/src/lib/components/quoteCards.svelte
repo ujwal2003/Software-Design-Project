@@ -13,15 +13,15 @@
     let quoteDetailsStyle = `
         mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none
     `;
-
+    
     let scrollBarStyle = `
-        max-h-[28.4rem] overflow-y-auto
+        flex flex-col gap-3
+        max-h-96 overflow-y-auto
         [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar-track]:rounded-full
         [&::-webkit-scrollbar-track]:bg-gray-100
         [&::-webkit-scrollbar-thumb]:rounded-full
         [&::-webkit-scrollbar-thumb]:bg-gray-300
-        flex flex-col gap-3
     `;
 
     if(darkMode) {
@@ -57,9 +57,9 @@
 
 </script>
 
-<div class="columns-1">
+<!-- <div class="columns-1"> -->
     <!-- scrollbar -->
-    <div class={scrollBarStyle}>
+    <div class={scrollBarStyle} id="quoteCardContainer">
         {#each quoteCards as quote }
             <div class={cardBackgroundStyle}>
                 <h3 class={cardTitleStyle}>
@@ -78,4 +78,4 @@
             </div>
         {/each}
      </div>
-</div>
+<!-- </div> -->

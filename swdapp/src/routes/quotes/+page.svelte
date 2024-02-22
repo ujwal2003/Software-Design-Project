@@ -78,7 +78,7 @@
         <Header />
     </nav>
 
-    <main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-14 h-full">
+    <main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap h-full">
         <!-- left sidebar -->
         <aside class="w-1/6 bg-[#282828] h-full flex justify-left pl-10 pt-6 text-lg">
             <nav class="flex flex-col gap-2">
