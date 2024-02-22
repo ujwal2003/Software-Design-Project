@@ -3,6 +3,7 @@
     import Footer from "$lib/components/footer.svelte";
 
     import DescriptionList from "$lib/components/description-list/descriptionList.svelte";
+    import DescListItem from "$lib/components/description-list/descListItem.svelte";
 
     import { dummyQuoteData } from "$lib";
 </script>
@@ -30,7 +31,10 @@
 				</div>
 
 				<div class="w-2/3 ml-6 mr-6 mt-4">
-					test
+					<DescriptionList>
+                        <!-- <DescListItem slot="listItem0" details={{title: "title", text: "text 1"}} /> -->
+                        <!-- <DescListItem slot="listItem" details={{title: "title 2", text: "text 2"}} /> -->
+                    </DescriptionList>
 				</div>
 			</div>
 		</div>
