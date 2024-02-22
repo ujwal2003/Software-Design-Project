@@ -1,7 +1,17 @@
-<script>
+<script lang="ts">
+	// Variable to control the header transparency for home
+	export let homeHeader: boolean = false;
+	export let buttonColor: string = "bg-blue-600";
+	export let buttonTextColor: string = "text-white";
+
+	let headerStyles: string = "";
+
+	homeHeader
+		? (headerStyles = "absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden")
+		: (headerStyles = "relative bg-white z-10 w-screen bg-orange overflow-hidden");
 </script>
 
-<header class="absolute top-0 z-10 w-screen bg-transparent">
+<header class={headerStyles}>
 	<div class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4">
 		<nav
 			class="max-w-full w-full mx-auto px-10 sm:flex sm:items-center sm:justify-between"
@@ -11,6 +21,7 @@
 				<a class="flex-none text-3xl font-modak text-pretty" href="/">
 					<h1>FUEL<span class="text-logo">FINDER</span></h1>
 				</a>
+				<!-- Navbar for Mobile -->
 				<div class="sm:hidden">
 					<button
 						type="button"
@@ -51,6 +62,7 @@
 						>
 					</button>
 				</div>
+				<!-- End Navbar for Mobile -->
 			</div>
 			<div
 				id="navbar-collapse-with-animation"
@@ -59,13 +71,14 @@
 				<div
 					class="flex flex-col text-lg gap-5 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5"
 				>
-					<a class="font-medium text-blue-500" href="/" aria-current="page">Home</a>
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/">Account</a>
+					<a class="font-medium text-gray-600 hover:text-gray-400" href="/" aria-current="page"
+						>Home</a
+					>
+					<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
-					<!-- TODO: CHAGE TO BUTTON AFTER CHECKPOINT -->
 					<button
 						type="button"
-						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
 					>
 						<a href="/register">Register</a>
 					</button>

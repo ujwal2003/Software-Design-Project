@@ -1,7 +1,8 @@
 <script>
+	export let textColor = 'text-gray-500';
 </script>
 
-<footer class="relative w-screen z-10">
+<footer class="relative w-screen z-10 overflow-hidden">
 	<div class="w-full max-w-[85rem] py-4 px-4 sm:px-6 lg:px-8 mx-auto bg-transparent">
 		<!-- Grid -->
 		<div class="text-center">
@@ -12,8 +13,8 @@
 			</div>
 			<!-- End Col -->
 
-			<div class="">
-				<p class="text-gray-500">
+			<div class={textColor}>
+				<p class={textColor}>
 					Built by <a href="https://github.com/SageCT" class="underline underline-offset-2"
 						>Sage Turner</a
 					>,
@@ -25,13 +26,13 @@
 						>Yonatan Deneke</a
 					>.
 				</p>
-				<p class="text-gray-500"></p>
+				<p>For Singh COSC4353.</p>
 			</div>
 
 			<!-- Github Link -->
-			<div class="mt-3 space-x-2">
+			<div class="mt-1 space-x-2">
 				<a
-					class="inline-flex justify-center items-center size-10 text-center text-gray-500 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition"
+					class="inline-flex justify-center items-center size-10 text-center {textColor} hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition"
 					href="https://github.com/ujwal2003/Software-Design-Project"
 				>
 					<svg
