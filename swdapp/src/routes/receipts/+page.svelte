@@ -2,6 +2,8 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
+    import DescriptionList from "$lib/components/description-list/descriptionList.svelte";
+
     import { dummyQuoteData } from "$lib";
 </script>
 
