@@ -15,13 +15,13 @@
     `;
 
 	let scrollBarStyle = `
-        max-h-[28.4rem] overflow-y-auto
+        flex flex-col gap-3
+        cards-max-h overflow-y-auto
         [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar-track]:rounded-full
         [&::-webkit-scrollbar-track]:bg-gray-100
         [&::-webkit-scrollbar-thumb]:rounded-full
         [&::-webkit-scrollbar-thumb]:bg-gray-300
-        flex flex-col gap-3
     `;
 
 	if (darkMode) {
@@ -61,36 +61,43 @@
 	}
 </script>
 
-<div class="columns-1">
-	<!-- scrollbar -->
-	<div class={scrollBarStyle}>
-		{#each quoteCards as quote}
-			<div class={cardBackgroundStyle}>
-				<h3 class={cardTitleStyle}>
-					{`${quote.date} at ${quote.time}`}
-				</h3>
+<!-- <div class="columns-1"> -->
+<!-- scrollbar -->
+<div class={scrollBarStyle} id="quoteCardContainer">
+	{#each quoteCards as quote}
+		<div class={cardBackgroundStyle}>
+			<h3 class={cardTitleStyle}>
+				{`${quote.date} at ${quote.time}`}
+			</h3>
 
-				<p class={cardDescriptionStyle}>
-					{`Requested Gallons: ${quote.gallons}`} <br />
-					{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
-				</p>
+			<p class={cardDescriptionStyle}>
+				{`Requested Gallons: ${quote.gallons}`} <br />
+				{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
+			</p>
 
-				<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
-					Quote Details
-					<svg
-						class="flex-shrink-0 size-4"
-						xmlns="http://www.w3.org/2000/svg"
-						width="24"
-						height="24"
-						viewBox="0 0 24 24"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="2"
-						stroke-linecap="round"
-						stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
-					>
-				</button>
-			</div>
-		{/each}
-	</div>
+			<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
+				Quote Details
+				<svg
+					class="flex-shrink-0 size-4"
+					xmlns="http://www.w3.org/2000/svg"
+					width="24"
+					height="24"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2"
+					stroke-linecap="round"
+					stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+				>
+			</button>
+		</div>
+	{/each}
 </div>
+<!-- </div> -->
+
+<style>
+	.cards-max-h {
+		/* max-height: calc(100vh - 25%); */
+		max-height: calc(100vh - 18.7rem);
+	}
+</style>
