@@ -52,14 +52,14 @@
 	}
 </script>
 
-<section class="flex flex-col h-screen">
+<section class="flex flex-col">
 	<nav>
 		<Header />
 	</nav>
 
-	<main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-0 h-full">
+	<main class="overflow-auto max-w-full h-screen flex flex-wrap mt-0">
 		<!-- * Sidebar -->
-		<aside class="w-1/6 bg-[#282828] h-full flex justify-left pl-10 pt-6 text-lg">
+		<aside class="w-1/6 bg-[#282828] flex grow justify-left pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
 				<a href="/" class="text-[#CBD5E1]"> Fuel Quote History </a>
 
@@ -69,12 +69,12 @@
 		<!-- * End Sidebar -->
 
 		<!-- * Main Content -->
-		<div class="w-5/6 bg-[#F0F5F8] flex flex-col flex-wrap">
+		<div class="w-5/6 bg-[#F0F5F8] flex flex-col flex-wrap pb-10">
 			<p class="text-3xl pl-8 pt-4">Dashboard</p>
-			<div class="flex">
-				<div class="w-1/3 pl-7 pt-4">
+			<div class="flex flex-col">
+				<div class="w-5/6 pl-7 pt-4">
 					<!-- * Cards -->
-					<section class="flex flex-row h-full w-screen flex-wrap gap-10">
+					<section class="flex flex-row grow h-full flex-wrap gap-5">
 						<!-- Name Card -->
 						<div class="w-[30rem] h-[26rem] px-8 py-5 bg-white flex flex-col rounded-xl">
 							<div class="flex flex-col text-lg font-bold text-black">Full Name</div>
