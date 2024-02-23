@@ -6,10 +6,10 @@
 
 	export let sidebarLinks: SidebarLink[];
 
-    let backroundStyle = "w-1/6 bg-[#282828] h-full flex justify-left pl-10 pt-6 text-lg";
-    let verticalStyle = "flex flex-col gap-2"
-    let heightStyle = "flex flex-col h-screen"
-    let heightStyle2 = "overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-0 h-full"
+	let backroundStyle = 'w-1/6 bg-[#282828] h-full flex justify-left pl-10 pt-6 text-lg';
+	let verticalStyle = 'flex flex-col gap-2';
+	let heightStyle = 'flex flex-col h-screen';
+	let heightStyle2 = 'overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-0 h-full';
 </script>
 
 <div class={heightStyle}>

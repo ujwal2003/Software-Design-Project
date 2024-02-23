@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
 
@@ -16,36 +16,36 @@
 	export let details: QuoteCardDetail;
 </script>
 
-<div class="bg-[#E9F0F6] shadow-md rounded-xl p-4 md:p-5">
-	<dl class="grid sm:grid-cols-3 gap-1 sm:gap-3 mb-3">
-		<dt class="sm:col-span-1 font-semibold">Quote Date</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">{details.date}</dd>
+<div class="rounded-xl bg-[#E9F0F6] p-4 shadow-md md:p-5">
+	<dl class="mb-3 grid gap-1 sm:grid-cols-3 sm:gap-3">
+		<dt class="font-semibold sm:col-span-1">Quote Date</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">{details.date}</dd>
 
-		<dt class="sm:col-span-1 font-semibold">Location</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">
+		<dt class="font-semibold sm:col-span-1">Location</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">
 			{details.location}
 		</dd>
 
-		<dt class="sm:col-span-1 font-semibold">Delivery Date</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">{details.deliveryDate}</dd>
+		<dt class="font-semibold sm:col-span-1">Delivery Date</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">{details.deliveryDate}</dd>
 
-		<dt class="sm:col-span-1 font-semibold truncate">Gallons</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">{details.gallons} gal</dd>
+		<dt class="truncate font-semibold sm:col-span-1">Gallons</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">{details.gallons} gal</dd>
 
-		<dt class="sm:col-span-1 font-semibold">Price</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">${details.price.toFixed(2)} per gal</dd>
+		<dt class="font-semibold sm:col-span-1">Price</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">${details.price.toFixed(2)} per gal</dd>
 
-		<dt class="sm:col-span-1 font-semibold">Tax</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">${details.tax}</dd>
+		<dt class="font-semibold sm:col-span-1">Tax</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">${details.tax}</dd>
 
-		<dt class="sm:col-span-1 font-semibold">Total</dt>
-		<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]">${details.total}</dd>
+		<dt class="font-semibold sm:col-span-1">Total</dt>
+		<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">${details.total}</dd>
 	</dl>
 	<button
 		type="button"
-		class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-gray-800 text-white hover:bg-gray-900 disabled:opacity-50 disabled:pointer-events-none"
+		class="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
 		on:click={() => {
-			dispatch("quotePurchaseClick");
+			dispatch('quotePurchaseClick');
 		}}
 	>
 		Purchase Quote

@@ -1,2 +1,2 @@
 // place files you want to import through the `$lib` alias in this folder.
-export const hello = 'Hello from $lib!';
+export const hello = "Hello from $lib!";

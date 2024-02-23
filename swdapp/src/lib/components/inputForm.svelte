@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher } from 'svelte';
 
-	type TailwindString = string | "";
+	type TailwindString = string | '';
 	interface LabelColorProperties {
 		border: TailwindString;
 		background: TailwindString;
@@ -23,8 +23,8 @@
 		bottom: string;
 	}
 
-	type FormColorProperties = Omit<LabelColorProperties, "text">;
-	type FormInputType = "text" | "password" | "email";
+	type FormColorProperties = Omit<LabelColorProperties, 'text'>;
+	type FormInputType = 'text' | 'password' | 'email';
 
 	/**
 	 * basic settings: labels, number of inputs, descriptions & title
@@ -35,7 +35,7 @@
 	export let numInputs: number;
 	export let fromDescription: FormDescriptionProperties;
 
-	export let inputTypes: FormInputType[] = Array(numInputs).fill("text");
+	export let inputTypes: FormInputType[] = Array(numInputs).fill('text');
 
 	interface InputValue {
 		inputLabel: string;
@@ -56,32 +56,32 @@
 			inputValue: inputValues[index]
 		};
 
-		dispatch("inputChange", formInputValues);
+		dispatch('inputChange', formInputValues);
 	}
 
 	// Default color settings
 	export let labelColor: LabelColorProperties = {
-		border: "border-gray-200",
-		background: "bg-gray-50",
-		text: "text-gray-500"
+		border: 'border-gray-200',
+		background: 'bg-gray-50',
+		text: 'text-gray-500'
 	};
 
 	export let inputColor: InputColorProperties = {
-		border: "border-gray-200",
-		background: "bg-slate-100",
-		focusBorder: "border-blue-500",
-		focusRing: "ring-blue-500",
-		text: ""
+		border: 'border-gray-200',
+		background: 'bg-slate-100',
+		focusBorder: 'border-blue-500',
+		focusRing: 'ring-blue-500',
+		text: ''
 	};
 
 	export let formColor: FormColorProperties = {
-		border: "border-gray-200",
-		background: "bg-[#FFFFFF]"
+		border: 'border-gray-200',
+		background: 'bg-[#FFFFFF]'
 	};
 
-	let darkModeLabel = "dark:bg-gray-700 dark:border-gray-700 dark:text-gray-400";
+	let darkModeLabel = 'dark:bg-gray-700 dark:border-gray-700 dark:text-gray-400';
 	let darkModeInput =
-		"dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600";
+		'dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600';
 
 	let labelStyle = `
         px-4 inline-flex items-center min-w-fit rounded-s-md border border-e-0 ${labelColor.border} ${labelColor.background} text-sm ${labelColor.text}
@@ -106,11 +106,11 @@
 </script>
 
 <div class={formBorderStyle}>
-	<p class="font-medium text-2xl text-[#0F172A]">
+	<p class="text-2xl font-medium text-[#0F172A]">
 		{fromDescription.title}
 	</p>
 
-	<p class="text-[#64748B] text-sm">
+	<p class="text-sm text-[#64748B]">
 		{@html fromDescription.top}
 	</p>
 
@@ -123,7 +123,7 @@
 			{/if}
 			<!-- <input type="text" class={inputStyle} bind:value={inputValues[index]} on:input={(event) => handleChange(event, index)}> -->
 
-			{#if inputType === "text"}
+			{#if inputType === 'text'}
 				<input
 					type="text"
 					class={inputStyle}
@@ -131,7 +131,7 @@
 					bind:value={inputValues[index]}
 					on:input={(event) => handleChange(event, index)}
 				/>
-			{:else if inputType === "email"}
+			{:else if inputType === 'email'}
 				<input
 					type="email"
 					class={inputStyle}
@@ -139,7 +139,7 @@
 					bind:value={inputValues[index]}
 					on:input={(event) => handleChange(event, index)}
 				/>
-			{:else if inputType === "password"}
+			{:else if inputType === 'password'}
 				<input
 					type="password"
 					class={inputStyle}
@@ -154,16 +154,16 @@
 	<div class="flex justify-end">
 		<button
 			type="button"
-			class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+			class="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-700 dark:bg-slate-900 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
 			on:click={() => {
-				dispatch("formSubmit");
+				dispatch('formSubmit');
 			}}
 		>
 			{fromDescription.button}
 		</button>
 	</div>
 
-	<p class="text-[#64748B] text-sm">
+	<p class="text-sm text-[#64748B]">
 		{@html fromDescription.bottom}
 	</p>
 </div>

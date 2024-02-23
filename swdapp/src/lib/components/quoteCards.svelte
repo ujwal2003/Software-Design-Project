@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { createEventDispatcher } from "svelte";
+	import { createEventDispatcher } from 'svelte';
 
 	/**
 	 * Colors and Dark Mode
@@ -26,15 +26,15 @@
 
 	if (darkMode) {
 		cardBackgroundStyle =
-			cardBackgroundStyle + " dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]";
-		cardTitleStyle = cardTitleStyle + " dark:text-white";
-		cardDescriptionStyle = cardDescriptionStyle + " dark:text-gray-400";
+			cardBackgroundStyle + ' dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]';
+		cardTitleStyle = cardTitleStyle + ' dark:text-white';
+		cardDescriptionStyle = cardDescriptionStyle + ' dark:text-gray-400';
 		quoteDetailsStyle =
 			quoteDetailsStyle +
-			" dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600";
+			' dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600';
 		scrollBarStyle =
 			scrollBarStyle +
-			" dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500";
+			' dark:[&::-webkit-scrollbar-track]:bg-slate-700 dark:[&::-webkit-scrollbar-thumb]:bg-slate-500';
 	}
 
 	/**
@@ -55,7 +55,7 @@
 	 */
 	const dispatch = createEventDispatcher();
 	function handleCardDetailsClick(cardQuoteID: string): void {
-		dispatch("cardDetailClick", {
+		dispatch('cardDetailClick', {
 			quoteID: cardQuoteID
 		});
 	}
@@ -78,7 +78,7 @@
 			<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
 				Quote Details
 				<svg
-					class="flex-shrink-0 size-4"
+					class="size-4 flex-shrink-0"
 					xmlns="http://www.w3.org/2000/svg"
 					width="24"
 					height="24"
@@ -93,6 +93,7 @@
 		</div>
 	{/each}
 </div>
+
 <!-- </div> -->
 
 <style>
