@@ -3,19 +3,21 @@
     import DatePickerHeader from "$lib/components/date-picker/datePickerHeader.svelte";
     import DatePickerDays from "$lib/components/date-picker/datePickerDays.svelte";
 
-    import DummyDatePickerDays from "$lib/components/date-picker/dummyDatePickerDays.svelte";
+    let chosenMonth: any = "-";
+    let chosenYear: any = "-";
 
-    let mo: any = "-";
-    let yr: any = "-";
+    $: selectionUpdateStr = chosenMonth + chosenYear;
+
     function handleDateSelection() {
-        console.log(mo, yr);
+        console.log(chosenMonth, chosenYear);
     }
 </script>
 
-<div class="flex flex-col items-center">
+<div class="flex flex-col items-center mt-14">
     <DatePicker> 
-        <DatePickerHeader slot="header" bind:selectedMonth={mo} bind:selectedYear={yr} on:dateSelection={handleDateSelection} />
-        <!-- <DummyDatePickerDays /> -->
-        <DatePickerDays />
+        <DatePickerHeader slot="header" bind:selectedMonth={chosenMonth} bind:selectedYear={chosenYear} on:dateSelection={handleDateSelection} />
+        {#key selectionUpdateStr}
+            <DatePickerDays calMonth={chosenMonth} calYear={chosenYear} />
+        {/key}
     </DatePicker>
 </div>
