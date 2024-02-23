@@ -1,4 +1,8 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
+
     type Month = "-" | "Jan"| "Feb"| "Mar"| "Apr"| "May"| "Jun"| "Jul"| "Aug"| "Sep"| "Oct"| "Nov"| "Dec";
     const OVERFLOW = 100;
 
@@ -47,21 +51,65 @@
             m-px flex size-10 items-center justify-center rounded-full border border-transparent text-sm 
             text-gray-800 hover:border-blue-600 hover:text-blue-600 disabled:pointer-events-none disabled:text-gray-300
         `;
+
+    let prevClicked: any = null;
+    let currClicked: any = null;
+
+    function handleDayClick(e: any, clickedDate: any) {
+        prevClicked = currClicked;
+        currClicked = e.target;
+
+        if(prevClicked != null) {
+            if(prevClicked == currClicked && currClicked.classList.contains("bg-blue-600")) {
+                currClicked.classList.add("bg-blue-600");
+                currClicked.classList.add("font-medium");
+                currClicked.classList.add("text-white");
+                currClicked.classList.remove("hover:text-blue-600");
+            }
+
+            currClicked.classList.add("bg-blue-600");
+            currClicked.classList.add("font-medium");
+            currClicked.classList.add("text-white");
+            currClicked.classList.remove("hover:text-blue-600");
+
+            prevClicked.classList.remove("bg-blue-600");
+            prevClicked.classList.remove("font-medium");
+            prevClicked.classList.remove("text-white");
+            prevClicked.classList.add("hover:text-blue-600");
+        } else {
+            currClicked.classList.add("bg-blue-600");
+            currClicked.classList.add("font-medium");
+            currClicked.classList.add("text-white");
+            currClicked.classList.remove("hover:text-blue-600");
+        }
+
+        dispatch('dateClick', {
+            dateToggle: `${calMonth}_${currClicked.textContent}_${calYear}`
+        });
+    }
 </script>
 
 {#each {length: 6} as _, i}
     <div class="flex">
         {#each {length: 7} as __, j}
             {#if lastDayFirstRowOffset == -1}
-                <button type="button" class={dateStyle} disabled>-</button>
+                <button type="button" class={dateStyle} disabled>
+                    -
+                </button>
             {:else if i == 0}
                 {#if calFirstRow[j] == ''}
-                    <button type="button" class={dateStyle} disabled>{calFirstRow[j]}</button>
+                    <button type="button" class={dateStyle} disabled>
+                        {calFirstRow[j]}
+                    </button>
                 {:else}
-                    <button type="button" class={dateStyle}>{calFirstRow[j]}</button>
+                    <button type="button" class={dateStyle} on:click={(e) => handleDayClick(e, calFirstRow[j])}>
+                        {calFirstRow[j]}
+                    </button>
                 {/if}
             {:else if i > 0 && ((1 + j + (i*7)) - lastDayFirstRowOffset) <= lastDay}
-                <button type="button" class={dateStyle}>{(1 + j + (i*7) - lastDayFirstRowOffset)}</button>
+                <button type="button" class={dateStyle} on:click={(e) => handleDayClick(e, (1 + j + (i*7) - lastDayFirstRowOffset))}>
+                    {(1 + j + (i*7) - lastDayFirstRowOffset)}
+                </button>
             {/if}
         {/each}
     </div>
