@@ -2,4 +2,6 @@
     import DatePicker from "$lib/components/datePicker.svelte";
 </script>
 
-<DatePicker />
+<div class="flex justify-center">
+    <DatePicker />
+</div>
