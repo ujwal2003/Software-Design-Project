@@ -1,5 +1,25 @@
 <script lang="ts">
-	
+	let weekDays: string[] = ["Mo", "Tu", "We", "Th", "Fr","Sa", "Su"];
+
+	const weekDayName = {0: "Su", 1: "Mo", 2: "Tu", 3: "We", 4: "Th", 5: "Fr", 6: "Sa"};
+	const monthNames = {"Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5, "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11};
+
+	function getMonthDayDetails(monthName: string, year: number) {
+		let month: number = (monthNames as any)[monthName];
+		let date = new Date(year, month, 1);
+
+		let beginDay = date.getDay();
+		let dayNum: number = 0;
+
+		while(date.getMonth() === month) {
+			dayNum = date.getDate();
+			date.setDate(date.getDate() + 1);
+		}
+
+		return {startDay: (weekDayName as any)[beginDay], numDays: dayNum};
+	}
+
+	console.log(getMonthDayDetails("Feb", 2024));
 </script>
 
 <!-- Datepicker -->
@@ -12,13 +32,9 @@
 		<div class="space-y-0.5">
 			<!-- Weeks -->
 			<div class="flex pb-1.5">
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Mo </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Tu </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> We </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Th </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Fr </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Sa </span>
-				<span class="m-px block w-10 text-center text-sm text-gray-500"> Su </span>
+				{#each weekDays as weekDay}
+					<span class="m-px block w-10 text-center text-sm text-gray-500"> {weekDay} </span>
+				{/each}
 			</div>
 			<!-- Weeks -->
 
