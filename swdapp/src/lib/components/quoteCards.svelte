@@ -65,6 +65,7 @@
 	 */
 	interface TextOverrideSetting {override: boolean, text: string, showProperty: "price" | "none"};
 	export let textOverride:TextOverrideSetting = {override: false, text: '', showProperty: "price"};
+	export let btnName = "Quote Details";
 
 </script>
 
@@ -93,7 +94,7 @@
 			{/if}
 
 			<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
-				Quote Details
+				{btnName}
 				<svg
 					class="size-4 flex-shrink-0"
 					xmlns="http://www.w3.org/2000/svg"

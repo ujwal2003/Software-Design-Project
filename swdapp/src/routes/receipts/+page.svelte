@@ -7,7 +7,7 @@
 	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
-
+	
     import { dummyPaymentData } from "$lib";
 
 	let dummyPayments = dummyPaymentData.map((dat) => {
@@ -25,9 +25,9 @@
 		console.log(`card with id ${e.detail.quoteID} clicked!`)
 	}
 
-	function handleQuoteDetailClick() {
-		console.log("clicked quote detail button!");
-	}
+	// function handleQuoteDetailClick() {
+	// 	console.log("clicked quote detail button!");
+	// }
 </script>
 
 <div class="flex h-screen flex-col">
@@ -52,6 +52,7 @@
 					<QuoteCards
 						quoteCards={dummyPayments}
 						textOverride={{override: true, text: 'Payment: $', showProperty: "price"}}
+						btnName={"Payment Details"}
 						on:cardDetailClick={handleCardDetailClick}
 					/>
 				</div>
@@ -65,7 +66,7 @@
 						<DescListItem details={{ title: 'Total', text: '$XXX.XX' }} />
 						<DescListItem details={{ title: 'Description', text: 'You purchased [X] gallons of fuel for $X.XX' }} />
 						<div>
-							<DescListButton btnLabel={"See Quote Details"} btnEvent={"quoteDetailClicked"} on:quoteDetailClicked={handleQuoteDetailClick} />
+							<!-- <DescListButton btnLabel={"See Quote Details"} btnEvent={"quoteDetailClicked"} on:quoteDetailClicked={handleQuoteDetailClick} /> -->
 						</div>
 					</DescriptionList>
 				</div>
