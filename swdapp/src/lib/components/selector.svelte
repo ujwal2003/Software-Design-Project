@@ -1,5 +1,14 @@
 <script lang="ts">
-    export let label: string;
+  import { createEventDispatcher } from "svelte";
+  const dispatch = createEventDispatcher();
+
+  function handleSelection(e: any) {
+    dispatch('selection', {
+      selectedVal: e.target.value
+    });
+  }
+
+  export let label: string;
 </script>
 
 <!-- Floating Select -->
@@ -10,7 +19,7 @@
     [&:not(:placeholder-shown)]:pt-6
     [&:not(:placeholder-shown)]:pb-2
     autofill:pt-6
-    autofill:pb-2">
+    autofill:pb-2" on:change={(e) => {handleSelection(e)}}>
       <!-- <option selected>Open this select menu</option>
       <option>1</option>
       <option>2</option>
