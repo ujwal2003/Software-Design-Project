@@ -1,3 +1,4 @@
+<!-- This will be deprecated soon -->
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 
@@ -13,7 +14,9 @@
 		total: number;
 	}
 
+
 	export let details: QuoteCardDetail;
+
 </script>
 
 <div class="rounded-xl bg-[#E9F0F6] p-4 shadow-md md:p-5">
