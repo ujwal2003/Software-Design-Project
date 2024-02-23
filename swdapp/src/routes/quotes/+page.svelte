@@ -7,8 +7,6 @@
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
-	import QuoteDetail from '$lib/components/quoteDetail.svelte';
-
 	import { dummyQuoteData } from "$lib";
 
 	interface QuoteCard {
