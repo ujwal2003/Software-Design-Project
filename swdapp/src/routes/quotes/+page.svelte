@@ -76,6 +76,11 @@
 	function handleQuotePurchase() {
 		console.log('Purchase Button Clicked!');
 	}
+
+	function handleCreateQuote(e: any) {
+		console.log('Create Quote Button Clicked!');
+		console.log(e.detail);
+	}
 </script>
 
 <div class="flex h-screen flex-col">
@@ -107,18 +112,36 @@
 
 				<div class="ml-6 mr-6 mt-4 w-2/3">
 					<DescriptionList>
-						<DescListItem details={{title: "Quote Date", text: selectedQuoteDetails.date}} />
-						<DescListItem details={{title: "Location", text: selectedQuoteDetails.location}} />
-						<DescListItem details={{title: "Delivery Date", text: selectedQuoteDetails.deliveryDate}} />
-						<DescListItem details={{title: "Gallons", text: selectedQuoteDetails.gallons}} />
-						<DescListItem details={{title: "Price", text: selectedQuoteDetails.price.toFixed(2)}} />
-						<DescListItem details={{title: "Tax", text: selectedQuoteDetails.tax.toFixed(2)}} />
-						<DescListItem details={{title: "Total", text: selectedQuoteDetails.total.toFixed(2)}} />
-						<div>
-							<DescListButton btnLabel={"Purchase Quote"} btnEvent={'quotePurchaseClick'} on:quotePurchaseClick={handleQuotePurchase} />
+						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
+						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
+						<DescListItem
+							details={{ title: 'Delivery Date', text: selectedQuoteDetails.deliveryDate }}
+						/>
+						<DescListItem details={{ title: 'Gallons', text: selectedQuoteDetails.gallons }} />
+						<DescListItem
+							details={{ title: 'Price', text: selectedQuoteDetails.price.toFixed(2) }}
+						/>
+						<DescListItem details={{ title: 'Tax', text: selectedQuoteDetails.tax.toFixed(2) }} />
+						<DescListItem
+							details={{ title: 'Total', text: selectedQuoteDetails.total.toFixed(2) }}
+						/>
+						<div class="flex w-full flex-row gap-3">
+							<DescListButton
+								btnColor={'bg-[#2563eb]'}
+								btnColorHoever={'hover:bg-blue-700'}
+								btnLabel={'Purchase Quote'}
+								btnEvent={'quotePurchaseClick'}
+								on:quotePurchaseClick={handleQuotePurchase}
+							/>
+							<DescListButton
+								btnLabel={'Create New Quote'}
+								btnEvent={'quotePurchaseClick'}
+								on:click={handleCreateQuote}
+							/>
 						</div>
 					</DescriptionList>
 				</div>
+				<div class=""></div>
 			</div>
 		</div>
 	</main>
