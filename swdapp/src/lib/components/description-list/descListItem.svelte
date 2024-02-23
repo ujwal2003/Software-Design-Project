@@ -1,7 +1,7 @@
 <script lang="ts">
     interface DetailItem {
         title: string,
-        text: string
+        text: string | number
     };
 
     export let details: DetailItem;

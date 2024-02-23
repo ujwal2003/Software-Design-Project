@@ -2,6 +2,11 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import QuoteCards from '$lib/components/quoteCards.svelte';
+
+	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
+	import DescListItem from '$lib/components/description-list/descListItem.svelte';
+	import DescListButton from '$lib/components/description-list/descListButton.svelte';
+
 	import QuoteDetail from '$lib/components/quoteDetail.svelte';
 
 	import { dummyQuoteData } from "$lib";
@@ -104,7 +109,18 @@
 				</div>
 
 				<div class="ml-6 mr-6 mt-4 w-2/3">
-					<QuoteDetail details={selectedQuoteDetails} on:quotePurchaseClick={handleQuotePurchase} />
+					<DescriptionList>
+						<DescListItem details={{title: "Quote Date", text: selectedQuoteDetails.date}} />
+						<DescListItem details={{title: "Location", text: selectedQuoteDetails.location}} />
+						<DescListItem details={{title: "Delivery Date", text: selectedQuoteDetails.deliveryDate}} />
+						<DescListItem details={{title: "Gallons", text: selectedQuoteDetails.gallons}} />
+						<DescListItem details={{title: "Price", text: selectedQuoteDetails.price.toFixed(2)}} />
+						<DescListItem details={{title: "Tax", text: selectedQuoteDetails.tax.toFixed(2)}} />
+						<DescListItem details={{title: "Total", text: selectedQuoteDetails.total.toFixed(2)}} />
+						<div>
+							<DescListButton btnLabel={"Purchase Quote"} btnEvent={'quotePurchaseClick'} on:quotePurchaseClick={handleQuotePurchase} />
+						</div>
+					</DescriptionList>
 				</div>
 			</div>
 		</div>
