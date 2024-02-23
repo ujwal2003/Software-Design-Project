@@ -41,11 +41,11 @@
 	 * Quote Card Generation
 	 */
 	interface QuoteCard {
-		id: string;
-		date: string;
-		time: string;
-		gallons: number;
-		price: number;
+		id: string,
+		date: string,
+		time: string,
+		gallons: number,
+		price: number
 	}
 
 	export let quoteCards: QuoteCard[];
@@ -59,6 +59,14 @@
 			quoteID: cardQuoteID
 		});
 	}
+
+	/**
+	 * card text
+	 */
+	interface TextOverrideSetting {override: boolean, text: string, showProperty: "price" | "none"};
+	export let textOverride:TextOverrideSetting = {override: false, text: '', showProperty: "price"};
+	export let btnName = "Quote Details";
+
 </script>
 
 <!-- <div class="columns-1"> -->
@@ -70,13 +78,23 @@
 				{`${quote.date} at ${quote.time}`}
 			</h3>
 
-			<p class={cardDescriptionStyle}>
-				{`Requested Gallons: ${quote.gallons}`} <br />
-				{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
-			</p>
+			{#if textOverride.override}
+				<p class={cardDescriptionStyle}>
+					{#if textOverride.showProperty == "price"}
+						{`${textOverride.text}${quote.price}`}
+					{:else}
+						{textOverride.text}
+					{/if}
+				</p>
+			{:else}
+				<p class={cardDescriptionStyle}>
+					{`Requested Gallons: ${quote.gallons}`} <br />
+					{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
+				</p>
+			{/if}
 
 			<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
-				Quote Details
+				{btnName}
 				<svg
 					class="size-4 flex-shrink-0"
 					xmlns="http://www.w3.org/2000/svg"
