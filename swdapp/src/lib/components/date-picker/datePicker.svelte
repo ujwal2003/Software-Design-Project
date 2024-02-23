@@ -1,11 +1,12 @@
 <script lang="ts">
 	let weekDays: string[] = ["Mo", "Tu", "We", "Th", "Fr","Sa", "Su"];
 
-	const weekDayName = {0: "Su", 1: "Mo", 2: "Tu", 3: "We", 4: "Th", 5: "Fr", 6: "Sa"};
-	const monthNames = {"Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5, "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11};
+	const convertWeekDayName = {0: "Su", 1: "Mo", 2: "Tu", 3: "We", 4: "Th", 5: "Fr", 6: "Sa"};
+	const convertWeekToCalNum = {"Mo": 0, "Tu": 1, "We": 2, "Th": 3, "Fr": 4, "Sa": 5, "Su": 6};
+	const convertMonthNames = {"Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "Jun": 5, "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11};
 
 	function getMonthDayDetails(monthName: string, year: number) {
-		let month: number = (monthNames as any)[monthName];
+		let month: number = (convertMonthNames as any)[monthName];
 		let date = new Date(year, month, 1);
 
 		let beginDay = date.getDay();
@@ -16,10 +17,21 @@
 			date.setDate(date.getDate() + 1);
 		}
 
-		return {startDay: (weekDayName as any)[beginDay], numDays: dayNum};
+		return {startDay: (convertWeekDayName as any)[beginDay], numDays: dayNum};
 	}
 
-	console.log(getMonthDayDetails("Feb", 2024));
+	const CAL_ROWS = 6;
+	const CALC_COLS = 7;
+	interface CalendarDay {placeholder: boolean, value?: string};
+	let calDays:CalendarDay[][] =[];
+
+	let calInfo = getMonthDayDetails("Jan", 2024);
+	let startCalDayIdx = (convertWeekToCalNum as any)[calInfo.startDay];
+	let sopCalDay = calInfo.numDays;
+
+	for(let i = 0; i < CAL_ROWS; i++) {
+		let calRowDays:CalendarDay[] = Array(7).fill({placeholder: true});
+	}
 </script>
 
 <!-- Datepicker -->
