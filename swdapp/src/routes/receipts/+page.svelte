@@ -2,15 +2,13 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
+	import QuoteCards from "$lib/components/quoteCards.svelte";
+
     import DescriptionList from "$lib/components/description-list/descriptionList.svelte";
     import DescListItem from "$lib/components/description-list/descListItem.svelte";
 	import DescListButton from "$lib/components/description-list/descListButton.svelte";
 
     import { dummyQuoteData } from "$lib";
-
-	function handleClick() {
-		console.log("click!");
-	}
 </script>
 
 <div class="flex flex-col h-screen">
@@ -32,7 +30,11 @@
 
 			<div class="flex">
 				<div class="w-1/3 pl-7 pt-4">
-					test
+					<QuoteCards
+						quoteCards={[{id: "1", date: "2/20/2024", time: "2:00pm", gallons: 0, price: 0}]}
+						textOverride={{override: true, text: ''}}
+						on:cardDetailClick={(e) => {console.log("click")}}
+					/>
 				</div>
 
 				<div class="w-2/3 ml-6 mr-6 mt-4">
@@ -41,7 +43,7 @@
                         <DescListItem details={{title: "title 2", text: "text 2"}} />
                         <DescListItem details={{title: "title 3", text: "text 3"}} />
 						<div>
-							<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={handleClick} />
+							<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={() => {console.log("clicked")}} />
 						</div>
                     </DescriptionList>
 				</div>

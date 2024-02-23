@@ -59,6 +59,13 @@
 			quoteID: cardQuoteID
 		});
 	}
+
+	/**
+	 * card text
+	 */
+	interface TextOverrideSetting {override: boolean, text: string};
+	export let textOverride:TextOverrideSetting = {override: false, text: ''};
+
 </script>
 
 <!-- <div class="columns-1"> -->
@@ -70,10 +77,16 @@
 				{`${quote.date} at ${quote.time}`}
 			</h3>
 
-			<p class={cardDescriptionStyle}>
-				{`Requested Gallons: ${quote.gallons}`} <br />
-				{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
-			</p>
+			{#if textOverride.override}
+				<p class={cardDescriptionStyle}>
+					{textOverride.text}
+				</p>
+			{:else}
+				<p class={cardDescriptionStyle}>
+					{`Requested Gallons: ${quote.gallons}`} <br />
+					{`Suggested Price: $${quote.price.toFixed(2)} /gal`}
+				</p>
+			{/if}
 
 			<button class={quoteDetailsStyle} on:click={() => handleCardDetailsClick(quote.id)}>
 				Quote Details
