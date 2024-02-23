@@ -41,11 +41,11 @@
 	 * Quote Card Generation
 	 */
 	interface QuoteCard {
-		id: string;
-		date: string;
-		time: string;
-		gallons: number;
-		price: number;
+		id: string,
+		date: string,
+		time: string,
+		gallons: number,
+		price: number
 	}
 
 	export let quoteCards: QuoteCard[];
@@ -63,8 +63,8 @@
 	/**
 	 * card text
 	 */
-	interface TextOverrideSetting {override: boolean, text: string};
-	export let textOverride:TextOverrideSetting = {override: false, text: ''};
+	interface TextOverrideSetting {override: boolean, text: string, showProperty: "price" | "none"};
+	export let textOverride:TextOverrideSetting = {override: false, text: '', showProperty: "price"};
 
 </script>
 
@@ -79,7 +79,11 @@
 
 			{#if textOverride.override}
 				<p class={cardDescriptionStyle}>
-					{textOverride.text}
+					{#if textOverride.showProperty == "price"}
+						{`${textOverride.text}${quote.price}`}
+					{:else}
+						{textOverride.text}
+					{/if}
 				</p>
 			{:else}
 				<p class={cardDescriptionStyle}>

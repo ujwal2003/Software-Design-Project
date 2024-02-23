@@ -8,7 +8,26 @@
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
-    import { dummyQuoteData } from "$lib";
+    import { dummyPaymentData } from "$lib";
+
+	let dummyPayments = dummyPaymentData.map((dat) => {
+		return {
+			id: dat._id,
+			date: dat.paymentDate,
+			time: dat.paymentTime,
+			gallons: 0,
+			price: dat.payment
+		};
+	});
+
+	// see `selectedQuoteDetails` in /quotes/+page for updating text descriptions
+	function handleCardDetailClick(e: CustomEvent<any>) {
+		console.log(`card with id ${e.detail.quoteID} clicked!`)
+	}
+
+	function handleQuoteDetailClick() {
+		console.log("clicked quote detail button!");
+	}
 </script>
 
 <div class="flex h-screen flex-col">
@@ -31,19 +50,22 @@
 			<div class="flex">
 				<div class="w-1/3 pl-7 pt-4">
 					<QuoteCards
-						quoteCards={[{id: "1", date: "2/20/2024", time: "2:00pm", gallons: 0, price: 0}]}
-						textOverride={{override: true, text: ''}}
-						on:cardDetailClick={(e) => {console.log("click")}}
+						quoteCards={dummyPayments}
+						textOverride={{override: true, text: 'Payment: $', showProperty: "price"}}
+						on:cardDetailClick={handleCardDetailClick}
 					/>
 				</div>
 
 				<div class="ml-6 mr-6 mt-4 w-2/3">
 					<DescriptionList>
-						<DescListItem details={{ title: 'title', text: 'text 1' }} />
-						<DescListItem details={{ title: 'title 2', text: 'text 2' }} />
-						<DescListItem details={{ title: 'title 3', text: 'text 3' }} />
+						<DescListItem details={{ title: 'Payment Date', text: 'XX/XX/XXXX' }} />
+						<DescListItem details={{ title: 'Delivery Date', text: 'XX/XX/XXXX' }} />
+						<DescListItem details={{ title: 'Payment', text: '$XXX.XX' }} />
+						<DescListItem details={{ title: 'Tax', text: '$XXX.XX' }} />
+						<DescListItem details={{ title: 'Total', text: '$XXX.XX' }} />
+						<DescListItem details={{ title: 'Description', text: 'You purchased [X] gallons of fuel for $X.XX' }} />
 						<div>
-							<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={() => {console.log("clicked")}} />
+							<DescListButton btnLabel={"See Quote Details"} btnEvent={"quoteDetailClicked"} on:quoteDetailClicked={handleQuoteDetailClick} />
 						</div>
 					</DescriptionList>
 				</div>
