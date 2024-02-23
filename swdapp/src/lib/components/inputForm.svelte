@@ -106,11 +106,11 @@
 </script>
 
 <div class={formBorderStyle}>
-	<p class="font-medium text-2xl text-[#0F172A]">
+	<p class="text-2xl font-medium text-[#0F172A]">
 		{fromDescription.title}
 	</p>
 
-	<p class="text-[#64748B] text-sm">
+	<p class="text-sm text-[#64748B]">
 		{@html fromDescription.top}
 	</p>
 
@@ -154,7 +154,7 @@
 	<div class="flex justify-end">
 		<button
 			type="button"
-			class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+			class="inline-flex items-center gap-x-2 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-700 dark:bg-slate-900 dark:text-white dark:hover:bg-gray-800 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
 			on:click={() => {
 				dispatch('formSubmit');
 			}}
@@ -163,7 +163,7 @@
 		</button>
 	</div>
 
-	<p class="text-[#64748B] text-sm">
+	<p class="text-sm text-[#64748B]">
 		{@html fromDescription.bottom}
 	</p>
 </div>

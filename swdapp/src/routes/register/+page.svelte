@@ -25,19 +25,19 @@
 	<Header />
 </nav>
 
-<main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-0 max-h-full">
+<main class="mt-0 flex max-h-full max-w-full flex-wrap overflow-hidden overflow-x-hidden">
 	<!-- left side -->
-	<section class="w-1/2 bg-[#282828] h-screen flex items-center justify-center mt-0">
-		<quote class="text-white flex flex-col gap-4 mt-[25rem]">
-			<p class="text-center text-wrap text-3xl font-bold italic">
+	<section class="mt-0 flex h-screen w-1/2 items-center justify-center bg-[#282828]">
+		<quote class="mt-[25rem] flex flex-col gap-4 text-white">
+			<p class="text-wrap text-center text-3xl font-bold italic">
 				&ldquo;My car started to fly after using FuelFinder&rdquo;
 			</p>
-			<p class="text-xl flex flex-row-reverse pr-16">- Generic Car Owner</p>
+			<p class="flex flex-row-reverse pr-16 text-xl">- Generic Car Owner</p>
 		</quote>
 	</section>
 
 	<!-- right side -->
-	<section class="w-1/2 bg-[#F0F5F8] h-screen flex flex-wrap items-center justify-center">
+	<section class="flex h-screen w-1/2 flex-wrap items-center justify-center bg-[#F0F5F8]">
 		<div class="w-1/2">
 			<InputForm
 				numInputs={3}

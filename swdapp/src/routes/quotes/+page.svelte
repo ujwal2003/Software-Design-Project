@@ -1,8 +1,8 @@
 <script lang="ts">
-	import Header from "$lib/components/header.svelte";
-	import Footer from "$lib/components/footer.svelte";
-	import QuoteCards from "$lib/components/quoteCards.svelte";
-	import QuoteDetail from "$lib/components/quoteDetail.svelte";
+	import Header from '$lib/components/header.svelte';
+	import Footer from '$lib/components/footer.svelte';
+	import QuoteCards from '$lib/components/quoteCards.svelte';
+	import QuoteDetail from '$lib/components/quoteDetail.svelte';
 
 	import { dummyQuoteData } from "$lib";
 
@@ -25,14 +25,15 @@
 	}
 
 	let selectedQuoteDetails: QuoteCardDetail = {
-		date: "-",
-		location: "-",
-		deliveryDate: "-",
+		date: '-',
+		location: '-',
+		deliveryDate: '-',
 		gallons: 0,
 		price: 0.0,
 		tax: 0.0,
 		total: 0.0
 	};
+
 
 	// replace this with filtering from database data later
 	let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
@@ -59,9 +60,9 @@
 			selectedQuoteDetails.total = dummyData.price * dummyData.gallons + dummyData.tax;
 		} else {
 			selectedQuoteDetails = {
-				date: "-",
-				location: "-",
-				deliveryDate: "-",
+				date: '-',
+				location: '-',
+				deliveryDate: '-',
 				gallons: 0,
 				price: 0.0,
 				tax: 0.0,
@@ -71,27 +72,28 @@
 	}
 
 	function handleQuotePurchase() {
-		console.log("Purchase Button Clicked!");
+		console.log('Purchase Button Clicked!');
 	}
 </script>
 
-<div class="flex flex-col h-screen">
+<div class="flex h-screen flex-col">
 	<nav>
 		<Header />
 	</nav>
 
-	<main class="overflow-hidden max-w-full overflow-x-hidden flex flex-wrap mt-0 h-full">
+	<main class="mt-0 flex h-full max-w-full flex-wrap overflow-hidden overflow-x-hidden">
 		<!-- left sidebar -->
-		<aside class="w-1/6 bg-[#282828] h-full flex justify-left pl-10 pt-6 text-lg">
+		<aside class="justify-left flex h-full w-1/6 bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
 				<a href="/" class="text-[#CBD5E1]"> Profile </a>
+
 				<a href="/" class="text-[#CBD5E1]"> Payment History </a>
 			</nav>
 		</aside>
 
 		<!-- main content -->
-		<div class="w-5/6 bg-[#F0F5F8] flex flex-col flex-wrap">
-			<p class="text-3xl pl-8 pt-4">Fuel Quote History</p>
+		<div class="flex w-5/6 flex-col flex-wrap bg-[#F0F5F8]">
+			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
 			<div class="flex">
 				<div class="w-1/3 pl-7 pt-4">
@@ -101,7 +103,7 @@
 					/>
 				</div>
 
-				<div class="w-2/3 ml-6 mr-6 mt-4">
+				<div class="ml-6 mr-6 mt-4 w-2/3">
 					<QuoteDetail details={selectedQuoteDetails} on:quotePurchaseClick={handleQuotePurchase} />
 				</div>
 			</div>

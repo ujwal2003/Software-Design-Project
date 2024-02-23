@@ -2,12 +2,12 @@
 	export let textColor = 'text-gray-500';
 </script>
 
-<footer class="relative w-screen z-10 overflow-hidden">
-	<div class="w-full max-w-[85rem] py-4 px-4 sm:px-6 lg:px-8 mx-auto bg-transparent">
+<footer class="relative z-10 w-screen overflow-hidden">
+	<div class="mx-auto w-full max-w-[85rem] bg-transparent px-4 py-4 sm:px-6 lg:px-8">
 		<!-- Grid -->
 		<div class="text-center">
 			<div>
-				<a class="flex-none text-3xl font-modak text-pretty" href="/">
+				<a class="font-modak flex-none text-pretty text-3xl" href="/">
 					<h1>FUEL<span class="text-logo">FINDER</span></h1>
 				</a>
 			</div>
@@ -32,11 +32,11 @@
 			<!-- Github Link -->
 			<div class="mt-1 space-x-2">
 				<a
-					class="inline-flex justify-center items-center size-10 text-center {textColor} hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white transition"
+					class="inline-flex size-10 items-center justify-center text-center {textColor} rounded-full transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:ring-offset-white"
 					href="https://github.com/ujwal2003/Software-Design-Project"
 				>
 					<svg
-						class="flex-shrink-0 size-3.5"
+						class="size-3.5 flex-shrink-0"
 						xmlns="http://www.w3.org/2000/svg"
 						width="16"
 						height="16"

@@ -8,30 +8,30 @@
 
 	homeHeader
 		? (headerStyles = 'absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden')
-		: (headerStyles = 'relative bg-white w-screen bg-orange overflow-hidden');
+		: (headerStyles = 'relative bg-white z-10 w-screen bg-orange overflow-hidden');
 </script>
 
 <header class={headerStyles}>
-	<div class="flex flex-wrap sm:justify-start sm:flex-nowrap z-50 w-full text-sm py-4">
+	<div class="z-50 flex w-full flex-wrap py-4 text-sm sm:flex-nowrap sm:justify-start">
 		<nav
-			class="max-w-full w-full mx-auto px-10 sm:flex sm:items-center sm:justify-between"
+			class="mx-auto w-full max-w-full px-10 sm:flex sm:items-center sm:justify-between"
 			aria-label="Global"
 		>
 			<div class="flex items-center justify-between">
-				<a class="flex-none text-3xl font-modak text-pretty" href="/">
+				<a class="font-modak flex-none text-pretty text-3xl" href="/">
 					<h1>FUEL<span class="text-logo">FINDER</span></h1>
 				</a>
 				<!-- Navbar for Mobile -->
 				<div class="sm:hidden">
 					<button
 						type="button"
-						class="hs-collapse-toggle p-2 inline-flex justify-center items-center gap-x-2 rounded-lg border border-gray-200 bg-white text-gray-800 shadow-sm hover:bg-gray-50 disabled:opacity-50 disabled:pointer-events-none"
+						class="hs-collapse-toggle inline-flex items-center justify-center gap-x-2 rounded-lg border border-gray-200 bg-white p-2 text-gray-800 shadow-sm hover:bg-gray-50 disabled:pointer-events-none disabled:opacity-50"
 						data-hs-collapse="#navbar-collapse-with-animation"
 						aria-controls="navbar-collapse-with-animation"
 						aria-label="Toggle navigation"
 					>
 						<svg
-							class="hs-collapse-open:hidden flex-shrink-0 size-4"
+							class="hs-collapse-open:hidden size-4 flex-shrink-0"
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
 							height="24"
@@ -49,7 +49,7 @@
 							/></svg
 						>
 						<svg
-							class="hs-collapse-open:block hidden flex-shrink-0 size-4"
+							class="hs-collapse-open:block hidden size-4 flex-shrink-0"
 							xmlns="http://www.w3.org/2000/svg"
 							width="24"
 							height="24"
@@ -66,19 +66,19 @@
 			</div>
 			<div
 				id="navbar-collapse-with-animation"
-				class="hs-collapse hidden overflow-hidden transition-all duration-300 basis-full grow sm:block"
+				class="hs-collapse hidden grow basis-full overflow-hidden transition-all duration-300 sm:block"
 			>
 				<div
-					class="flex flex-col text-lg gap-5 mt-5 sm:flex-row sm:items-center sm:justify-end sm:mt-0 sm:ps-5"
+					class="mt-5 flex flex-col gap-5 text-lg sm:mt-0 sm:flex-row sm:items-center sm:justify-end sm:ps-5"
 				>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/" aria-current="page"
 						>Home</a
 					>
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/">Account</a>
+					<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
 					<button
 						type="button"
-						class="py-2 px-3 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none"
+						class="inline-flex items-center gap-x-2 rounded-lg border border-transparent px-3 py-2 text-sm font-semibold {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
 					>
 						<a href="/register">Register</a>
 					</button>
