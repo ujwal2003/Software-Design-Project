@@ -32,8 +32,10 @@
 
 				<div class="w-2/3 ml-6 mr-6 mt-4">
 					<DescriptionList>
-                        <!-- <DescListItem slot="listItem0" details={{title: "title", text: "text 1"}} /> -->
-                        <!-- <DescListItem slot="listItem" details={{title: "title 2", text: "text 2"}} /> -->
+                        <!-- <DescListItem details={{title: "title", text: "text 1"}} />
+                        <DescListItem details={{title: "title 2", text: "text 2"}} />
+                        <DescListItem details={{title: "title 2", text: "text 2"}} />
+						<button slot="button">test</button> -->
                     </DescriptionList>
 				</div>
 			</div>

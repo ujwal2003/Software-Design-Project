@@ -1,13 +1,17 @@
 <script lang="ts">
-    export let numDetails = 1;
+    // export let numDetails = 1;
+    // interface DetailItem {
+    //     title: string;
+    //     text: string;
+    // }
+
+    // export let items: { slotName: string, content: DetailItem }[] = [];
+
 </script>
 
 <div class="bg-[#E9F0F6] shadow-md rounded-xl p-4 md:p-5">
     <dl class="grid sm:grid-cols-3 gap-1 sm:gap-3 mb-3">
-        <!-- title & description slots -->
-        {#each {length: numDetails} as _, i}
-            <slot name={`listItem${i}`}></slot>
-        {/each}
+        <slot></slot>
     </dl>
 
     <!-- button slot -->
