@@ -3,7 +3,7 @@ export const hello = 'Hello from $lib!';
 
 // global dummy data
 // dummy data get actual data and format it from database
-interface DummyData {
+interface DummyQuoteData {
     _id: string;
     quoteDate: string;
     quoteTime: string;
@@ -14,7 +14,7 @@ interface DummyData {
     tax: number;
 }
 
-export let dummyQuoteData: DummyData[] = [
+export let dummyQuoteData: DummyQuoteData[] = [
     {_id:"da95101afa3ecfda46d1", quoteDate:"2/21/2024", quoteTime:"1:59pm", loc:"houston", deliveryDate:"2/24/2024", gallons:5, price:2.86, tax: 3.14},
     {_id:"09075d1659108ae43ea4", quoteDate:"2/20/2024", quoteTime:"11:35am", loc:"houston", deliveryDate:"2/23/2024", gallons:3, price:3.86, tax:1.59},
     {_id:"1042af652e115fc669f3", quoteDate:"2/18/2024", quoteTime:"4:30pm", loc:"houston", deliveryDate:"2/21/2024", gallons:10, price:5.86, tax:2.65},

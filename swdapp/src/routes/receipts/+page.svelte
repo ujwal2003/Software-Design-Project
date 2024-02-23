@@ -40,7 +40,9 @@
                         <DescListItem details={{title: "title", text: "text 1"}} />
                         <DescListItem details={{title: "title 2", text: "text 2"}} />
                         <DescListItem details={{title: "title 3", text: "text 3"}} />
-						<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={handleClick} />
+						<div>
+							<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={handleClick} />
+						</div>
                     </DescriptionList>
 				</div>
 			</div>
