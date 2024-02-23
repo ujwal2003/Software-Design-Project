@@ -41,11 +41,11 @@
 	 * Quote Card Generation
 	 */
 	interface QuoteCard {
-		id: string,
-		date: string,
-		time: string,
-		gallons: number,
-		price: number
+		id: string;
+		date: string;
+		time: string;
+		gallons: number;
+		price: number;
 	}
 
 	export let quoteCards: QuoteCard[];
@@ -63,10 +63,17 @@
 	/**
 	 * card text
 	 */
-	interface TextOverrideSetting {override: boolean, text: string, showProperty: "price" | "none"};
-	export let textOverride:TextOverrideSetting = {override: false, text: '', showProperty: "price"};
-	export let btnName = "Quote Details";
-
+	interface TextOverrideSetting {
+		override: boolean;
+		text: string;
+		showProperty: 'price' | 'none';
+	}
+	export let textOverride: TextOverrideSetting = {
+		override: false,
+		text: '',
+		showProperty: 'price'
+	};
+	export let btnName = 'Quote Details';
 </script>
 
 <!-- <div class="columns-1"> -->
@@ -80,7 +87,7 @@
 
 			{#if textOverride.override}
 				<p class={cardDescriptionStyle}>
-					{#if textOverride.showProperty == "price"}
+					{#if textOverride.showProperty == 'price'}
 						{`${textOverride.text}${quote.price}`}
 					{:else}
 						{textOverride.text}
@@ -116,7 +123,7 @@
 
 <style>
 	.cards-max-h {
-		/* max-height: calc(100vh - 25%); */
-		max-height: calc(100vh - 18.7rem);
+		max-height: calc(95vh - 10%);
+		/* max-height: calc(100vh - 18.7rem); */
 	}
 </style>
