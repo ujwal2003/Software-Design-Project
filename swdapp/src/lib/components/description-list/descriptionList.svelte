@@ -1,11 +1,4 @@
 <script lang="ts">
-    // export let numDetails = 1;
-    // interface DetailItem {
-    //     title: string;
-    //     text: string;
-    // }
-
-    // export let items: { slotName: string, content: DetailItem }[] = [];
 
 </script>
 

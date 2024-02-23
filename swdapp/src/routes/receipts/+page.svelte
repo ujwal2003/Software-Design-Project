@@ -4,8 +4,13 @@
 
     import DescriptionList from "$lib/components/description-list/descriptionList.svelte";
     import DescListItem from "$lib/components/description-list/descListItem.svelte";
+	import DescListButton from "$lib/components/description-list/descListButton.svelte";
 
     import { dummyQuoteData } from "$lib";
+
+	function handleClick() {
+		console.log("click!");
+	}
 </script>
 
 <div class="flex flex-col h-screen">
@@ -32,10 +37,10 @@
 
 				<div class="w-2/3 ml-6 mr-6 mt-4">
 					<DescriptionList>
-                        <!-- <DescListItem details={{title: "title", text: "text 1"}} />
+                        <DescListItem details={{title: "title", text: "text 1"}} />
                         <DescListItem details={{title: "title 2", text: "text 2"}} />
-                        <DescListItem details={{title: "title 2", text: "text 2"}} />
-						<button slot="button">test</button> -->
+                        <DescListItem details={{title: "title 3", text: "text 3"}} />
+						<DescListButton btnLabel={"button"} btnEvent={"coolEvent"} on:coolEvent={handleClick} />
                     </DescriptionList>
 				</div>
 			</div>
