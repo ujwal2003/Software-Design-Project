@@ -1,11 +1,11 @@
 <script lang="ts">
-    interface DetailItem {
-        title: string,
-        text: string | number
-    };
+	interface DetailItem {
+		title: string;
+		text: string | number;
+	}
 
-    export let details: DetailItem;
+	export let details: DetailItem;
 </script>
 
-<dt class="sm:col-span-1 font-semibold"> {details.title} </dt>
-<dd class="sm:col-span-2 mb-3 sm:mb-0 text-[#64748B]"> {details.text} </dd>
+<dt class="font-semibold sm:col-span-1">{details.title}</dt>
+<dd class="mb-3 text-[#64748B] sm:col-span-2 sm:mb-0">{details.text}</dd>

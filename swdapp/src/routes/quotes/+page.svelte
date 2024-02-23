@@ -7,7 +7,7 @@
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
-	import { dummyQuoteData } from "$lib";
+	import { dummyQuoteData } from '$lib';
 
 	interface QuoteCard {
 		id: string;
@@ -36,7 +36,6 @@
 		tax: 0.0,
 		total: 0.0
 	};
-
 
 	// replace this with filtering from database data later
 	let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
@@ -88,9 +87,9 @@
 		<!-- left sidebar -->
 		<aside class="justify-left flex h-full w-1/6 bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
-				<a href="/" class="text-[#CBD5E1]"> Profile </a>
+				<a href="/profile" class="text-[#CBD5E1]"> Profile </a>
 
-				<a href="/" class="text-[#CBD5E1]"> Payment History </a>
+				<a href="/payment" class="text-[#CBD5E1]"> Payment History </a>
 			</nav>
 		</aside>
 

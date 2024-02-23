@@ -59,22 +59,22 @@
 
 	<main class="flex max-w-full flex-wrap overflow-auto">
 		<!-- * Sidebar -->
-		<aside class="justify-left flex w-1/6 grow bg-[#282828] pl-10 pt-6 text-lg">
+		<aside class="justify-left flex min-h-screen w-1/6 grow bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
-				<a href="/" class="text-[#CBD5E1]"> Fuel Quote History </a>
+				<a href="/quotes" class="text-[#CBD5E1]"> Fuel Quote History </a>
 
-				<a href="/" class="text-[#CBD5E1]"> Payment History </a>
+				<a href="/payment" class="text-[#CBD5E1]"> Payment History </a>
 			</nav>
 		</aside>
 		<!-- * End Sidebar -->
 
 		<!-- * Main Content -->
-		<div class="flex w-5/6 flex-col flex-wrap bg-[#F0F5F8] pb-10">
+		<div class="flex w-5/6 grow flex-col flex-wrap bg-[#F0F5F8] pb-10">
 			<p class="pl-8 pt-4 text-3xl">Dashboard</p>
-			<div class="flex flex-col">
-				<div class="w-5/6 pl-7 pt-4">
+			<div class="flex w-5/6 flex-col">
+				<div class="pl-7 pt-4">
 					<!-- * Cards -->
-					<section class="flex h-full grow flex-row flex-wrap gap-5">
+					<section class="mx-auto flex h-full w-full grow flex-row flex-wrap gap-5">
 						<!-- Name Card -->
 						<div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
 							<div class="flex flex-col text-lg font-bold text-black">Full Name</div>
