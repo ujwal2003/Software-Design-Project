@@ -88,7 +88,7 @@
 		<Header />
 	</nav>
 
-	<main class="mt-0 flex h-full max-w-full flex-wrap overflow-hidden overflow-x-hidden">
+	<main class="mt-0 flex max-w-full flex-wrap">
 		<!-- left sidebar -->
 		<aside class="justify-left flex h-full w-1/6 bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
@@ -99,10 +99,10 @@
 		</aside>
 
 		<!-- main content -->
-		<div class="flex w-5/6 flex-col flex-wrap bg-[#F0F5F8]">
+		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
-			<div class="flex">
+			<div class="flex h-screen flex-row">
 				<div class="w-1/3 pl-7 pt-4">
 					<QuoteCards
 						quoteCards={dummyQuotes}
@@ -110,7 +110,7 @@
 					/>
 				</div>
 
-				<div class="ml-6 mr-6 mt-4 w-2/3">
+				<div class="ml-6 mr-6 mt-4 flex h-2/3 w-2/3 flex-row">
 					<DescriptionList>
 						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
 						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
@@ -141,9 +141,8 @@
 						</div>
 					</DescriptionList>
 				</div>
-				<div class=""></div>
 			</div>
-		</div>
+		</section>
 	</main>
 
 	<footer>
