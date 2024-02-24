@@ -1,11 +1,12 @@
-<script>
-  import {afterNavigate} from "svelte-navigator";
-  import "../app.css";
+<script lang="ts">
+	import '../app.css';
+	import { afterNavigate } from '$app/navigation';
 
-
-  afterNavigate(() => {
-    window.HSStaticMethods.autoInit();
-  });
+	afterNavigate(() => {
+		(window as any).HSStaticMethods.autoInit();
+	});
 </script>
 
-<slot />
+<main class="overflow-x-hidden">
+	<slot />
+</main>
