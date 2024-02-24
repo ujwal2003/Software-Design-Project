@@ -14,6 +14,29 @@ interface DummyQuoteData {
 	tax: number;
 }
 
+export let dummyUserData = {
+	name: {
+		_id: '5f8e3b6e7d2d8a5f5b3',
+		firstName: 'John',
+		middleName: 'Jr.',
+		lastName: 'Doe',
+		email: 'John@doe.com'
+	},
+	payment: {
+		_id: '5f8e3b6e7d2d8a5f5b3',
+		cardName: 'John J Doe',
+		cardNumber: '1234567890',
+		expDate: '12/2024',
+		cvv: '123'
+	},
+	address: {
+		address1: '1234 Main St',
+		city: 'Houston',
+		state: 'TX',
+		zip: '77001'
+	}
+};
+
 export let dummyQuoteData: DummyQuoteData[] = [
 	{
 		_id: 'da95101afa3ecfda46d1',

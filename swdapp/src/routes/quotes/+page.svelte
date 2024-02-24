@@ -8,6 +8,7 @@
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
 	import { dummyQuoteData } from '$lib';
+	import { goto } from '$app/navigation';
 
 	interface QuoteCard {
 		id: string;
@@ -77,9 +78,9 @@
 		console.log('Purchase Button Clicked!');
 	}
 
-	function handleCreateQuote(e: any) {
-		console.log('Create Quote Button Clicked!');
-		console.log(e.detail);
+	function handleCreateQuote() {
+		console.log('Create New Quote Button Clicked!');
+		goto('/quotes/newquote');
 	}
 </script>
 
@@ -102,7 +103,7 @@
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
-			<div class="flex h-screen flex-row">
+			<div class="flex flex-row">
 				<div class="w-1/3 pl-7 pt-4">
 					<QuoteCards
 						quoteCards={dummyQuotes}
@@ -135,8 +136,8 @@
 							/>
 							<DescListButton
 								btnLabel={'Create New Quote'}
-								btnEvent={'quotePurchaseClick'}
-								on:click={handleCreateQuote}
+								btnEvent={'newQuoteClick'}
+								on:newQuoteClick={handleCreateQuote}
 							/>
 						</div>
 					</DescriptionList>
