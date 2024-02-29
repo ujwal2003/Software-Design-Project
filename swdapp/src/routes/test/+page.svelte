@@ -20,6 +20,16 @@
 	//   }
 
 	let isOpen = false;
+
+	import Card from "$lib/components/cards/card.svelte";
+
+	function handleCardClick(e: CustomEvent<any>) {
+		console.log(e.detail);
+	}
 </script>
 
-<main></main>
+<main class="flex justify-center mt-14">
+	<div class="w-1/3">
+		<Card cardID="2" on:cardClick={(e) => {handleCardClick(e)}} />
+	</div>
+</main>
