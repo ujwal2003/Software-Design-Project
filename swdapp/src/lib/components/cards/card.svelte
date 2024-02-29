@@ -1,5 +1,4 @@
 <script lang="ts">
-    console.warn("WARNING: The Card component is experimental")
     import { createEventDispatcher } from "svelte";
 
     export let darkMode: boolean = false;
