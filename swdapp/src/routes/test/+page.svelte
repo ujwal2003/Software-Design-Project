@@ -21,6 +21,7 @@
 
 	let isOpen = false;
 
+	import CardContainer from "$lib/components/cards/cardContainer.svelte";
 	import Card from "$lib/components/cards/card.svelte";
 	import CardText from "$lib/components/cards/cardText.svelte";
 
@@ -30,16 +31,55 @@
 </script>
 
 <main class="flex justify-center mt-14">
-	<div class="w-1/3">
+	<div class="w-1/2">
 
-		<Card cardID="1" on:cardClick={(e) => {handleCardClick(e)}}>
-			<CardText title={true}>
-				Title
-			</CardText>
-			<CardText>
-				description
-			</CardText>
-		</Card>
-		
+		<CardContainer>
+			<Card cardID="1" btnName={"Card Details"} on:cardClick={(e) => {handleCardClick(e)}}>
+				<CardText title={true}>
+					Title
+				</CardText>
+				<CardText>
+					description
+				</CardText>
+			</Card>
+
+			<Card cardID="2" btnName={"Card Details"} on:cardClick={(e) => {handleCardClick(e)}}>
+				<CardText title={true}>
+					Title
+				</CardText>
+				<CardText>
+					description
+				</CardText>
+			</Card>
+
+			<Card cardID="3" btnName={"Card Details"} on:cardClick={(e) => {handleCardClick(e)}}>
+				<CardText title={true}>
+					Title
+				</CardText>
+				<CardText>
+					description
+				</CardText>
+			</Card>
+
+			<Card cardID="4" btnName={"Card Details"} on:cardClick={(e) => {handleCardClick(e)}}>
+				<CardText title={true}>
+					Title
+				</CardText>
+				<CardText>
+					description
+				</CardText>
+			</Card>
+
+			<Card cardID="5" btnName={"Card Details"} on:cardClick={(e) => {handleCardClick(e)}}>
+				<CardText title={true}>
+					Title
+				</CardText>
+				<CardText>
+					description
+				</CardText>
+			</Card>
+		</CardContainer>
+
+
 	</div>
 </main>
