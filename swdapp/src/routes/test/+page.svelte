@@ -22,6 +22,7 @@
 	let isOpen = false;
 
 	import Card from "$lib/components/cards/card.svelte";
+	import CardText from "$lib/components/cards/cardText.svelte";
 
 	function handleCardClick(e: CustomEvent<any>) {
 		console.log(e.detail);
@@ -30,6 +31,15 @@
 
 <main class="flex justify-center mt-14">
 	<div class="w-1/3">
-		<Card cardID="2" on:cardClick={(e) => {handleCardClick(e)}} />
+
+		<Card cardID="1" on:cardClick={(e) => {handleCardClick(e)}}>
+			<CardText title={true}>
+				Title
+			</CardText>
+			<CardText>
+				description
+			</CardText>
+		</Card>
+		
 	</div>
 </main>

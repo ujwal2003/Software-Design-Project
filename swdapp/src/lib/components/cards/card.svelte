@@ -8,8 +8,6 @@
     export let cardID: string;
 
     let cardBackgroundStyle = `flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 mr-2`;
-	let cardTitleStyle = `text-lg font-bold text-gray-800`;
-	let cardDescriptionStyle = `mt-2 text-gray-500`;
     let cardButtonStyle = `
         mt-3 inline-flex items-center gap-x-1 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none
     `;
@@ -17,8 +15,6 @@
     if (darkMode) {
 		cardBackgroundStyle =
 			cardBackgroundStyle + ' dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7]';
-		cardTitleStyle = cardTitleStyle + ' dark:text-white';
-		cardDescriptionStyle = cardDescriptionStyle + ' dark:text-gray-400';
 		cardButtonStyle =
 			cardButtonStyle +
 			' dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600';
@@ -33,14 +29,7 @@
 </script>
 
 <div class={cardBackgroundStyle}>
-    <h3 class={cardTitleStyle}>
-        <!-- {`${quote.date} at ${quote.time}`} -->
-        title
-    </h3>
-
-    <p class={cardDescriptionStyle}>
-        description
-    </p>
+    <slot></slot>
 
     {#if btnVisible}
         <button class={cardButtonStyle} on:click={() => handleCardButtonClick(cardID)}>
