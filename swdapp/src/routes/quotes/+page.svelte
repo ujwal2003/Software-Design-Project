@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
-	// import QuoteCards from '$lib/components/quoteCards.svelte';
+	
 	import CardContainer from '$lib/components/cards/cardContainer.svelte';
 	import Card from '$lib/components/cards/card.svelte';
 	import CardText from '$lib/components/cards/cardText.svelte';
@@ -82,7 +82,6 @@
 
 	function handleCreateQuote(e: any) {
 		console.log('Create Quote Button Clicked!');
-		console.log(e.detail);
 	}
 </script>
 
@@ -107,11 +106,7 @@
 
 			<div class="flex h-screen flex-row">
 				<div class="w-1/3 pl-7 pt-4">
-					<!-- <QuoteCards
-						quoteCards={dummyQuotes}
-						on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)}
-					/> -->
-					<CardContainer>
+					<CardContainer heightOffset={5}>
 						{#each dummyQuotes as quote}
 							<Card cardID={quote.id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
 								<CardText title={true}>
@@ -128,7 +123,7 @@
 					</CardContainer>
 				</div>
 
-				<div class="ml-6 mr-6 mt-4 flex h-2/3 w-2/3 flex-row">
+				<div class="ml-6 mr-6 mt-4 flex h-1/2 w-2/3 flex-row">
 					<DescriptionList>
 						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
 						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
@@ -153,8 +148,8 @@
 							/>
 							<DescListButton
 								btnLabel={'Create New Quote'}
-								btnEvent={'quotePurchaseClick'}
-								on:click={handleCreateQuote}
+								btnEvent={'quoteCreateClick'}
+								on:quoteCreateClick={e => {handleCreateQuote(e)}}
 							/>
 						</div>
 					</DescriptionList>
