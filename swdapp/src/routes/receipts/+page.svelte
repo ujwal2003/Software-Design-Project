@@ -2,7 +2,9 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
-	import QuoteCards from "$lib/components/quoteCards.svelte";
+	import CardContainer from "$lib/components/cards/cardContainer.svelte";
+	import Card from "$lib/components/cards/card.svelte";
+	import CardText from "$lib/components/cards/cardText.svelte";
 
 	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
@@ -22,12 +24,8 @@
 
 	// see `selectedQuoteDetails` in /quotes/+page for updating text descriptions
 	function handleCardDetailClick(e: CustomEvent<any>) {
-		console.log(`card with id ${e.detail.quoteID} clicked!`)
+		console.log(`card with id ${e.detail.cardID} clicked!`);
 	}
-
-	// function handleQuoteDetailClick() {
-	// 	console.log("clicked quote detail button!");
-	// }
 </script>
 
 <div class="flex h-screen flex-col">
@@ -49,12 +47,18 @@
 
 			<div class="flex">
 				<div class="w-1/3 pl-7 pt-4">
-					<QuoteCards
-						quoteCards={dummyPayments}
-						textOverride={{override: true, text: 'Payment: $', showProperty: "price"}}
-						btnName={"Payment Details"}
-						on:cardDetailClick={handleCardDetailClick}
-					/>
+					<CardContainer>
+						{#each dummyPayments as receipt}
+							<Card cardID={receipt.id} btnName={"Payment Details"} on:cardClick={e => {handleCardDetailClick(e)}}>
+								<CardText title>
+									{`${receipt.date} at ${receipt.time}`}
+								</CardText>
+								<CardText>
+									{`Payment: $${receipt.price}`}
+								</CardText>
+							</Card>
+						{/each}
+					</CardContainer>
 				</div>
 
 				<div class="ml-6 mr-6 mt-4 w-2/3">
