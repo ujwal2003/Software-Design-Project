@@ -1,7 +1,10 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
-	import QuoteCards from '$lib/components/quoteCards.svelte';
+	
+	import CardContainer from '$lib/components/cards/cardContainer.svelte';
+	import Card from '$lib/components/cards/card.svelte';
+	import CardText from '$lib/components/cards/cardText.svelte';
 
 	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
@@ -51,7 +54,7 @@
 	// replace code in function with actual data from db later
 	function getQuoteDetailsFromCard(e: any) {
 		console.log(e.detail);
-		let dummyData = dummyQuoteData.find((obj) => obj._id === e.detail.quoteID);
+		let dummyData = dummyQuoteData.find((obj) => obj._id === e.detail.cardID);
 		if (dummyData != undefined) {
 			selectedQuoteDetails.date = dummyData.quoteDate;
 			selectedQuoteDetails.location = dummyData.loc;
@@ -79,7 +82,6 @@
 
 	function handleCreateQuote(e: any) {
 		console.log('Create Quote Button Clicked!');
-		console.log(e.detail);
 	}
 </script>
 
@@ -94,7 +96,7 @@
 			<nav class="flex flex-col gap-2">
 				<a href="/profile" class="text-[#CBD5E1]"> Profile </a>
 
-				<a href="/payment" class="text-[#CBD5E1]"> Payment History </a>
+				<a href="/receipts" class="text-[#CBD5E1]"> Payment History </a>
 			</nav>
 		</aside>
 
@@ -104,13 +106,24 @@
 
 			<div class="flex h-screen flex-row">
 				<div class="w-1/3 pl-7 pt-4">
-					<QuoteCards
-						quoteCards={dummyQuotes}
-						on:cardDetailClick={(e) => getQuoteDetailsFromCard(e)}
-					/>
+					<CardContainer heightOffset={5}>
+						{#each dummyQuotes as quote}
+							<Card cardID={quote.id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
+								<CardText title={true}>
+									{`${quote.date} at ${quote.time}`}
+								</CardText>
+								<CardText>
+									{`Requested Gallons: ${quote.gallons}`}
+								</CardText>
+								<CardText>
+									{`Suggested Price: ${quote.price} /gal`}
+								</CardText>
+							</Card>
+						{/each}
+					</CardContainer>
 				</div>
 
-				<div class="ml-6 mr-6 mt-4 flex h-2/3 w-2/3 flex-row">
+				<div class="ml-6 mr-6 mt-4 flex h-1/2 w-2/3 flex-row">
 					<DescriptionList>
 						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
 						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
@@ -135,8 +148,8 @@
 							/>
 							<DescListButton
 								btnLabel={'Create New Quote'}
-								btnEvent={'quotePurchaseClick'}
-								on:click={handleCreateQuote}
+								btnEvent={'quoteCreateClick'}
+								on:quoteCreateClick={e => {handleCreateQuote(e)}}
 							/>
 						</div>
 					</DescriptionList>
