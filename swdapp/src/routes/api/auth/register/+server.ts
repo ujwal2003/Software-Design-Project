@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { json } from '@sveltejs/kit';
 
-import { userExists } from '$lib/server/controllers/userController.js';
+import { userExists, addUser } from '$lib/server/controllers/userController.js';
 
 interface RegistrationRequest {
     username: string,
@@ -35,7 +35,11 @@ export async function POST({request}): Promise<Response> {
             } as RegistrationResponse, {status: 500});
         }
 
-        //TODO: add user to "database"
+        const salt = await bcrypt.genSalt();
+        const hashedPass = await bcrypt.hash(body.password, salt);
+        let newUser = await addUser(body.username, hashedPass);
+
+        console.log("[SERVER] new user registered:", newUser);
     
         return json({
             success: true,
