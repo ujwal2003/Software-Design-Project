@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { json } from '@sveltejs/kit';
 
-import { userExists, addUser } from '$lib/server/controllers/userController.js';
+import { userExists, addUser } from '$lib/server/services/userService.js';
 
 interface RegistrationRequest {
     username: string,
