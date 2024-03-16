@@ -1,50 +1,11 @@
-import * as bcrypt from 'bcrypt';
 import { json } from '@sveltejs/kit';
-
-import { userExists, addUser } from '$lib/server/services/userService.js';
-
-interface RegistrationRequest {
-    username: string,
-    password: string
-};
-
-interface FailResponse {
-    failType: "error" | "exists",
-    message: string,
-    err?: any
-}
-
-interface RegistrationResponse {
-    success: boolean,
-    response: string | FailResponse
-};
+import { registerUser } from '$lib/server/controllers/authController.js';
+import type { RegistrationRequest, RegistrationResponse } from '$lib/server/customTypes/authTypes.js';
 
 export async function POST({request}): Promise<Response> {
     try {
         const body: RegistrationRequest = await request.json();
-    
-        console.log("[SERVER] POST /api/auth/register recieved: ", body);
-    
-        if(await userExists(body.username)) {
-            return json({
-                success: false,
-                response: {
-                    failType: 'exists',
-                    message: `${body.username} is already registered`
-                }
-            } as RegistrationResponse, {status: 500});
-        }
-
-        const salt = await bcrypt.genSalt();
-        const hashedPass = await bcrypt.hash(body.password, salt);
-        let newUser = await addUser(body.username, hashedPass);
-
-        console.log("[SERVER] new user registered:", newUser);
-    
-        return json({
-            success: true,
-            response: `Succesfully registered ${body.username}`
-        } as RegistrationResponse, {status: 201});
+        return await registerUser(body);
         
     } catch (error) {
         console.log("[SERVER] error on POST /api/auth/register", error);
