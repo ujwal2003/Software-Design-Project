@@ -36,8 +36,7 @@ export async function registerUser(requestBody: RegistrationRequest): Promise<Re
             success: false,
             response: {
                 failType: 'error',
-                message: "Request failed due to error",
-                err: error
+                message: "Request failed due to error"
             }
         } as RegistrationResponse, {status: 500});
     }
