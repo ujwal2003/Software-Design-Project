@@ -3,7 +3,7 @@ import { json } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '$env/static/private';
 
-import { userExists, getUserCredentials, addUserRefreshSession } from '../services/userService';
+import { userExists, getUserCredentials, addUserRefreshSession, isRefreshTokenValid } from '../services/userService';
 import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
 import type { GeneralAPIResponse } from '../customTypes/generalTypes';
 
@@ -105,3 +105,43 @@ export async function loginUser(requestBody: LoginRequest): Promise<Response> {
         } as LoginResponse<LoginFailure>, {status: 500})
     }
 }
+
+export async function authorizeUser(requestBody: {username: string, refreshToken: string}): Promise<Response> {
+    try {
+        if(!requestBody.refreshToken) {
+            return json({
+                success: false,
+                message: 'no token provided'
+            } as GeneralAPIResponse, {status: 401});
+        }
+
+        if(!isRefreshTokenValid(requestBody.refreshToken)) {
+            return json({
+                success: false,
+                message: 'invalid token provided'
+            } as GeneralAPIResponse, {status: 403});
+        }
+
+        try {
+            const decoded = jwt.verify(requestBody.refreshToken, REFRESH_TOKEN_SECRET);
+
+            return json({
+                success: true,
+                payload: decoded,
+                newAccessToken: generateAccessToken(requestBody.username)
+            }, {status: 200});
+
+        } catch (error) {
+            return json({
+                success: false,
+                message: 'failed to verify token'
+            } as GeneralAPIResponse, {status: 403});
+        }
+    } catch (error) {
+        return json({
+            success: false,
+            message: "failed to authorize due to internal server error"
+        } as GeneralAPIResponse, {status: 500});
+    }
+}
+

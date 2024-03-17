@@ -40,3 +40,8 @@ export async function revokeRefreshToken(refreshToken: string) {
     if(indexToDelete !== -1)
         dummyRefreshTokens.splice(indexToDelete, 1);
 }
+
+export async function isRefreshTokenValid(refreshToken: string) {
+    const foundToken = dummyRefreshTokens.find(token => token === refreshToken);
+    return foundToken ? true : false;
+}
