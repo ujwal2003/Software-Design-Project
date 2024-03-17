@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { dummyUsersModel } from "../dummyDatabase";
+import { dummyUsersModel, dummyRefreshTokens } from "../dummyDatabase";
 
 export async function userExists(username: string) {
     const foundUser = dummyUsersModel.find(user => user.username === username);
@@ -28,4 +28,15 @@ export async function getUserCredentials(username: string) {
         username: foundUser!.username,
         encryptedPass: foundUser!.encryptedPassword
     }
+}
+
+export async function addUserRefreshSession(refreshToken: string) {
+    dummyRefreshTokens.push(refreshToken);
+}
+
+export async function revokeRefreshToken(refreshToken: string) {
+    const indexToDelete = dummyRefreshTokens.indexOf(refreshToken);
+
+    if(indexToDelete !== -1)
+        dummyRefreshTokens.splice(indexToDelete, 1);
 }

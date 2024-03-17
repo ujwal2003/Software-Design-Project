@@ -46,7 +46,7 @@ interface dummyCompanySchema {
     financeDate: Date
 };
 
-export const refreshTokens = [];
+export const dummyRefreshTokens: string[] = [];
 
 export const dummyUsersModel: dummyUserSchema[] = [
     {
