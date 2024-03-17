@@ -15,6 +15,14 @@ test.todo('unsuccesful login (user does not exist)', async () => {
         username: 'nonExistentUser',
         password: 'nonExistentPassword'
     }
+
+    expect(await (await loginUser(testRequest)).json()).toEqual({
+        success: false,
+        response: {
+            failType: 'invalid_user',
+            message: 'User not found'
+        }
+    } as LoginResponse<LoginFailure>);
 })
 
 test.todo('unsucessful login (wrong password)', async () => {
@@ -22,6 +30,14 @@ test.todo('unsucessful login (wrong password)', async () => {
         username: 'dummyUser1',
         password: 'wrongPassword'
     }
+
+    expect(await (await loginUser(testRequest)).json()).toEqual({
+        success: false,
+        response: {
+            failType: 'invalid_pass',
+            message: `invalid password for user ${testRequest.username}`
+        }
+    } as LoginResponse<LoginFailure>);
 })
 
 test.todo('authentication fails due to error or invalid info', async () => {
@@ -32,5 +48,5 @@ test.todo('authentication fails due to error or invalid info', async () => {
             failType: 'error',
             message: "Request failed due to error"
         }
-    } as LoginResponse<LoginFailure>)
+    } as LoginResponse<LoginFailure>);
 })
