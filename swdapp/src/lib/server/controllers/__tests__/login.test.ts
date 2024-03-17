@@ -1,13 +1,27 @@
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
-import type { LoginFailure, LoginRequest, LoginResponse } from '$lib/server/customTypes/authTypes';
+import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 
-test.todo('succesful login for user', async () => {
+test('succesful login for user', async () => {
     const testRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
     }
+
+    vi.mock('$env/static/private', () => {
+        return {
+            REFRESH_TOKEN_SECRET: 'test',
+            ACCESS_TOKEN_SECRET: 'test2'
+        }
+    });
+
+    const res: LoginResponse<LoginSuccess> = await (await loginUser(testRequest)).json();
+
+    expect(res.success).toBe(true);
+    expect(Object.keys(res.response).length).toEqual(2);
+    expect(res.response.accessToken).toBeTypeOf('string');
+    expect(res.response.refreshToken).toBeTypeOf('string');
 })
 
 test('unsuccesful login (user does not exist)', async () => {
