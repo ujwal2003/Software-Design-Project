@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { registerUser } from '../authController';
+import { registerUser } from '../registerController';
 import type { RegistrationRequest, RegistrationResponse } from '$lib/server/customTypes/authTypes';
 
 test('unsuccesful registration where a user already exists', async () => {
