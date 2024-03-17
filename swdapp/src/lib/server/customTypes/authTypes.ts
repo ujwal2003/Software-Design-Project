@@ -4,31 +4,31 @@ export interface RegistrationRequest {
     password: string
 };
 
-export interface RegistrationFailResponse {
+export interface RegistrationFail {
     failType: "error" | "exists",
     message: string,
     err?: any
-}
+};
 
 export interface RegistrationResponse {
     success: boolean,
-    response: string | RegistrationFailResponse
+    response: string | RegistrationFail
 };
 
 // sign in
 export type LoginRequest = RegistrationRequest;
 
-export interface LoginFailResponse {
+export interface LoginFailure {
     failType: "error" | "invalid_user" | "invalid_pass",
     message: string
-}
+};
 
-export interface LoginSuccessResponse {
+export interface LoginSuccess {
     refreshToken: string,
     accessToken: string
-}
+};
 
-export interface LoginResponse {
+export interface LoginResponse<T extends LoginSuccess | LoginFailure> {
     success: boolean,
-    response: LoginSuccessResponse | LoginFailResponse
-}
+    response: T
+};
