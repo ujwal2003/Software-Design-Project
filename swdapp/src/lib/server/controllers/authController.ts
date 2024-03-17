@@ -5,9 +5,52 @@ import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '$env/static/private';
 
 import { userExists, getUserCredentials, addUserRefreshSession } from '../services/userService';
 import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
+import type { GeneralAPIResponse } from '../customTypes/generalTypes';
 
 export function generateAccessToken(user: string) {
     return jwt.sign({username: user}, ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
+}
+
+export function isAccessTokenValid(token: string) {
+    try {
+        const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
+
+        return {
+            valid: true,
+            payload: decoded
+        }
+    } catch (error) {
+        return {
+            valid: false
+        }
+    }
+}
+
+export async function accessTokenStatus(requestBody: {accessToken: string}): Promise<Response> {
+    try {
+        let status = isAccessTokenValid(requestBody.accessToken);
+
+        if(status.valid) {
+            return json({
+                success: true,
+                valid: true,
+                message: 'token is still valid',
+                payload: status.payload
+            }, {status: 200})
+        }
+        
+        return json({
+            success: true,
+            valid: false,
+            message: 'token has expired'
+        }, {status: 200});
+    } catch (error) {
+        console.log("[SERVER] access token verification controller error", error)
+        return json({
+            success: false,
+            message: "failed to verify token due to internal server error"
+        } as GeneralAPIResponse, {status: 500});
+    }
 }
 
 export async function loginUser(requestBody: LoginRequest): Promise<Response> {
