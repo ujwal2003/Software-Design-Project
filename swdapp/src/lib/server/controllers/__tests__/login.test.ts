@@ -10,7 +10,7 @@ test.todo('succesful login for user', async () => {
     }
 })
 
-test.todo('unsuccesful login (user does not exist)', async () => {
+test.skip('unsuccesful login (user does not exist)', async () => {
     const testRequest: LoginRequest = {
         username: 'nonExistentUser',
         password: 'nonExistentPassword'
@@ -25,7 +25,7 @@ test.todo('unsuccesful login (user does not exist)', async () => {
     } as LoginResponse<LoginFailure>);
 })
 
-test.todo('unsucessful login (wrong password)', async () => {
+test.skip('unsucessful login (wrong password)', async () => {
     const testRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'wrongPassword'
@@ -40,7 +40,7 @@ test.todo('unsucessful login (wrong password)', async () => {
     } as LoginResponse<LoginFailure>);
 })
 
-test.todo('authentication fails due to error or invalid info', async () => {
+test.skip('authentication fails due to error or invalid info', async () => {
     // @ts-expect-error
     expect(await (await loginUser()).json()).toEqual({
         success: false,
