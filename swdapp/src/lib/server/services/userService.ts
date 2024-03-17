@@ -20,3 +20,12 @@ export async function addUser(username: string, encryptedPass: string) {
 
     return dummyUsersModel[newLen - 1];
 }
+
+export async function getUserCredentials(username: string) {
+    const foundUser = dummyUsersModel.find(user => user.username === username);
+
+    return {
+        username: foundUser!.username,
+        encryptedPass: foundUser!.encryptedPassword
+    }
+}

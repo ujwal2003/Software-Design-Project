@@ -46,7 +46,7 @@ test.skip('authentication fails due to error or invalid info', async () => {
         success: false,
         response: {
             failType: 'error',
-            message: "Request failed due to error"
+            message: 'login failed due to internal server error'
         }
     } as LoginResponse<LoginFailure>);
 })
