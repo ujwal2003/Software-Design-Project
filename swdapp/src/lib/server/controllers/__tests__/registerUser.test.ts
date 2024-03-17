@@ -34,7 +34,7 @@ test('succesful registration of a new user', async () => {
 })
 
 test('registration fails due to network error or undefined info', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect(await (await registerUser()).json()).toEqual({
         success: false,
         response: {

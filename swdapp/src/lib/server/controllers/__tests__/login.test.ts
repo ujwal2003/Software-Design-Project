@@ -1,6 +1,7 @@
 import { expect, test } from 'vitest';
 
-import type { LoginRequest } from '$lib/server/customTypes/authTypes';
+import type { LoginFailure, LoginRequest, LoginResponse } from '$lib/server/customTypes/authTypes';
+import { loginUser } from '../authController';
 
 test.todo('succesful login for user', async () => {
     const testRequest: LoginRequest = {
@@ -24,5 +25,12 @@ test.todo('unsucessful login (wrong password)', async () => {
 })
 
 test.todo('authentication fails due to error or invalid info', async () => {
-
+    // @ts-expect-error
+    expect(await (await loginUser()).json()).toEqual({
+        success: false,
+        response: {
+            failType: 'error',
+            message: "Request failed due to error"
+        }
+    } as LoginResponse<LoginFailure>)
 })
