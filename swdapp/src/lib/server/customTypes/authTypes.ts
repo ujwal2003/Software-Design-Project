@@ -16,14 +16,19 @@ export interface RegistrationResponse {
 };
 
 // sign in
-type LoginRequest = RegistrationRequest;
+export type LoginRequest = RegistrationRequest;
 
 export interface LoginFailResponse {
     failType: "error" | "invalid_user" | "invalid_pass",
     message: string
 }
 
+export interface LoginSuccessResponse {
+    refreshToken: string,
+    accessToken: string
+}
+
 export interface LoginResponse {
     success: boolean,
-    response: string | LoginFailResponse
+    response: LoginSuccessResponse | LoginFailResponse
 }
