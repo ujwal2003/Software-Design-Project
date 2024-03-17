@@ -32,3 +32,14 @@ export interface LoginResponse<T extends LoginSuccess | LoginFailure> {
     success: boolean,
     response: T
 };
+
+// sign out
+export interface LogOutRequest {
+    username: string,
+    refreshToken: string
+};
+
+export interface LogOutResponse {
+    success: boolean,
+    message: string
+};

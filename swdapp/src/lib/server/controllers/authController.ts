@@ -3,16 +3,22 @@ import { json } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '$env/static/private';
 
-import { userExists, getUserCredentials, addUserRefreshSession, isRefreshTokenValid } from '../services/userService';
-import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
+import { userExists, getUserCredentials, addUserRefreshSession, isRefreshTokenValid, revokeRefreshToken } from '../services/userService';
+import type { LogOutRequest, LogOutResponse, LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
 import type { GeneralAPIResponse } from '../customTypes/generalTypes';
 
 export function generateAccessToken(user: string) {
     return jwt.sign({username: user}, ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
 }
 
-export function isAccessTokenValid(token: string) {
+export async function isAccessTokenValid(token: string, refreshToken: string) {
     try {
+        if(!await isRefreshTokenValid(refreshToken)) {
+            return {
+                valid: false
+            }
+        }
+
         const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
 
         return {
@@ -26,9 +32,9 @@ export function isAccessTokenValid(token: string) {
     }
 }
 
-export async function accessTokenStatus(requestBody: {accessToken: string}): Promise<Response> {
+export async function accessTokenStatus(requestBody: {accessToken: string, refreshToken: string}): Promise<Response> {
     try {
-        let status = isAccessTokenValid(requestBody.accessToken);
+        let status = await isAccessTokenValid(requestBody.accessToken, requestBody.refreshToken);
 
         if(status.valid) {
             return json({
@@ -115,7 +121,7 @@ export async function authorizeUser(requestBody: {username: string, refreshToken
             } as GeneralAPIResponse, {status: 401});
         }
 
-        if(!isRefreshTokenValid(requestBody.refreshToken)) {
+        if(!await isRefreshTokenValid(requestBody.refreshToken)) {
             return json({
                 success: false,
                 message: 'invalid token provided'
@@ -145,3 +151,18 @@ export async function authorizeUser(requestBody: {username: string, refreshToken
     }
 }
 
+export async function logOutUser(requestBody: LogOutRequest): Promise<Response> {
+    try {
+        revokeRefreshToken(requestBody.refreshToken);
+
+        return json({
+            success: true,
+            message: `Successfully logged out user ${requestBody.username}`
+        } as LogOutResponse, {status: 200})
+    } catch (error) {
+        return json({
+            success: false,
+            message: `failed to log out ${requestBody.username} due to internal server error`
+        } as LogOutResponse, {status: 500});
+    }
+}
