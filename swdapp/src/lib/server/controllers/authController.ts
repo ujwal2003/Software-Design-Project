@@ -1,8 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { json } from '@sveltejs/kit';
+import jwt from 'jsonwebtoken';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '$env/static/private';
 
-import { userExists, getUserCredentials } from '../services/userService';
+import { userExists, getUserCredentials, addUserRefreshSession } from '../services/userService';
 import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
+
+export function generateAccessToken(user: string) {
+    return jwt.sign({username: user}, ACCESS_TOKEN_SECRET, {expiresIn: '15m'});
+}
 
 export async function loginUser(requestBody: LoginRequest): Promise<Response> {
     try {
@@ -20,12 +26,18 @@ export async function loginUser(requestBody: LoginRequest): Promise<Response> {
 
         let userCreds = await getUserCredentials(requestBody.username);
         if(await bcrypt.compare(requestBody.password, userCreds.encryptedPass)) {
-            //TODO generate tokens
+            console.log(`[SERVER] ${requestBody.username} has succesfully authenticated`);
+
+            const refreshToken = jwt.sign({username: requestBody.username}, REFRESH_TOKEN_SECRET);
+            const accessToken = generateAccessToken(requestBody.username);
+
+            addUserRefreshSession(refreshToken);
+
             return json({
                 success: true,
                 response: {
-                    accessToken: 'succesfully logged in',
-                    refreshToken: 'succesfully logged in'
+                    accessToken: accessToken,
+                    refreshToken: refreshToken
                 }
             } as LoginResponse<LoginSuccess>, {status: 200});
         }
