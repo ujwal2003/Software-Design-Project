@@ -21,7 +21,9 @@ test('succesful login for user', async () => {
     expect(res.success).toBe(true);
     expect(Object.keys(res.response).length).toEqual(2);
     expect(res.response.accessToken).toBeTypeOf('string');
+    expect(res.response.accessToken.length).toBeGreaterThan(0);
     expect(res.response.refreshToken).toBeTypeOf('string');
+    expect(res.response.refreshToken.length).toBeGreaterThan(0);
 })
 
 test('unsuccesful login (user does not exist)', async () => {
