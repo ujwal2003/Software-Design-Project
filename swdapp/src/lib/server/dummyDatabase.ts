@@ -46,11 +46,14 @@ interface dummyCompanySchema {
     financeDate: Date
 };
 
+export const dummyRefreshTokens: string[] = [];
+
 export const dummyUsersModel: dummyUserSchema[] = [
     {
         _id: "1bd3702148b259c41ab0265a",
         username: "dummyUser1",
-        encryptedPassword: "unsecurePassword1",
+        // encryptedPassword: "unsecurePassword1",
+        encryptedPassword: '$2b$10$VW2QCJqr6PvQuG36O7Og5OULxMpz.AzXbnKdwClMqwTIZkMyU.T8u',
         isAdmin: false,
         profile: null
     },
@@ -58,7 +61,8 @@ export const dummyUsersModel: dummyUserSchema[] = [
     {
         _id: "bf86507fd94451f9fdbe5a3f",
         username: "dummyUser2",
-        encryptedPassword: "usecurePassword2",
+        // encryptedPassword: "usecurePassword2",
+        encryptedPassword: '$2b$10$VW2QCJqr6PvQuG36O7Og5OcuXpnG7Egj9pqyeYYbi/gpR3CylqQ9u',
         isAdmin: false,
         profile: {
             _id: "c82c60b5b45c6da3d98635b7",
@@ -75,7 +79,8 @@ export const dummyUsersModel: dummyUserSchema[] = [
     {
         _id: "d88bc7b7368548e1e45b018a",
         username: "dummyUser3",
-        encryptedPassword: "unsecurePassword3",
+        // encryptedPassword: "unsecurePassword3",
+        encryptedPassword: '$2b$10$VW2QCJqr6PvQuG36O7Og5OlSgYRX3BRxhq5ZF9J6a46KLzUSFYIC2',
         isAdmin: false,
         profile: {
             _id: "cf7226e79ea6c264b5675b12",
@@ -116,7 +121,8 @@ export const dummyUsersModel: dummyUserSchema[] = [
     {
         _id: "d5d5816c5beb8b39ed15ff2d",
         username: "dummyUser4",
-        encryptedPassword: "unsecurePassword4",
+        // encryptedPassword: "unsecurePassword4",
+        encryptedPassword: '$2b$10$VW2QCJqr6PvQuG36O7Og5OgGvSQSVIbUnmWlq2pzs0pDQnR59Nt6W',
         isAdmin: false,
         profile: {
             _id: "55d027ba16a3ef7a10b78c9f",
@@ -197,7 +203,8 @@ export const dummyUsersModel: dummyUserSchema[] = [
     {
         _id: "21621acba25ce6f771419831",
         username: "admin1",
-        encryptedPassword: "unsecureImportantPassword",
+        // encryptedPassword: "unsecureImportantPassword",
+        encryptedPassword: '$2b$10$VW2QCJqr6PvQuG36O7Og5OKcxorXtQvPNo3EeXOcqG/7glpso51lu',
         isAdmin: true,
         profile: null
     }

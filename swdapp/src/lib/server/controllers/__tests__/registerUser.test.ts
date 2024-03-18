@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest';
 
-import { registerUser } from '../authController';
+import { registerUser } from '../registerController';
 import type { RegistrationRequest, RegistrationResponse } from '$lib/server/customTypes/authTypes';
 
 test('unsuccesful registration where a user already exists', async () => {
@@ -34,7 +34,7 @@ test('succesful registration of a new user', async () => {
 })
 
 test('registration fails due to network error or undefined info', async () => {
-    // @ts-ignore
+    // @ts-expect-error
     expect(await (await registerUser()).json()).toEqual({
         success: false,
         response: {
