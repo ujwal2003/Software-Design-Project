@@ -1,11 +1,11 @@
 import { json } from "@sveltejs/kit";
-import { authorizeUser } from "$lib/server/controllers/authController";
+import { reauthorizeUser } from "$lib/server/controllers/authController";
 import type { GeneralAPIResponse } from "$lib/server/customTypes/generalTypes";
 
 export async function POST({request}): Promise<Response> {
     try {
         const body = await request.json();
-        return await authorizeUser(body);
+        return await reauthorizeUser(body);
 
     } catch (error) {
         console.log("[SERVER] access token authorization route error", error)

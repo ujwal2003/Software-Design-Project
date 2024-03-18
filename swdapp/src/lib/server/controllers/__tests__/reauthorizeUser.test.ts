@@ -1,5 +1,5 @@
 import { beforeAll, expect, test, vi } from 'vitest';
-import { authorizeUser, loginUser } from '../authController';
+import { reauthorizeUser, loginUser } from '../authController';
 import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 
@@ -18,7 +18,7 @@ test('failure to reauthorize due to no token provided', async () => {
         refreshToken: ''
     };
 
-    expect(await (await authorizeUser(testReauthorizeResponse)).json()).toEqual({
+    expect(await (await reauthorizeUser(testReauthorizeResponse)).json()).toEqual({
         success: false,
         message: 'no token provided'
     } as GeneralAPIResponse);
@@ -36,7 +36,7 @@ test('failure to reauthorize due refresh token being invalid', async () => {
         refreshToken: loginRes.response.refreshToken + 'abcd'
     }
 
-    expect(await (await authorizeUser(testReauthorizeResponse)).json()).toEqual({
+    expect(await (await reauthorizeUser(testReauthorizeResponse)).json()).toEqual({
         success: false,
         message: 'invalid token provided'
     } as GeneralAPIResponse);
@@ -54,7 +54,7 @@ test('succesful user reauthorization', async () => {
         refreshToken: loginRes.response.refreshToken
     }
 
-    const res = await (await authorizeUser(testReauthorizeResponse)).json();
+    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
 
     expect(res.success).toBeTruthy();
     expect(res.payload).toBeDefined();
@@ -63,7 +63,7 @@ test('succesful user reauthorization', async () => {
 
 test('failure to reauthorize due to internal error', async () => {
     //@ts-expect-error
-    expect(await (await authorizeUser()).json()).toEqual({
+    expect(await (await reauthorizeUser()).json()).toEqual({
         success: false,
         message: "failed to authorize due to internal server error"
     } as GeneralAPIResponse);

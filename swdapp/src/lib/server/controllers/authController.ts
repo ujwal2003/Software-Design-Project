@@ -112,7 +112,7 @@ export async function loginUser(requestBody: LoginRequest): Promise<Response> {
     }
 }
 
-export async function authorizeUser(requestBody: {username: string, refreshToken: string}): Promise<Response> {
+export async function reauthorizeUser(requestBody: {username: string, refreshToken: string}): Promise<Response> {
     try {
         if(!requestBody.refreshToken) {
             return json({
