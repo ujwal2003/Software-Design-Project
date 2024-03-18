@@ -20,3 +20,16 @@ export async function addUser(username: string, encryptedPass: string) {
 
     return dummyUsersModel[newLen - 1];
 }
+
+export async function getProfile(username: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+
+    return user ? user.profile : null;
+}
+
+export async function getQuoteHistory(username: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+
+    return user ? user.profile?.quoteHistory : null;
+    
+}
