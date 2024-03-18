@@ -45,3 +45,16 @@ export async function isRefreshTokenValid(refreshToken: string) {
     const foundToken = dummyRefreshTokens.find(token => token === refreshToken);
     return foundToken ? true : false;
 }
+
+export async function getProfile(username: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+
+    return user ? user.profile : null;
+}
+
+export async function getQuoteHistory(username: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+
+    return user ? user.profile?.quoteHistory : null;
+    
+}

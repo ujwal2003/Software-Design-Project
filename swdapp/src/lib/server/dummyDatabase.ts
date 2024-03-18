@@ -1,11 +1,11 @@
-interface dummyQuoteSchema {
+export interface dummyQuoteSchema {
     _id: string,
     generationDate: Date,
     gallonsRequested: number,
     priceCalculated: number
 };
 
-interface dummyReceiptSchema {
+export interface dummyReceiptSchema {
     _id: string,
     quoteID: string,
     purchaseDate: Date,
@@ -13,7 +13,7 @@ interface dummyReceiptSchema {
     tax: number
 };
 
-interface dummyPaymentInfoSchema {
+export interface dummyPaymentInfoSchema {
     _id: string,
     creditCardNumber: string,
     cardExpiration: Date,
@@ -232,3 +232,4 @@ export const dummyCompanyModel: dummyCompanySchema[] = [
         financeDate: new Date("2024-03-22")
     }
 ];
+
