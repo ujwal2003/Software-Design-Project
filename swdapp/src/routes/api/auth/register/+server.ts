@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { registerUser } from '$lib/server/controllers/authController.js';
+import { registerUser } from '$lib/server/controllers/registerController.js';
 import type { RegistrationRequest, RegistrationResponse } from '$lib/server/customTypes/authTypes.js';
 
 export async function POST({request}): Promise<Response> {
