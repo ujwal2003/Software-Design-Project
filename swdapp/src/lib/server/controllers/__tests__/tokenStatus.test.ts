@@ -1,16 +1,18 @@
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
-import { expect, test, vi } from 'vitest';
+import { beforeAll, expect, test, vi } from 'vitest';
 import { accessTokenStatus, loginUser } from '../authController';
 import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
 
-test('Access token is still valid', async () => {
+beforeAll(() => {
     vi.mock('$env/static/private', () => {
         return {
             REFRESH_TOKEN_SECRET: 'test',
             ACCESS_TOKEN_SECRET: 'test2'
         }
     });
+})
 
+test('Access token is still valid', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -31,13 +33,6 @@ test('Access token is still valid', async () => {
 })
 
 test('Access token is invalid', async () => {
-    vi.mock('$env/static/private', () => {
-        return {
-            REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
-        }
-    });
-
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -57,13 +52,6 @@ test('Access token is invalid', async () => {
 })
 
 test('Token verification failure', async () => {
-    vi.mock('$env/static/private', () => {
-        return {
-            REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
-        }
-    });
-
     //@ts-expect-error
     expect(await (await accessTokenStatus()).json()).toEqual({
         success: false,
