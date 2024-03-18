@@ -1,7 +1,7 @@
 import { beforeAll, expect, test, vi } from 'vitest';
 
 import { getProfileData } from '../profileController';
-import type { ProfileRequest, ProfileResponse, GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
+import type { ProfileRequest, ProfileResponse, GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 
@@ -53,5 +53,26 @@ test('profile not found test', async () => {
     expect(await (await getProfileData(testRequest)).json()).toEqual({
         success: false,
         message: "Profile not found"
+    } as GeneralAPIResponse);
+})
+
+test('profile not found due to invalid access token', async () => {
+    const testRequest: ProfileRequest = {
+        username: "dummyUser3",
+        accessToken: ''
+    }
+
+    expect(await (await getProfileData(testRequest)).json()).toEqual({
+        success: true,
+        unauthorized: true,
+        message: 'invalid access token'
+    } as UnauthorizedResponse);
+})
+
+test('profile retrieval dailed due to internal error', async () => {
+    //@ts-expect-error
+    expect(await (await getProfileData()).json()).toEqual({
+        success: false,
+        message: "Request failed due to error"
     } as GeneralAPIResponse);
 })
