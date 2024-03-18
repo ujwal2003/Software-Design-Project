@@ -1,7 +1,16 @@
-import { expect, test } from 'vitest';
+import { beforeAll, expect, test, vi } from 'vitest';
 
 import { getProfileData, getQuoteHistoryData } from '../profileController';
 import type { QuoteHistoryRequest, QuoteHistoryResponse, GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
+
+beforeAll(() => {
+    vi.mock('$env/static/private', () => {
+        return {
+            REFRESH_TOKEN_SECRET: 'test',
+            ACCESS_TOKEN_SECRET: 'test2'
+        }
+    });
+})
 
 test('successful quote history test', async () => {
     const testRequest: QuoteHistoryRequest = {

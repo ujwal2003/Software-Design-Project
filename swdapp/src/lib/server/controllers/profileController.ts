@@ -1,10 +1,20 @@
 import { json } from '@sveltejs/kit';
 import { getProfile, getQuoteHistory } from '../services/userService';
-import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse } from '../customTypes/generalTypes';
+import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, UnauthorizedResponse } from '../customTypes/generalTypes';
+import { isAccessTokenValid_simple } from './authController';
 
 export async function getProfileData(requestBody: ProfileRequest): Promise<Response>{
     try {
-        const { username } = requestBody;
+        const { username, accessToken } = requestBody;
+
+        if(!await isAccessTokenValid_simple(accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, {status: 401});
+        }
+
         const profile = await getProfile(username);
 
         if (profile) {

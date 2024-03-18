@@ -1,12 +1,19 @@
-import type { dummyQuoteSchema, dummyReceiptSchema, dummyPaymentInfoSchema } from '../dummyDatabase';
+import type { dummyQuoteSchema } from '../dummyDatabase';
 
 export interface GeneralAPIResponse {
     success: boolean,
     message: string
 };
 
+export interface UnauthorizedResponse {
+    success: boolean,
+    unauthorized: boolean,
+    message: "invalid access token"
+}
+
 export interface ProfileRequest {
-    username: string
+    username: string,
+    accessToken: string
 }
 
 export interface ProfileResponse {
