@@ -32,6 +32,15 @@ export async function isAccessTokenValid(token: string, refreshToken: string) {
     }
 }
 
+export function isAccessTokenValid_simple(token: string): boolean {
+    try {
+        const decoded = jwt.verify(token, ACCESS_TOKEN_SECRET);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
 export async function accessTokenStatus(requestBody: {accessToken: string, refreshToken: string}): Promise<Response> {
     try {
         let status = await isAccessTokenValid(requestBody.accessToken, requestBody.refreshToken);
