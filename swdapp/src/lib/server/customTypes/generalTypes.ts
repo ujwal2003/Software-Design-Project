@@ -26,7 +26,8 @@ export interface ProfileResponse {
 }
 
 export interface QuoteHistoryRequest {
-    username: string
+    username: string,
+    accessToken: string
 }
 
 export interface QuoteHistoryResponse {

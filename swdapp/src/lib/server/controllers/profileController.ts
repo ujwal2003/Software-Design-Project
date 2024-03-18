@@ -45,7 +45,16 @@ export async function getProfileData(requestBody: ProfileRequest): Promise<Respo
 
 export async function getQuoteHistoryData(requestBody: QuoteHistoryRequest): Promise<Response>{
     try {
-        const { username } = requestBody;
+        const { username, accessToken } = requestBody;
+
+        if(!await isAccessTokenValid_simple(accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, {status: 401});
+        }
+
         const hist = await getQuoteHistory(username);
 
         if (hist) {
