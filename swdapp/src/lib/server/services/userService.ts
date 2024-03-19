@@ -58,3 +58,10 @@ export async function getQuoteHistory(username: string){
     return user ? user.profile?.quoteHistory : null;
     
 }
+
+export async function getPurchaseHistory(username: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+
+    return user ? user.profile?.purchaseHistory : null;
+    
+}

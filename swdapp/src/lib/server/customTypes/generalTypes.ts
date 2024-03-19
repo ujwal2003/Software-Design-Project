@@ -1,4 +1,4 @@
-import type { dummyQuoteSchema } from '../dummyDatabase';
+import type { dummyQuoteSchema, dummyReceiptSchema } from '../dummyDatabase';
 
 export interface GeneralAPIResponse {
     success: boolean,
@@ -33,4 +33,14 @@ export interface QuoteHistoryRequest {
 export interface QuoteHistoryResponse {
     success: boolean,
     quoteHistory: dummyQuoteSchema[]
+}
+
+export interface PurchaseHistoryRequest {
+    username: string,
+    accessToken: string
+}
+
+export interface PurchaseHistoryResponse {
+    success: boolean,
+    purchaseHistory: dummyReceiptSchema[]
 }

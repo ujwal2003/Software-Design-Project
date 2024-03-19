@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory } from '../services/userService';
-import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, UnauthorizedResponse } from '../customTypes/generalTypes';
+import { getProfile, getQuoteHistory, getPurchaseHistory } from '../services/userService';
+import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse } from '../customTypes/generalTypes';
 import { isAccessTokenValid_simple } from './authController';
 
 export async function getProfileData(requestBody: ProfileRequest): Promise<Response>{
@@ -35,7 +35,7 @@ export async function getProfileData(requestBody: ProfileRequest): Promise<Respo
             } as GeneralAPIResponse, { status: 404 });
         }
     } catch (error) {
-        console.log("[SERVER] error on GET /api/user", error);
+        console.log("[SERVER] error on POST /api/user", error);
         return json({
             success: false,
             message: "Request failed due to error"
@@ -71,7 +71,43 @@ export async function getQuoteHistoryData(requestBody: QuoteHistoryRequest): Pro
             } as GeneralAPIResponse, { status: 404 });
         }
     } catch (error) {
-        console.log("[SERVER] error on GET /api/user", error);
+        console.log("[SERVER] error on POST /api/user", error);
+        return json({
+            success: false,
+            message: "Request failed due to error"
+        } as GeneralAPIResponse, { status: 500 });
+    }
+}
+
+export async function getReceipts(requestBody: QuoteHistoryRequest): Promise<Response>{
+    try {
+        const { username, accessToken } = requestBody;
+
+        if(!await isAccessTokenValid_simple(accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, {status: 401});
+        }
+
+        const hist = await getPurchaseHistory(username);
+
+        if (hist) {
+
+            const response: PurchaseHistoryResponse = {
+                success: true,
+                purchaseHistory: hist
+            };
+            return json(response, { status: 200 });
+        } else {
+            return json({
+                success: false,
+                message: "Purchase history not found"
+            } as GeneralAPIResponse, { status: 404 });
+        }
+    } catch (error) {
+        console.log("[SERVER] error on POST /api/user", error);
         return json({
             success: false,
             message: "Request failed due to error"
