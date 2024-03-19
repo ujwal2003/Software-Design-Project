@@ -44,6 +44,7 @@
 	"dependencies": {
 		"@preline/collapse": "^2.0.2",
 		"@preline/overlay": "^2.0.2",
+		"@zerodevx/svelte-toast": "^0.9.5",
 		"apexcharts": "^3.46.0",
 		"bcrypt": "^5.1.1",
 		"jsonwebtoken": "^9.0.2",
