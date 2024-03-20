@@ -2,6 +2,9 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import InputForm from '$lib/components/inputForm.svelte';
+	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
+	import { postRequest } from '$lib/requests';
+	import { goto } from '$app/navigation';
 
 	const regTopDescription = 'Make a new account to access gas savings you could only dream of!';
 	const regBottomDescription = 'Already have an account? <a href="/login"><u>Log in here.</u></a>';
@@ -16,8 +19,37 @@
 		registrationVals = e.detail;
 	}
 
-	function handleRegistrationSubmit() {
-		console.log('Registration Submission Clicked!');
+	async function handleRegistrationSubmit() {
+		if(registrationVals.length < 3 || !registrationVals[0].inputValue || !registrationVals[1].inputValue || !registrationVals[2].inputValue) {
+			failureAlert("Registration form must be completely filled out!");
+			return;
+		}
+
+		const registrationFormInfo = {
+			email: registrationVals[0].inputValue,
+			username: registrationVals[1].inputValue,
+			password: registrationVals[2].inputValue
+		};
+
+		const registerRes = await postRequest('api/auth/register', {
+			username: registrationFormInfo.username,
+			password: registrationFormInfo.password
+		});
+
+		const resJSON = await registerRes.json();
+
+		if(!resJSON.success) {
+			if(resJSON.response.failType == "exists") {
+				failureAlert(resJSON.response.message);
+				return;
+			}
+
+			failureAlert("Registration failed due to error, please try again");
+			return;
+		}
+
+		successAlert('Registration Succesful! Redirecting...');
+		goto('/login/verify/');
 	}
 </script>
 
