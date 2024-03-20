@@ -1,7 +1,9 @@
 <script lang="ts">
-	import PrelineToast from "$lib/components/toasts/prelineToast.svelte";
+	import { successAlert, failureAlert, genericAlert } from "$lib/components/toasts/customToasts";
+
+	let alertText = "You got a toast alert!";
 </script>
 
 <main class="flex justify-center mt-14">
-	<PrelineToast toastText="toast text" toastType="failure" />
+	<button on:click={() => successAlert(alertText)}>CLICK FOR TOAST!</button>
 </main>

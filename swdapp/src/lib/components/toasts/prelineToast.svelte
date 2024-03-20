@@ -6,6 +6,7 @@
 
     type TailwindString = string;
     interface ToastStyle {
+      border?: boolean
       background?: TailwindString,
       border_color?: TailwindString,
       text_color?: TailwindString
@@ -15,7 +16,7 @@
 
     let toastStyles: string;
     if(toastType == "custom") {
-      toastStyles = `max-w-xs ${customToastStyle.background} border ${customToastStyle.border_color} text-sm ${customToastStyle.text_color} rounded-lg`;
+      toastStyles = `max-w-xs ${customToastStyle.background} ${customToastStyle.border ? 'border': ''} ${customToastStyle.border_color} text-sm ${customToastStyle.text_color} rounded-lg`;
     } else if(toastType == "generic") {
       toastStyles = "max-w-xs bg-blue-100 border border-blue-200 text-sm text-blue-800 rounded-lg";
     } else if(toastType == "success") {
