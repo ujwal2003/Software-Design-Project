@@ -12,7 +12,7 @@ export function setCookie(name: string, value: any, durationMillis: number = 5*6
 /**
  * 
  * @param name name of cookie you are trying to retrieve
- * @returns value of the cookie or null (is value is JSON it must be parsed)
+ * @returns value of the cookie or null (if value is JSON it must be parsed)
  */
 export function getCookie(name: string) {
     const cookies = document.cookie.split(';');
