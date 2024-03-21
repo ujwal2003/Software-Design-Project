@@ -5,6 +5,12 @@
 	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { postRequest } from '$lib/requests';
 
+	import { myStore, updateStore } from '$lib/store';
+	let storedObj: any;
+	myStore.subscribe(value => {
+		storedObj = value;
+	});
+
 	const loginTopDescription =
 		'Once you login you can create new quotes, and set your quote search settings!';
 	const loginBottomDescription =
@@ -52,7 +58,8 @@
 		successAlert("login succesful. Redirecting...");
 		genericAlert("TODO: [REDIRECT TO PROFILE PAGE HERE]");
 
-		console.log(loginResJSON);
+		// console.log(loginResJSON);
+		updateStore(loginResJSON);
 	}
 </script>
 
@@ -73,7 +80,7 @@
 
 	<!-- right side -->
 	<section class="flex w-1/2 flex-wrap items-center justify-center bg-[#F0F5F8]">
-		<!-- <p>{$tokensData.username}</p> -->
+		<p>{JSON.stringify(storedObj)}</p>
 		<div class="w-1/2">
 			<InputForm
 				numInputs={2}
