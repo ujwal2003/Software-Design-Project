@@ -4,7 +4,7 @@
 	import InputForm from '$lib/components/inputForm.svelte';
 	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { postRequest } from '$lib/requests';
-	import { deleteCookie, getCookie, setCookie } from '$lib/cookieUtil';
+	import { deleteCookie, setCookie } from '$lib/cookieUtil';
 
 	const loginTopDescription =
 		'Once you login you can create new quotes, and set your quote search settings!';
