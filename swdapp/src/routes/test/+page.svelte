@@ -1,9 +1,27 @@
 <script lang="ts">
-	import { successAlert, failureAlert, genericAlert } from "$lib/components/toasts/customToasts";
+	import { postRequest } from "$lib/requests";
+	import { onMount } from "svelte";
 
-	let alertText = "You got a toast alert!";
+	let resData: Object;
+
+	onMount(async () => {
+		try {
+			const res = await postRequest('api/auth/login', {
+				username: "dummyUser1",
+				password: "unsecurePassword1"
+			});
+
+			const jsonDat = await res.json();
+
+			document.cookie = `user_session=${JSON.stringify(jsonDat)}; expires=${new Date(Date.now() + 5 * 60 * 1000).toUTCString()}`;
+			resData = jsonDat;
+
+		} catch (error) {
+			console.error('Error fetching data:', error);
+		}
+	});
 </script>
 
 <main class="flex justify-center mt-14">
-	<button on:click={() => successAlert(alertText)}>CLICK FOR TOAST!</button>
+	<p>{JSON.stringify(resData)}</p>
 </main>
