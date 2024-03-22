@@ -11,6 +11,17 @@
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 	
     import { dummyPaymentData } from "$lib";
+	import { onMount } from "svelte";
+	import { isClientAllowed } from "$lib/protected";
+	import { failureAlert } from "$lib/components/toasts/customToasts";
+	import { goto } from "$app/navigation";
+
+	onMount(async () => {
+		if(!await isClientAllowed()) {
+			failureAlert("please log in to access this page");
+			goto("/login");
+		}
+	});
 
 	let dummyPayments = dummyPaymentData.map((dat) => {
 		return {

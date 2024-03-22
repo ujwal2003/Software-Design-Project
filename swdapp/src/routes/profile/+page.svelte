@@ -1,6 +1,17 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
+	import { onMount } from 'svelte';
+	import { isClientAllowed } from '$lib/protected';
+	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { goto } from '$app/navigation';
+
+	onMount(async () => {
+		if(!await isClientAllowed()) {
+			failureAlert("please log in to access this page");
+			goto('/login');
+		}
+	});
 
 	// Input variables
 	let name = {

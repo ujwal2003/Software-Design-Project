@@ -1,21 +1,30 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
-	import QuoteCards from '$lib/components/quoteCards.svelte';
+	import { onMount } from 'svelte';
+	import { isClientAllowed } from '$lib/protected';
+	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { goto } from '$app/navigation';
 
+	onMount(async () => {
+		if(!await isClientAllowed()) {
+			failureAlert("Please log in to access this page.");
+			goto('/login');
+		}
+	});
 
-  let gallonsRequested = 0;
-  let deliveryAddress = '';
-  let deliveryDate = '';
+	let gallonsRequested = 0;
+	let deliveryAddress = '';
+	let deliveryDate = '';
 
-  function generateQuote() {
-    // You can implement your logic for generating the quote here
-    const suggestedPricePerGallon = 2.50; // Example value
-    const totalAmountDue = gallonsRequested * suggestedPricePerGallon;
-    
-    // Display the suggested price per gallon and total amount due
-    alert(`Suggested Price Per Gallon: $${suggestedPricePerGallon.toFixed(2)}\nTotal Amount Due: $${totalAmountDue.toFixed(2)}`);
-  }
+	function generateQuote() {
+		// You can implement your logic for generating the quote here
+		const suggestedPricePerGallon = 2.50; // Example value
+		const totalAmountDue = gallonsRequested * suggestedPricePerGallon;
+		
+		// Display the suggested price per gallon and total amount due
+		alert(`Suggested Price Per Gallon: $${suggestedPricePerGallon.toFixed(2)}\nTotal Amount Due: $${totalAmountDue.toFixed(2)}`);
+	}
 
 </script>
 
