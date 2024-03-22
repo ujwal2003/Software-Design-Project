@@ -38,7 +38,7 @@
 
 <div class="flex h-screen flex-col">
 	<nav>
-		<Header />
+		<Header rootAPIRoutePrefix={'../'} />
 	</nav>
 
 	<main class="mt-0 flex max-w-full flex-wrap">
