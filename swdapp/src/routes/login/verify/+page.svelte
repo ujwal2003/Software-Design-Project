@@ -66,7 +66,7 @@
 
 <div class="flex h-screen flex-col">
 	<nav>
-		<Header />
+		<Header rootAPIRoutePrefix={'../'} />
 	</nav>
 
 	<main class="flex h-full max-w-full flex-wrap overflow-hidden overflow-x-hidden">

@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { getCookie } from "$lib/cookieUtil";
+	import { deleteCookie, getCookie } from "$lib/cookieUtil";
 	import { onMount } from "svelte";
+	import { failureAlert, genericAlert } from "./toasts/customToasts";
+	import { deleteRequest } from "$lib/requests";
+	import { goto } from "$app/navigation";
 
 	// Variable to control the header transparency for home
 	export let homeHeader: boolean = false;
@@ -10,6 +13,9 @@
 	let headerStyles: string = '';
 
 	let currUser: string;
+	let refToken: string;
+	export let rootAPIRoutePrefix = '';
+
 	let loggedIn: boolean;
 	onMount(async () => {
 		const cookieDat = getCookie('user_session');
@@ -18,8 +24,23 @@
 		} else {
 			loggedIn = true;
 			currUser = JSON.parse(cookieDat).username;
+			refToken = JSON.parse(cookieDat).refreshToken;
 		}
 	});
+
+	async function handleLogOutClick() {
+		try {			
+			genericAlert("Logging out...");
+			const res = await (await (deleteRequest(`${rootAPIRoutePrefix}api/auth/logout/`, {
+				username: currUser,
+				refreshToken: refToken
+			}))).json();
+			deleteCookie('user_session');
+			goto('/login');
+		} catch (error) {
+			failureAlert("An error was encountered, please try again.");
+		}
+	}
 
 	homeHeader
 		? (headerStyles = 'absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden')
@@ -91,7 +112,7 @@
 					>
 					{#if loggedIn}
 						<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
-						<button class="font-medium text-gray-600 hover:text-gray-400">
+						<button class="font-medium text-gray-600 hover:text-gray-400" on:click={handleLogOutClick}>
 							Logout
 						</button>
 					{:else}
