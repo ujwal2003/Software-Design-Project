@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
+
 	// import { successAlert, failureAlert, genericAlert } from "$lib/components/toasts/customToasts";
 	import { deleteCookie, getCookie } from "$lib/cookieUtil";
 	import { isClientAllowed } from "$lib/protected";
@@ -29,6 +31,7 @@
 				{#if output}
 					<p>hello {username}</p>
 				{:else}
+					{goto('/login')}
 					<p>You are not logged in, please <a href="/login" class="underline text-sky-700">login</a>.</p>
 				{/if}
 			{:catch error}
