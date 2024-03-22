@@ -11,6 +11,17 @@
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
 	import { dummyQuoteData } from '$lib';
+	import { onMount } from 'svelte';
+	import { isClientAllowed } from '$lib/protected';
+	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { goto } from '$app/navigation';
+
+	onMount(async () => {
+		if(!await isClientAllowed()) {
+			failureAlert("You must be logged in to access this page. Please log in.");
+			goto('/login');
+		}
+	});
 
 	interface QuoteCard {
 		id: string;

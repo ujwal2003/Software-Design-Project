@@ -1,7 +1,7 @@
 import { getCookie, setCookie } from "./cookieUtil";
 import { postRequest } from "./requests";
 
-export async function isClientAllowed() {
+export async function isClientAllowed(pathReset: string = '') {
     const cookieData = getCookie('user_session');
     if(!cookieData)
         return false;
@@ -12,7 +12,7 @@ export async function isClientAllowed() {
     const userRefreshToken = sessionData.refreshToken;
     let userAccessToken = sessionData.accessToken;
 
-    let accessTokenValidJSON = await (await postRequest('api/auth/session/status/', {
+    let accessTokenValidJSON = await (await postRequest(`${pathReset}api/auth/session/status/`, {
         accessToken: userAccessToken,
         refreshToken: userRefreshToken
     })).json();
@@ -21,7 +21,7 @@ export async function isClientAllowed() {
         return false;
 
     if(!accessTokenValidJSON.valid) {
-        const regenAccTokenJSON = await (await postRequest('api/auth/session/authorize/', {
+        const regenAccTokenJSON = await (await postRequest(`${pathReset}api/auth/session/status/`, {
             username: sessionUsername,
             refreshToken: userRefreshToken
         })).json();
@@ -36,7 +36,7 @@ export async function isClientAllowed() {
             refreshToken: userRefreshToken
         });
 
-        accessTokenValidJSON = await (await postRequest('api/auth/session/status/', {
+        accessTokenValidJSON = await (await postRequest(`${pathReset}api/auth/session/status/`, {
             accessToken: userAccessToken,
             refreshToken: userRefreshToken
         })).json();

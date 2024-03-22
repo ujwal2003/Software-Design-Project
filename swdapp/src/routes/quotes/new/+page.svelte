@@ -3,6 +3,17 @@
 	import Footer from '$lib/components/footer.svelte';
 
 	import { dummyUserData } from '$lib';
+	import { onMount } from 'svelte';
+	import { isClientAllowed } from '$lib/protected';
+	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { goto } from '$app/navigation';
+
+	onMount(async () => {
+		if(!await isClientAllowed('../')) {
+			failureAlert("You must be logged in to access this page. Please log in.");
+			goto('../login');
+		}
+	});
 
 	let newQuote = {
 		gallonsRequested: 0,
