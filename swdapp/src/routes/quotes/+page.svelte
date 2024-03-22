@@ -40,6 +40,9 @@
 		total: 0.0
 	};
 
+	// replace this with quotes recieved from server
+	let quotes: QuoteCard[] = [];
+
 	// replace this with filtering from database data later
 	let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
 		return {
@@ -54,15 +57,15 @@
 	// replace code in function with actual data from db later
 	function getQuoteDetailsFromCard(e: any) {
 		console.log(e.detail);
-		let dummyData = dummyQuoteData.find((obj) => obj._id === e.detail.cardID);
-		if (dummyData != undefined) {
-			selectedQuoteDetails.date = dummyData.quoteDate;
-			selectedQuoteDetails.location = dummyData.loc;
-			selectedQuoteDetails.deliveryDate = dummyData.deliveryDate;
-			selectedQuoteDetails.gallons = dummyData.gallons;
-			selectedQuoteDetails.price = dummyData.price;
-			selectedQuoteDetails.tax = dummyData.tax;
-			selectedQuoteDetails.total = dummyData.price * dummyData.gallons + dummyData.tax;
+		let quoteData = dummyQuoteData.find((obj) => obj._id === e.detail.cardID);
+		if (quoteData != undefined) {
+			selectedQuoteDetails.date = quoteData.quoteDate;
+			selectedQuoteDetails.location = quoteData.loc;
+			selectedQuoteDetails.deliveryDate = quoteData.deliveryDate;
+			selectedQuoteDetails.gallons = quoteData.gallons;
+			selectedQuoteDetails.price = quoteData.price;
+			selectedQuoteDetails.tax = quoteData.tax;
+			selectedQuoteDetails.total = quoteData.price * quoteData.gallons + quoteData.tax;
 		} else {
 			selectedQuoteDetails = {
 				date: '-',
@@ -107,7 +110,7 @@
 			<div class="flex h-screen flex-row">
 				<div class="w-1/3 pl-7 pt-4">
 					<CardContainer heightOffset={5}>
-						{#each dummyQuotes as quote}
+						{#each quotes as quote}
 							<Card cardID={quote.id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
 								<CardText title={true}>
 									{`${quote.date} at ${quote.time}`}
