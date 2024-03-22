@@ -6,6 +6,7 @@
 	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { postRequest } from '$lib/requests';
 	import { deleteCookie, setCookie } from '$lib/cookieUtil';
+	import { goto } from '$app/navigation';
 
 	const loginTopDescription =
 		'Once you login, you can create new quotes, and set your quote search settings!';
@@ -51,7 +52,6 @@
 		}
 
 		successAlert("login succesful. Redirecting...");
-		genericAlert("TODO: [REDIRECT TO PROFILE PAGE HERE]");
 
 		deleteCookie('user_session');
 		setCookie('user_session', JSON.stringify({
@@ -59,6 +59,8 @@
 			accessToken: loginResJSON.response.accessToken,
 			refreshToken: loginResJSON.response.refreshToken
 		}));
+
+		goto('../profile');
 	}
 </script>
 
