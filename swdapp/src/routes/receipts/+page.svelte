@@ -48,8 +48,8 @@
 		<!-- left sidebar -->
 		<aside class="justify-left flex h-full w-1/6 bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
-				<a href="/" class="text-[#CBD5E1]"> Profile </a>
-				<a href="/" class="text-[#CBD5E1]"> Quote History </a>
+				<a href="/profile" class="text-[#CBD5E1]"> Profile </a>
+				<a href="/quotes" class="text-[#CBD5E1]"> Quote History </a>
 			</nav>
 		</aside>
 
