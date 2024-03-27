@@ -47,7 +47,7 @@
 			<nav class="flex flex-col gap-2">
 				<a href="/profile" class="text-[#CBD5E1]"> Profile </a>
 
-				<a href="/payment" class="text-[#CBD5E1]"> Payment History </a>
+				<a href="/receipts" class="text-[#CBD5E1]"> Payment History </a>
 
 				<a href="/quotes" class="text-[#CBD5E1]"> Fuel Quote History </a>
 			</nav>

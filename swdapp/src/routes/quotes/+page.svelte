@@ -91,11 +91,8 @@
 	}
 
 	function handleQuotePurchase() {
-		console.log('Purchase Button Clicked!');
-	}
-
-	function handleCreateQuote(e: any) {
-		console.log('Create Quote Button Clicked!');
+		//TODO pass in quote id as route parameter
+		goto('payment/');
 	}
 </script>
 
@@ -163,7 +160,7 @@
 							<DescListButton
 								btnLabel={'Create New Quote'}
 								btnEvent={'quoteCreateClick'}
-								on:quoteCreateClick={e => {handleCreateQuote(e)}}
+								on:quoteCreateClick={() => goto('quotes/new/')}
 							/>
 						</div>
 					</DescriptionList>
