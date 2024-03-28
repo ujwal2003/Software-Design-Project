@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote } from '../services/userService';
-import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse } from '../customTypes/generalTypes';
+import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment } from '../services/userService';
+import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
 import { isAccessTokenValid_simple } from './authController';
 
 export async function getProfileData(requestBody: ProfileRequest): Promise<Response>{
@@ -168,3 +168,74 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
     }
 }
 
+
+export async function updateAccountData(requestBody: UpdateAccountRequest): Promise<Response>{
+    try {
+        const { username, accessToken } = requestBody;
+
+        if(!await isAccessTokenValid_simple(accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, {status: 401});
+        }
+
+        const { firstName, middleName, lastName, location } = requestBody;
+        const updatedAccount = await updateAccount(username, firstName, middleName, lastName, location);
+
+        if (updatedAccount) {
+            const response: GeneralAPIResponse = {
+                success: true,
+                message: "Account update successful"
+            };
+            return json(response, { status: 200 });
+        } else {
+            return json({
+                success: false,
+                message: "Account update failed"
+            } as GeneralAPIResponse, { status: 404 });
+        }
+    } catch (error) {
+        console.log("[SERVER] error on POST /api/user", error);
+        return json({
+            success: false,
+            message: "Request failed due to error"
+        } as GeneralAPIResponse, { status: 500 });
+    }
+}
+
+export async function makePaymentMethod(requestBody: MakePaymentRequest): Promise<Response>{
+    try {
+        const { username, accessToken, company, price } = requestBody;
+
+        if(!await isAccessTokenValid_simple(accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, {status: 401});
+        }
+
+        const pay = await makePayment(username, price, company);
+
+        if (pay) {
+            const response: GeneralAPIResponse = {
+                success: true,
+                message: "Payment successful"
+            };
+            return json(response, { status: 200 });
+        } else {
+            return json({
+                success: false,
+                message: "Payment failed"
+            } as GeneralAPIResponse, { status: 404 });
+        }
+    } catch (error) {
+        console.log("[SERVER] error on POST /api/user", error);
+        return json({
+            success: false,
+            message: "Request failed due to error"
+        } as GeneralAPIResponse, { status: 500 });
+    }
+}

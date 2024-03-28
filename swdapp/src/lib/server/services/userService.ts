@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { dummyUsersModel, dummyRefreshTokens } from "../dummyDatabase";
+import { dummyUsersModel, dummyRefreshTokens, dummyCompanyModel } from "../dummyDatabase";
 
 export async function userExists(username: string) {
     const foundUser = dummyUsersModel.find(user => user.username === username);
@@ -83,4 +83,68 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     quoteHistory?.push(quote);
 
     return quote;
+}
+
+export async function updateAccount(username: string, firstName?: string, middleName?: string, lastName?: string, location?: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+    
+    if (!user) {
+        return;
+    }
+    
+    let profile = user.profile;
+    if (!profile) {
+        profile = {
+            _id: crypto.randomBytes(24 / 2).toString('hex'),
+            firstName: '',
+            middleName: '',
+            lastName: '',
+            location: '',
+            quoteHistory: null,
+            purchaseHistory: null,
+            paymentInfo: null
+        };
+        user.profile = profile;
+    }
+
+    if (firstName !== undefined) {
+        profile.firstName = firstName;
+    }
+
+    if (middleName !== undefined) {
+        profile.middleName = middleName;
+    }
+
+    if (lastName !== undefined) {
+        profile.lastName = lastName;
+    }
+
+    if (location !== undefined) {
+        profile.location = location;
+    }
+
+    return profile;
+}
+
+export async function makePayment(username: string, price: number, companyName: string){
+    const user = dummyUsersModel.find(user => user.username === username);
+    const paymentInfo = user ? user.profile?.paymentInfo : null;
+
+    if (!paymentInfo){
+        return;
+    }
+
+    //beep beep credit card machine
+    //imagine the credit card is being processed
+    //$$$$$$$
+
+    const company = dummyCompanyModel.find(cn => cn.name === companyName);
+
+    if (!company){
+        return;
+    }
+    
+    company.revenue += price;
+
+    return paymentInfo;
 }
