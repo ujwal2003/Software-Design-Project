@@ -44,14 +44,24 @@
 	}
 
 	interface UserAddress {
+		//street: string;
 		address1: string;
 		city: string;
 		state: string;
 		zip: string;
 	}
 
+	interface UserPayment {
+		cardName: '';
+		cardNumber: '';
+		expirationDate: '';
+		ccv: '';
+	};
+
 	let userProfile : UserProfile = { firstName: '', middleName: '', lastName: ''};
 	let userAddress : UserAddress = { address1: '', city: '', state: '', zip: ''};
+	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', ccv: ''};
+	//let userAddress : UserAddress = { string: '', city: '', state: '', zip: ''};
 
 	async function getUserData() {
 
@@ -77,6 +87,15 @@
 			middleName: profileResJSON.middleName,
 			lastName: profileResJSON.lastName
 		};
+		
+		/*
+		userPayment = {
+			cardName: profileResJSON.cardName,
+			cardNumber: profileResJSON.cardNumber,
+			expirationDate: profileResJSON.expirationDate,
+			ccv: profileResJSON.ccv
+		};
+		*/
 
 		const locationString = profileResJSON.location;
 		const locationParts = locationString.split(" ");
@@ -88,6 +107,15 @@
 			state: locationParts[2],
 			zip: locationParts[3]
 		};
+
+		/*
+		userAddress = {
+			string: profileResJSON.string,
+			city: profileResJSON.city,
+			state: profileResJSON.state,
+			zip: profileResJSON.zip
+		};
+		*/
 
 	}
 
@@ -110,27 +138,23 @@
 		'py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:frin-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100';
 
 	// Input Form Handling
-	function handleAddressSubmit(e: any) {
-		// console.log('Address Submitted');
-		// console.log('Address 1:', address.address1);
-		// console.log('City:', address.city);
-		// console.log('State:', address.state);
-		// console.log('Zipcode:', address.zip);
-	}
+	function handleSubmit(e: any) {
+		console.log('First Name:', userProfile.firstName);
+		console.log('Middle Name:', userProfile.middleName);
+		console.log('Last Name:', userProfile.lastName);
+		console.log('Name Submitted');
+		
+		console.log('Address 1:', userAddress.address1);
+		console.log('City:', userAddress.city);
+		console.log('State:', userAddress.state);
+		console.log('Zipcode:', userAddress.zip);
+		console.log('Address Submitted');
 
-	function handleNameSubmit(e: any) {
-		// console.log('Name Submitted');
-		// console.log('First Name:', name.firstName);
-		// console.log('Middle Name:', name.middleName);
-		// console.log('Last Name:', name.lastName);
-	}
-
-	function handlePaymentSubmit(e: any) {
-		// console.log('Payment Submitted');
-		// console.log('Card Name:', payment.cardName);
-		// console.log('Card Number:', payment.cardNumber);
-		// console.log('Expiration Date:', payment.expirationDate);
-		// console.log('CVV:', payment.ccv);
+		console.log('Card Name:', userPayment.cardName);
+		console.log('Card Number:', userPayment.cardNumber);
+		console.log('Expiration Date:', userPayment.expirationDate);
+		console.log('CVV:', userPayment.ccv);
+		console.log('Payment Submitted');
 	}
 
 </script>
@@ -161,7 +185,7 @@
 						<!-- Name Card -->
 						<div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
 							<div class="flex flex-col text-lg font-bold text-black">Full Name</div>
-							<form on:submit={handleNameSubmit}>
+							<form on:submit={handleSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">First Name</label>
 									<input 
@@ -224,9 +248,10 @@
 						</div>
 
 						<!-- Payment Card -->
+						<!-- TODO: change bind from payment to userPayment -->
 						<div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
 							<div class="text-lg font-bold text-black">Payment Information</div>
-							<form on:submit={handlePaymentSubmit}>
+							<form on:submit={handleSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">Card Name</label>
 									<input 
@@ -292,7 +317,7 @@
 						<!-- Address Card -->
 						<div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
 							<div class="text-lg font-bold text-black">Address</div>
-							<form on:submit={handleAddressSubmit}>
+							<form on:submit={handleSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">Address</label>
 									<input disabled
