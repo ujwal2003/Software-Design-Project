@@ -60,3 +60,19 @@ export interface GenerateQuoteResponse {
     gallonsRequested: number,
     priceCalculated: number
 }
+
+export interface UpdateAccountRequest {
+    username: string,
+    accessToken: string,
+    firstName?: string,
+    middleName?: string,
+    lastName?: string,
+    location?: string
+}
+
+export interface MakePaymentRequest {
+    username: string,
+    accessToken: string,
+    company: string,
+    price: number
+}

@@ -26,8 +26,8 @@ interface dummyProfileSchema {
     middleName: string,
     lastName: string,
     location: string,
-    quoteHistory: dummyQuoteSchema[],
-    purchaseHistory: dummyReceiptSchema[],
+    quoteHistory: dummyQuoteSchema[] | null,
+    purchaseHistory: dummyReceiptSchema[] | null,
     paymentInfo: dummyPaymentInfoSchema | null
 };
 
@@ -41,8 +41,9 @@ interface dummyUserSchema {
 
 interface dummyCompanySchema {
     _id: string,
-    revenue: Number,
-    cost: Number,
+    name: string,
+    revenue: number,
+    cost: number,
     financeDate: Date
 };
 
@@ -213,6 +214,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
 export const dummyCompanyModel: dummyCompanySchema[] = [
     {
         _id: "0a0813d28db9cbc16fcb8347",
+        name: "Exxon",
         revenue: 73.52,
         cost: 39.88,
         financeDate: new Date("2024-03-10")
@@ -220,6 +222,7 @@ export const dummyCompanyModel: dummyCompanySchema[] = [
 
     {
         _id: "829a060c4f3470ec0f8b3ced",
+        name: "Shell",
         revenue: 130.58,
         cost: 15.85,
         financeDate: new Date("2024-03-18")
@@ -227,6 +230,7 @@ export const dummyCompanyModel: dummyCompanySchema[] = [
 
     {
         _id: "9cad77be2ad1fcb90284c3de",
+        name: "Chevron",
         revenue: 66.50,
         cost: 40.25,
         financeDate: new Date("2024-03-22")
