@@ -121,6 +121,14 @@ export async function updateAccount(username: string, firstName?: string, middle
     return profile;
 }
 
+export async function updatePayment(username: string) {
+    const user = dummyUsersModel.find(user => user.username === username);
+    if(!user || !user.profile)
+        return;
+
+    const userPayment = user.profile.paymentInfo;
+}
+
 export async function makePayment(username: string, price: number, companyName: string){
     const user = dummyUsersModel.find(user => user.username === username);
     const paymentInfo = user ? user.profile?.paymentInfo : null;
