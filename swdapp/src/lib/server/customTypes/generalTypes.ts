@@ -18,11 +18,21 @@ export interface ProfileRequest {
 
 export interface ProfileResponse {
     success: boolean,
-    _id: string,
-    firstName: string,
-    middleName: string,
-    lastName: string,
-    location: string,
+    profile: {
+        firstName: string,
+        middleName: string,
+        lastName: string,
+        street: string,
+        state: string,
+        city: string,
+        zip: string
+    } | null,
+    paymentInfo: {
+        cardName: string,
+        cardNumber: string,
+        expiration: Date,
+        cardCVV: string
+    } | null
 }
 
 export interface QuoteHistoryRequest {

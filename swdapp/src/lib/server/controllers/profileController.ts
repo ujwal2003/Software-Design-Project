@@ -18,14 +18,27 @@ export async function getProfileData(requestBody: ProfileRequest): Promise<Respo
         const profile = await getProfile(username);
 
         if (profile) {
+            const profilePaymentInfo = profile.paymentInfo;
+            const resPaymentInfo = profilePaymentInfo ? {
+                cardName: profilePaymentInfo.cardName,
+                cardNumber: profilePaymentInfo.creditCardNumber,
+                expiration: profilePaymentInfo.cardExpiration,
+                cardCVV: profilePaymentInfo.cardCVV
+            } : null;
 
             const response: ProfileResponse = {
                 success: true,
-                _id: profile._id,
-                firstName: profile.firstName,
-                middleName: profile.middleName,
-                lastName: profile.lastName,
-                location: profile.location,
+                profile: {
+                    firstName: profile.firstName,
+                    middleName: profile.middleName,
+                    lastName: profile.lastName,
+                    city: profile.city,
+                    state: profile.state,
+                    street: profile.street,
+                    zip: profile.zip
+                },
+
+                paymentInfo: resPaymentInfo
             };
             return json(response, { status: 200 });
         } else {

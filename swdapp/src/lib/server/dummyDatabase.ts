@@ -15,6 +15,7 @@ export interface dummyReceiptSchema {
 
 export interface dummyPaymentInfoSchema {
     _id: string,
+    cardName: string,
     creditCardNumber: string,
     cardExpiration: Date,
     cardCVV: string
@@ -122,6 +123,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
             purchaseHistory: [],
             paymentInfo: {
                 _id: "9e35198f5ad29c78b6fd2828",
+                cardName: "fname2's card",
                 creditCardNumber: "5844203091667951",
                 cardExpiration: new Date("2026-05-01"),
                 cardCVV: "345"
@@ -207,6 +209,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
             ],
             paymentInfo: {
                 _id: "03d895ad8ea604df81b5742d",
+                cardName: "fName3's card",
                 creditCardNumber: "0410012782701014",
                 cardExpiration: new Date("2027-05-01"),
                 cardCVV: "543"
