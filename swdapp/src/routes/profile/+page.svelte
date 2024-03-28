@@ -3,22 +3,25 @@
 	import Footer from '$lib/components/footer.svelte';
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
+	import { postRequest } from '$lib/requests';
+	import { getCookie } from '$lib/cookieUtil';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
 			failureAlert("please log in to access this page");
 			goto('/login');
 		}
+		getUserData();
 	});
 
 	// Input variables
-	let name = {
-		firstName: '',
-		middleName: '',
-		lastName: ''
-	};
+	// let name = {
+	// 	firstName: '',
+	// 	middleName: '',
+	// 	lastName: ''
+	// };
 
 	let payment = {
 		cardName: '',
@@ -34,33 +37,93 @@
 		zip: ''
 	};
 
+	interface UserProfile {
+		firstName: string;
+		middleName: string;
+		lastName: string;
+	}
+
+	interface UserAddress {
+		address1: string;
+		city: string;
+		state: string;
+		zip: string;
+	}
+
+	let userProfile : UserProfile = { firstName: '', middleName: '', lastName: ''};
+	let userAddress : UserAddress = { address1: '', city: '', state: '', zip: ''};
+
+	async function getUserData() {
+
+		const cookie = getCookie('user_session');
+
+		if (!cookie) {
+			return;
+		}
+		let profileReq = JSON.parse(cookie);
+		// console.log(profileReq.username);
+		// console.log(profileReq.accessToken);
+
+		const profileAPIRes = await postRequest('api/profile/info', profileReq);
+		const profileResJSON = await profileAPIRes.json();
+
+		if(!profileResJSON.success || profileResJSON.unauthorized) {
+			return;
+		}
+
+		userProfile = {
+			firstName: profileResJSON.firstName,
+			middleName: profileResJSON.middleName,
+			lastName: profileResJSON.lastName
+		};
+
+		
+
+		const locationString = profileResJSON.location;
+		
+		const locationParts = locationString.split(" ");
+		//console.log(locationParts);
+		userAddress = {
+			address1: locationParts[0],
+			city: locationParts[1],
+			state: locationParts[2],
+			zip: locationParts[3]
+		};
+
+
+
+		
+
+	}
+
 	// Input TextBox Styling
 	let textBoxStyle =
 		'py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:frin-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100';
 
 	// Input Form Handling
 	function handleAddressSubmit(e: any) {
-		console.log('Address Submitted');
-		console.log('Address 1:', address.address1);
-		console.log('City:', address.city);
-		console.log('State:', address.state);
-		console.log('Zipcode:', address.zip);
+		// console.log('Address Submitted');
+		// console.log('Address 1:', address.address1);
+		// console.log('City:', address.city);
+		// console.log('State:', address.state);
+		// console.log('Zipcode:', address.zip);
 	}
 
 	function handleNameSubmit(e: any) {
-		console.log('Name Submitted');
-		console.log('First Name:', name.firstName);
-		console.log('Middle Name:', name.middleName);
-		console.log('Last Name:', name.lastName);
+		// console.log('Name Submitted');
+		// console.log('First Name:', name.firstName);
+		// console.log('Middle Name:', name.middleName);
+		// console.log('Last Name:', name.lastName);
 	}
 
 	function handlePaymentSubmit(e: any) {
-		console.log('Payment Submitted');
-		console.log('Card Name:', payment.cardName);
-		console.log('Card Number:', payment.cardNumber);
-		console.log('Expiration Date:', payment.expirationDate);
-		console.log('CVV:', payment.ccv);
+		// console.log('Payment Submitted');
+		// console.log('Card Name:', payment.cardName);
+		// console.log('Card Number:', payment.cardNumber);
+		// console.log('Expiration Date:', payment.expirationDate);
+		// console.log('CVV:', payment.ccv);
 	}
+
 </script>
 
 <section class="flex flex-col">
@@ -96,7 +159,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
-										bind:value={name.firstName}
+										bind:value={userProfile.firstName}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -105,7 +168,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
-										bind:value={name.middleName}
+										bind:value={userProfile.middleName}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -114,7 +177,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
-										bind:value={name.lastName}
+										bind:value={userProfile.lastName}
 									/>
 								</div>
 
@@ -184,7 +247,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
-										bind:value={address.address1}
+										bind:value={userAddress.address1}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -193,7 +256,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
-										bind:value={address.city}
+										bind:value={userAddress.city}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -202,12 +265,12 @@
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
-										bind:value={address.state}
+										bind:value={userAddress.state}
 									/>
 								</div>
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="last-name">Zip Code</label>
-									<input class={textBoxStyle} type="text" id="last-name" bind:value={address.zip} />
+									<input class={textBoxStyle} type="text" id="last-name" bind:value={userAddress.zip} />
 								</div>
 
 								<div class="flex flex-row justify-end pt-4">

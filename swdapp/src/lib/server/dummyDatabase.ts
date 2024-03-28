@@ -87,7 +87,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fname2",
             middleName: "mName2",
             lastName: "lName2",
-            location: "loc2",
+            location: "address2 city2 state2 zip2",
             quoteHistory: [
                 {
                     _id: "9e8e9a6bcc756b25eb1bef22",
