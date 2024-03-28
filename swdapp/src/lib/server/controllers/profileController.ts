@@ -181,7 +181,6 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
     }
 }
 
-
 export async function updateAccountData(requestBody: UpdateAccountRequest): Promise<Response>{
     try {
         const { username, accessToken } = requestBody;
@@ -194,8 +193,8 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
             } as UnauthorizedResponse, {status: 401});
         }
 
-        const { firstName, middleName, lastName, location } = requestBody;
-        const updatedAccount = await updateAccount(username, firstName, middleName, lastName, location);
+        const { firstName, middleName, lastName, street, city, state, zip } = requestBody;
+        const updatedAccount = await updateAccount(username, firstName, middleName, lastName, city, state, street, zip);
 
         if (updatedAccount) {
             const response: GeneralAPIResponse = {

@@ -77,7 +77,11 @@ export interface UpdateAccountRequest {
     firstName?: string,
     middleName?: string,
     lastName?: string,
-    location?: string
+    // location?: string
+    street?: string,
+    state?: string,
+    city?: string,
+    zip?: string
 }
 
 export interface MakePaymentRequest {
