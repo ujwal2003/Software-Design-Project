@@ -25,7 +25,11 @@ interface dummyProfileSchema {
     firstName: string,
     middleName: string,
     lastName: string,
-    location: string,
+    // location: string,
+    street: string,
+    state: string,
+    city: string,
+    zip: string,
     quoteHistory: dummyQuoteSchema[] | null,
     purchaseHistory: dummyReceiptSchema[] | null,
     paymentInfo: dummyPaymentInfoSchema | null
@@ -70,7 +74,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fName1",
             middleName: "",
             lastName: "lName1",
-            location: "loc1",
+            city: "houston",
+            state: "TX",
+            street: "314152 amazingStreetName Dr",
+            zip: "12345",
             quoteHistory: [],
             purchaseHistory: [],
             paymentInfo: null
@@ -88,7 +95,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fname2",
             middleName: "mName2",
             lastName: "lName2",
-            location: "loc2",
+            city: "Dallas",
+            state: "TX",
+            street: "423263 coolStreetName Dr",
+            zip: "98765",
             quoteHistory: [
                 {
                     _id: "9e8e9a6bcc756b25eb1bef22",
@@ -130,7 +140,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fName3",
             middleName: "",
             lastName: "lName3",
-            location: "loc3",
+            city: "Austin",
+            state: "TX",
+            street: "102030 middleOfNowhere St",
+            zip: "45678",
             quoteHistory: [
                 {
                     _id: "28526d313bc11f3f84a38cb7",
