@@ -119,6 +119,26 @@
 
 	}
 
+	// Input Form Handling
+	function handleSubmit(e: any) {
+		// console.log('First Name:', userProfile.firstName);
+		// console.log('Middle Name:', userProfile.middleName);
+		// console.log('Last Name:', userProfile.lastName);
+		// console.log('Name Submitted');
+		
+		// console.log('Address 1:', userAddress.address1);
+		// console.log('City:', userAddress.city);
+		// console.log('State:', userAddress.state);
+		// console.log('Zipcode:', userAddress.zip);
+		// console.log('Address Submitted');
+
+		// console.log('Card Name:', userPayment.cardName);
+		// console.log('Card Number:', userPayment.cardNumber);
+		// console.log('Expiration Date:', userPayment.expirationDate);
+		// console.log('CVV:', userPayment.ccv);
+		// console.log('Payment Submitted');
+	}
+
 	let nameFormDisabled: boolean = true;
 
     function handleEdit(section: string) {
@@ -134,28 +154,7 @@
     }
 
 	// Input TextBox Styling
-	let textBoxStyle =
-		'py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:frin-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100';
-
-	// Input Form Handling
-	function handleSubmit(e: any) {
-		console.log('First Name:', userProfile.firstName);
-		console.log('Middle Name:', userProfile.middleName);
-		console.log('Last Name:', userProfile.lastName);
-		console.log('Name Submitted');
-		
-		console.log('Address 1:', userAddress.address1);
-		console.log('City:', userAddress.city);
-		console.log('State:', userAddress.state);
-		console.log('Zipcode:', userAddress.zip);
-		console.log('Address Submitted');
-
-		console.log('Card Name:', userPayment.cardName);
-		console.log('Card Number:', userPayment.cardNumber);
-		console.log('Expiration Date:', userPayment.expirationDate);
-		console.log('CVV:', userPayment.ccv);
-		console.log('Payment Submitted');
-	}
+	let textBoxStyle = 'py-2 px-3 pe-11 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:frin-blue-500 disabled:opacity-50 disabled:pointer-events-none bg-slate-100';
 
 </script>
 
