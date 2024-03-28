@@ -30,12 +30,12 @@
 		ccv: ''
 	};
 
-	let address = {
-		address1: '',
-		city: '',
-		state: '',
-		zip: ''
-	};
+	// let address = {
+	// 	address1: '',
+	// 	city: '',
+	// 	state: '',
+	// 	zip: ''
+	// };
 
 	interface UserProfile {
 		firstName: string;
@@ -60,6 +60,7 @@
 		if (!cookie) {
 			return;
 		}
+
 		let profileReq = JSON.parse(cookie);
 		// console.log(profileReq.username);
 		// console.log(profileReq.accessToken);
@@ -77,12 +78,10 @@
 			lastName: profileResJSON.lastName
 		};
 
-		
-
 		const locationString = profileResJSON.location;
-		
 		const locationParts = locationString.split(" ");
 		//console.log(locationParts);
+
 		userAddress = {
 			address1: locationParts[0],
 			city: locationParts[1],
@@ -90,11 +89,21 @@
 			zip: locationParts[3]
 		};
 
-
-
-		
-
 	}
+
+	let nameFormDisabled: boolean = true;
+
+    function handleEdit(section: string) {
+        if (section === 'name') {
+            nameFormDisabled = false;
+        }
+    }
+
+    function handleCancel(section: string) {
+        if (section === 'name') {
+            nameFormDisabled = true;
+        }
+    }
 
 	// Input TextBox Styling
 	let textBoxStyle =
@@ -155,7 +164,8 @@
 							<form on:submit={handleNameSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">First Name</label>
-									<input
+									<input 
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
@@ -165,6 +175,7 @@
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="middle-name">Middle Name</label>
 									<input
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
@@ -173,7 +184,8 @@
 								</div>
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="last-name">Last Name</label>
-									<input
+									<input 
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
@@ -181,12 +193,32 @@
 									/>
 								</div>
 
-								<div class="flex flex-row justify-end pt-20">
-									<button
-										type="submit"
-										class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
-										>Submit</button
-									>
+								<div class="flex flex-row justify-end pt-20 gap-4">
+									{#if nameFormDisabled}
+										<button
+											on:click={() => handleEdit('name')}
+											type="button"
+											class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
+											>
+										Edit
+										</button>
+										{:else}
+										<div class="flex gap-x-2">
+											<button
+												on:click={() => handleCancel('name')}
+												type="button"
+												class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
+											>
+											Cancel
+											</button>
+											<button
+												type="submit"
+												class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+											>
+												Submit
+											</button>
+										</div>
+									{/if}
 								</div>
 							</form>
 						</div>
@@ -197,7 +229,7 @@
 							<form on:submit={handlePaymentSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">Card Name</label>
-									<input
+									<input 
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
@@ -228,11 +260,31 @@
 								</div>
 
 								<div class="flex flex-row justify-end pt-4">
-									<button
-										type="submit"
-										class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
-										>Submit</button
-									>
+									{#if nameFormDisabled}
+										<button
+											on:click={() => handleEdit('name')}
+											type="button"
+											class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
+											>
+										Edit
+										</button>
+										{:else}
+										<div class="flex gap-x-2">
+											<button
+												on:click={() => handleCancel('name')}
+												type="button"
+												class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
+											>
+											Cancel
+											</button>
+											<button
+												type="submit"
+												class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+											>
+												Submit
+											</button>
+										</div>
+									{/if}
 								</div>
 							</form>
 						</div>
@@ -243,7 +295,7 @@
 							<form on:submit={handleAddressSubmit}>
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">Address</label>
-									<input
+									<input disabled
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
@@ -252,7 +304,7 @@
 								</div>
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="middle-name">City</label>
-									<input
+									<input disabled
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
@@ -261,7 +313,7 @@
 								</div>
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="last-name">State</label>
-									<input
+									<input disabled
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
@@ -270,15 +322,39 @@
 								</div>
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="last-name">Zip Code</label>
-									<input class={textBoxStyle} type="text" id="last-name" bind:value={userAddress.zip} />
+									<input disabled
+										class={textBoxStyle} 
+										type="text" 
+										id="last-name" 
+										bind:value={userAddress.zip} />
 								</div>
 
 								<div class="flex flex-row justify-end pt-4">
-									<button
-										type="submit"
-										class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
-										>Submit</button
-									>
+									{#if nameFormDisabled}
+										<button
+											on:click={() => handleEdit('name')}
+											type="button"
+											class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
+											>
+										Edit
+										</button>
+										{:else}
+										<div class="flex gap-x-2">
+											<button
+												on:click={() => handleCancel('name')}
+												type="button"
+												class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
+											>
+											Cancel
+											</button>
+											<button
+												type="submit"
+												class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+											>
+												Submit
+											</button>
+										</div>
+									{/if}
 								</div>
 							</form>
 						</div>
