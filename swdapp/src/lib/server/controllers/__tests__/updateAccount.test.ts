@@ -25,8 +25,10 @@ test('successful account update test', async () => {
     const testRequest: UpdateAccountRequest = {
         username: 'dummyUser3',
         accessToken: loginRes.response.accessToken,
-        firstName: "Bartholomew",
-        lastName: "Da Third"
+        profileUpdates: {
+            firstName: "Bartholomew",
+            lastName: "Da Third"
+        }
     }
     
     expect(await (await updateAccountData(testRequest)).json()).toEqual({
@@ -48,8 +50,10 @@ test('successful account update when profile is completely empty test', async ()
     const testRequest: UpdateAccountRequest = {
         username: 'dummyUser1',
         accessToken: loginRes.response.accessToken,
-        firstName: "Bartholomew",
-        lastName: "Da Third"
+        profileUpdates: {
+            firstName: "Bartholomew",
+            lastName: "Da Third"
+        }
     }
     
     expect(await (await updateAccountData(testRequest)).json()).toEqual({
