@@ -58,7 +58,7 @@ test('company not found payment test', async () => {
     });
 })
 
-test('unsuccesful payment due to invalid payment', async () => {
+test('unsuccesful payment due to invalid access token', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -86,4 +86,8 @@ test('unsuccesful payment due to internal error', async () => {
         success: false,
         message: "Request failed due to error"
     } as GeneralAPIResponse);
+})
+
+test('unsuccesful payment due to no payment info set', async () => {
+    
 })
