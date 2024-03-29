@@ -1,7 +1,7 @@
 import { beforeAll, expect, test, vi } from 'vitest';
 
 import { makePaymentMethod } from '../profileController';
-import type { MakePaymentRequest } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, MakePaymentRequest, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 
@@ -56,4 +56,34 @@ test('company not found payment test', async () => {
         success: false,
         message: "Payment failed"
     });
+})
+
+test('unsuccesful payment due to invalid payment', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser3',
+        password: 'unsecurePassword3'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: MakePaymentRequest = {
+        username: 'dummyUser3',
+        accessToken: loginRes.response.accessToken + 'abcd',
+        company: "Exxon",
+        price: 30
+    }
+
+    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
+        success: true,
+        unauthorized: true,
+        message: 'invalid access token'
+    } as UnauthorizedResponse);
+})
+
+test('unsuccesful payment due to internal error', async () => {
+    //@ts-expect-error
+    expect(await (await makePaymentMethod()).json()).toEqual({
+        success: false,
+        message: "Request failed due to error"
+    } as GeneralAPIResponse);
 })
