@@ -6,29 +6,52 @@
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
+	import { getCookie } from '$lib/cookieUtil';
 
 	onMount(async () => {
 		if(!await isClientAllowed('../')) {
 			failureAlert("You must be logged in to access this page. Please log in.");
 			goto('../login');
 		}
+
+		// const cookie = getCookie('user_session');
+		// if(!cookie) {
+		// 	failureAlert('Error, please log in again...');
+		// 	goto('../login');
+		// 	return;
+		// }
+
+		// let profileReq = JSON.parse(cookie);
+
 	});
 
 	let newQuote = {
 		gallonsRequested: 0,
-		deliveryAddress: 'test',
+		deliveryAddress: '',
 		deliveryDate: '',
 		suggestedPrice: 0.0,
 		totalAmountDue: 0
 	};
 
 	function handleQuoteSubmit() {
-		console.log('Payment Submitted');
-		console.log('Gallons Requested:', newQuote.gallonsRequested);
-		console.log('Delivery Address:', newQuote.deliveryAddress);
-		console.log('Delivery Date:', newQuote.deliveryDate);
-		console.log('Suggested Price:', newQuote.suggestedPrice);
-		console.log('Total Amount Due:', newQuote.totalAmountDue);
+		// console.log('Payment Submitted');
+		// console.log('Gallons Requested:', newQuote.gallonsRequested);
+		// console.log('Delivery Address:', newQuote.deliveryAddress);
+		// console.log('Delivery Date:', newQuote.deliveryDate);
+		// console.log('Suggested Price:', newQuote.suggestedPrice);
+		// console.log('Total Amount Due:', newQuote.totalAmountDue);
+
+		if(newQuote.gallonsRequested <= 0 || !newQuote.deliveryAddress || !newQuote.deliveryDate) {
+			failureAlert('Form must be completely filled out!');
+			return;
+		}
+
+		const today = new Date();
+		const selectedDate = new Date(newQuote.deliveryDate);
+		if(selectedDate < today) {
+			failureAlert('You can only select dates after today!');
+			return;
+		}
 	}
 </script>
 
