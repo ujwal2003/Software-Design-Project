@@ -16,11 +16,16 @@
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 
+	import { postRequest } from '$lib/requests';
+	import { getCookie } from '$lib/cookieUtil';
+
 	onMount(async () => {
 		if(!await isClientAllowed()) {
 			failureAlert("You must be logged in to access this page. Please log in.");
 			goto('/login');
 		}
+		await fetchQuoteHistory();
+		getUserData();
 	});
 
 	interface QuoteCard {
@@ -34,54 +39,130 @@
 	interface QuoteCardDetail {
 		date: string;
 		location: string;
-		deliveryDate: string;
+		//deliveryDate: string;
 		gallons: number;
 		price: number;
 		tax: number;
 		total: number;
 	}
 
+	interface UserAddress {
+		street: string;
+		city: string;
+		state: string;
+		zip: string;
+	}
+
+	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
+
 	let selectedQuoteDetails: QuoteCardDetail = {
 		date: '-',
 		location: '-',
-		deliveryDate: '-',
+		//deliveryDate: '-',
 		gallons: 0,
 		price: 0.0,
 		tax: 0.0,
 		total: 0.0
 	};
 
-	// replace this with quotes recieved from server
-	let quotes: QuoteCard[] = [];
+	//let quotes: QuoteCard[] = [];
 
 	// replace this with filtering from database data later
-	let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
-		return {
-			id: dat._id,
-			date: dat.quoteDate,
-			time: dat.quoteTime,
-			gallons: dat.gallons,
-			price: dat.price
-		};
-	});
+	// let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
+	// 	return {
+	// 		id: dat._id,
+	// 		date: dat.quoteDate,
+	// 		time: dat.quoteTime,
+	// 		gallons: dat.gallons,
+	// 		price: dat.price
+	// 	};
+	// });
+
+	let quotes: any[] = [];
+
+	async function fetchQuoteHistory() {
+		try {
+			const cookie = getCookie('user_session');
+
+			if (!cookie) {
+				throw new Error("User session cookie not found");
+			}
+
+			let quoteReq = JSON.parse(cookie);
+
+			const quoteAPIRes = await postRequest('api/quotes/retrieve', quoteReq);
+
+			if (!quoteAPIRes.ok) {
+				throw new Error("Failed to fetch quote history");
+			}
+
+			const quoteResJSON = await quoteAPIRes.json();
+
+			if (!quoteResJSON.success || quoteResJSON.unauthorized) {
+				throw new Error("Unauthorized access or unsuccessful response");
+			}
+
+			quotes = quoteResJSON.quoteHistory;
+			return;
+
+		} catch (error) {
+			console.error("Error fetching quote history:", error);
+			return [];
+		}
+	}
+
+	async function getUserData() {
+		try {
+			const cookie = getCookie('user_session');
+
+			if (!cookie) {
+				throw new Error("User session cookie not found");
+			}
+
+			let profileReq = JSON.parse(cookie);
+
+			const profileAPIRes = await postRequest('api/profile/info', profileReq);
+
+			if (!profileAPIRes.ok) {
+				throw new Error("Failed to fetch profile data");
+			}
+
+			const profileResJSON = await profileAPIRes.json();
+
+			if (!profileResJSON.success || profileResJSON.unauthorized) {
+				throw new Error("Unauthorized access or unsuccessful response");
+			}
+
+			userAddress = {
+				street: profileResJSON.profile.street,
+				city: profileResJSON.profile.city,
+				state: profileResJSON.profile.state,
+				zip: profileResJSON.profile.zip
+			};
+
+		} catch (error) {
+			console.error("Error fetching user data:", error);
+		}
+	}
 
 	// replace code in function with actual data from db later
 	function getQuoteDetailsFromCard(e: any) {
-		console.log(e.detail);
-		let quoteData = dummyQuoteData.find((obj) => obj._id === e.detail.cardID);
+
+		let quoteData = quotes.find((obj) => obj._id === e.detail.cardID);
+		console.log(quoteData);
 		if (quoteData != undefined) {
-			selectedQuoteDetails.date = quoteData.quoteDate;
-			selectedQuoteDetails.location = quoteData.loc;
-			selectedQuoteDetails.deliveryDate = quoteData.deliveryDate;
-			selectedQuoteDetails.gallons = quoteData.gallons;
-			selectedQuoteDetails.price = quoteData.price;
-			selectedQuoteDetails.tax = quoteData.tax;
-			selectedQuoteDetails.total = quoteData.price * quoteData.gallons + quoteData.tax;
+			selectedQuoteDetails.date = quoteData.generationDate.slice(0,10);
+			selectedQuoteDetails.location = userAddress.city.concat(", ", userAddress.state);
+			//selectedQuoteDetails.deliveryDate = quoteData.date; 
+			selectedQuoteDetails.gallons = quoteData.gallonsRequested;
+			selectedQuoteDetails.price = quoteData.priceCalculated;
+			selectedQuoteDetails.tax = 3.14;
+			selectedQuoteDetails.total = quoteData.priceCalculated * quoteData.gallonsRequested + 3.14;
 		} else {
 			selectedQuoteDetails = {
 				date: '-',
 				location: '-',
-				deliveryDate: '-',
+				//deliveryDate: '-',
 				gallons: 0,
 				price: 0.0,
 				tax: 0.0,
@@ -119,15 +200,15 @@
 				<div class="w-1/3 pl-7 pt-4">
 					<CardContainer heightOffset={5}>
 						{#each quotes as quote}
-							<Card cardID={quote.id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
+							<Card cardID={quote._id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
 								<CardText title={true}>
-									{`${quote.date} at ${quote.time}`}
+									{`${quote.generationDate.slice(0, 10)} at ${quote.generationDate.slice(11,16)}`}
 								</CardText>
 								<CardText>
-									{`Requested Gallons: ${quote.gallons}`}
+									{`Requested Gallons: ${quote.gallonsRequested}`}
 								</CardText>
 								<CardText>
-									{`Suggested Price: ${quote.price} /gal`}
+									{`Suggested Price: ${quote.priceCalculated} /gal`}
 								</CardText>
 							</Card>
 						{/each}
@@ -138,9 +219,9 @@
 					<DescriptionList>
 						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
 						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
-						<DescListItem
+						<!-- <DescListItem
 							details={{ title: 'Delivery Date', text: selectedQuoteDetails.deliveryDate }}
-						/>
+						/> -->
 						<DescListItem details={{ title: 'Gallons', text: selectedQuoteDetails.gallons }} />
 						<DescListItem
 							details={{ title: 'Price', text: selectedQuoteDetails.price.toFixed(2) }}
