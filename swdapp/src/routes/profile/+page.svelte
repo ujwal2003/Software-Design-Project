@@ -16,27 +16,6 @@
 		getUserData();
 	});
 
-	// Input variables
-	// let name = {
-	// 	firstName: '',
-	// 	middleName: '',
-	// 	lastName: ''
-	// };
-
-	let payment = {
-		cardName: '',
-		cardNumber: '',
-		expirationDate: '',
-		CVV: ''
-	};
-
-	// let address = {
-	// 	address1: '',
-	// 	city: '',
-	// 	state: '',
-	// 	zip: ''
-	// };
-
 	interface UserProfile {
 		firstName: string;
 		middleName: string;
@@ -44,8 +23,7 @@
 	}
 
 	interface UserAddress {
-		//street: string;
-		address1: string;
+		street: string;
 		city: string;
 		state: string;
 		zip: string;
@@ -59,9 +37,8 @@
 	};
 
 	let userProfile : UserProfile = { firstName: '', middleName: '', lastName: ''};
-	let userAddress : UserAddress = { address1: '', city: '', state: '', zip: ''};
+	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
 	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', CVV: ''};
-	//let userAddress : UserAddress = { string: '', city: '', state: '', zip: ''};
 
 	async function getUserData() {
 
@@ -72,8 +49,6 @@
 		}
 
 		let profileReq = JSON.parse(cookie);
-		// console.log(profileReq.username);
-		// console.log(profileReq.accessToken);
 
 		const profileAPIRes = await postRequest('api/profile/info', profileReq);
 		const profileResJSON = await profileAPIRes.json();
@@ -83,60 +58,32 @@
 		}
 
 		userProfile = {
-			firstName: profileResJSON.firstName,
-			middleName: profileResJSON.middleName,
-			lastName: profileResJSON.lastName
+			firstName: profileResJSON.profile.firstName,
+			middleName: profileResJSON.profile.middleName,
+			lastName: profileResJSON.profile.lastName
 		};
 		
-		/*
 		userPayment = {
-			cardName: profileResJSON.cardName,
-			cardNumber: profileResJSON.cardNumber,
-			expirationDate: profileResJSON.expirationDate,
-			CVV: profileResJSON.CVV
+			cardName: profileResJSON.paymentInfo.cardName,
+			cardNumber: profileResJSON.paymentInfo.cardNumber,
+			expirationDate: profileResJSON.paymentInfo.expiration,
+			CVV: profileResJSON.paymentInfo.cardCVV
 		};
-		*/
-
-		const locationString = profileResJSON.location;
-		const locationParts = locationString.split(" ");
-		//console.log(locationParts);
 
 		userAddress = {
-			address1: locationParts[0],
-			city: locationParts[1],
-			state: locationParts[2],
-			zip: locationParts[3]
+			street: profileResJSON.profile.street,
+			city: profileResJSON.profile.city,
+			state: profileResJSON.profile.state,
+			zip: profileResJSON.profile.zip
 		};
-
-		/*
-		userAddress = {
-			string: profileResJSON.string,
-			city: profileResJSON.city,
-			state: profileResJSON.state,
-			zip: profileResJSON.zip
-		};
-		*/
+		
 
 	}
 
 	// Input Form Handling
+	// TODO: Update Profile Info POST Request
 	function handleSubmit(e: any) {
-		// console.log('First Name:', userProfile.firstName);
-		// console.log('Middle Name:', userProfile.middleName);
-		// console.log('Last Name:', userProfile.lastName);
-		// console.log('Name Submitted');
-		
-		// console.log('Address 1:', userAddress.address1);
-		// console.log('City:', userAddress.city);
-		// console.log('State:', userAddress.state);
-		// console.log('Zipcode:', userAddress.zip);
-		// console.log('Address Submitted');
 
-		// console.log('Card Name:', userPayment.cardName);
-		// console.log('Card Number:', userPayment.cardNumber);
-		// console.log('Expiration Date:', userPayment.expirationDate);
-		// console.log('CVV:', userPayment.CVV);
-		// console.log('Payment Submitted');
 	}
 
 	let nameFormDisabled: boolean = true;
@@ -258,7 +205,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
-										bind:value={payment.cardName}
+										bind:value={userPayment.cardName}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -268,7 +215,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
-										bind:value={payment.cardNumber}
+										bind:value={userPayment.cardNumber}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -278,7 +225,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
-										bind:value={payment.expirationDate}
+										bind:value={userPayment.expirationDate}
 									/>
 								</div>
 								<div class="flex flex-col">
@@ -288,7 +235,7 @@
 										class={textBoxStyle} 
 										type="text" 
 										id="last-name" 
-										bind:value={payment.CVV} />
+										bind:value={userPayment.CVV} />
 								</div>
 
 								<div class="flex flex-row justify-end pt-4">
@@ -331,7 +278,7 @@
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
-										bind:value={userAddress.address1}
+										bind:value={userAddress.street}
 									/>
 								</div>
 								<div class="flex flex-col">
