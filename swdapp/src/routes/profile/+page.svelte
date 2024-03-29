@@ -27,7 +27,7 @@
 		cardName: '',
 		cardNumber: '',
 		expirationDate: '',
-		ccv: ''
+		CVV: ''
 	};
 
 	// let address = {
@@ -55,12 +55,12 @@
 		cardName: '';
 		cardNumber: '';
 		expirationDate: '';
-		ccv: '';
+		CVV: '';
 	};
 
 	let userProfile : UserProfile = { firstName: '', middleName: '', lastName: ''};
 	let userAddress : UserAddress = { address1: '', city: '', state: '', zip: ''};
-	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', ccv: ''};
+	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', CVV: ''};
 	//let userAddress : UserAddress = { string: '', city: '', state: '', zip: ''};
 
 	async function getUserData() {
@@ -93,7 +93,7 @@
 			cardName: profileResJSON.cardName,
 			cardNumber: profileResJSON.cardNumber,
 			expirationDate: profileResJSON.expirationDate,
-			ccv: profileResJSON.ccv
+			CVV: profileResJSON.CVV
 		};
 		*/
 
@@ -135,7 +135,7 @@
 		// console.log('Card Name:', userPayment.cardName);
 		// console.log('Card Number:', userPayment.cardNumber);
 		// console.log('Expiration Date:', userPayment.expirationDate);
-		// console.log('CVV:', userPayment.ccv);
+		// console.log('CVV:', userPayment.CVV);
 		// console.log('Payment Submitted');
 	}
 
@@ -254,6 +254,7 @@
 								<div class="flex flex-col">
 									<label class="mt-4 text-gray-800" for="first-name">Card Name</label>
 									<input 
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="first-name"
@@ -263,6 +264,7 @@
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="middle-name">Card Number</label>
 									<input
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="middle-name"
@@ -272,6 +274,7 @@
 								<div class="flex flex-col">
 									<label class="mt-2 text-gray-800" for="last-name">Expiration Date</label>
 									<input
+										disabled={nameFormDisabled}
 										class={textBoxStyle}
 										type="text"
 										id="last-name"
@@ -279,8 +282,13 @@
 									/>
 								</div>
 								<div class="flex flex-col">
-									<label class="mt-2 text-gray-800" for="last-name">CCV</label>
-									<input class={textBoxStyle} type="text" id="last-name" bind:value={payment.ccv} />
+									<label class="mt-2 text-gray-800" for="last-name">CVV</label>
+									<input 
+										disabled={nameFormDisabled}
+										class={textBoxStyle} 
+										type="text" 
+										id="last-name" 
+										bind:value={payment.CVV} />
 								</div>
 
 								<div class="flex flex-row justify-end pt-4">
