@@ -1,7 +1,12 @@
 <script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
-	import InputForm from '$lib/components/inputForm.svelte';
+
+	import SubmitForm from '$lib/components/submission-form/submitForm.svelte';
+	import FormText from '$lib/components/submission-form/formText.svelte';
+	import FormInput from '$lib/components/submission-form/formInput.svelte';
+	import FormButton from '$lib/components/submission-form/formButton.svelte';
+
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { postRequest } from '$lib/requests';
 	import { goto } from '$app/navigation';
@@ -9,33 +14,26 @@
 	const regTopDescription = 'Make a new account to access gas savings you could only dream of!';
 	const regBottomDescription = 'Already have an account? <a href="/login"><u>Log in here.</u></a>';
 
-	interface InputValue {
-		inputLabel: string;
-		inputValue: string;
-	}
+	let registerRequest = {
+		username: '',
+		password: ''
+	};
 
-	let registrationVals: InputValue[] = [];
-	function handleRegInputChange(e: any) {
-		registrationVals = e.detail;
+	type RegLabel = "username" | "password";
+	function handleRegInputChange(e: any, inpType: RegLabel): void {
+		registerRequest = {
+			username: (inpType == 'username') ? e.detail : registerRequest.username,
+			password: (inpType == 'password') ? e.detail : registerRequest.password
+		}
 	}
 
 	async function handleRegistrationSubmit() {
-		if(registrationVals.length < 3 || !registrationVals[0].inputValue || !registrationVals[1].inputValue || !registrationVals[2].inputValue) {
+		if(!registerRequest.username || !registerRequest.password) {
 			failureAlert("Registration form must be completely filled out!");
 			return;
 		}
 
-		const registrationFormInfo = {
-			email: registrationVals[0].inputValue,
-			username: registrationVals[1].inputValue,
-			password: registrationVals[2].inputValue
-		};
-
-		const registerRes = await postRequest('api/auth/register', {
-			username: registrationFormInfo.username,
-			password: registrationFormInfo.password
-		});
-
+		const registerRes = await postRequest('api/auth/register', registerRequest);
 		const resJSON = await registerRes.json();
 
 		if(!resJSON.success) {
@@ -71,20 +69,19 @@
 	<!-- right side -->
 	<section class="flex h-screen w-1/2 flex-wrap items-center justify-center bg-[#F0F5F8]">
 		<div class="w-1/2">
-			<InputForm
-				numInputs={3}
-				labels={['Email', 'Username', 'Password']}
-				inputTypes={['email', 'text', 'password']}
-				fromDescription={{
-					title: 'Create Account',
-					button: 'Register',
-					top: regTopDescription,
-					bottom: regBottomDescription
-				}}
-				bind:formInputValues={registrationVals}
-				on:inputChange={handleRegInputChange}
-				on:formSubmit={handleRegistrationSubmit}
-			/>
+			<SubmitForm>
+				<FormText title>Create Account</FormText>
+				<FormText description>{regTopDescription}</FormText>
+
+				<FormInput inputType='text' placeholderText='Username' on:formInput={e => {handleRegInputChange(e, 'username')}} />
+				<FormInput inputType='password' placeholderText='Password' on:formInput={e => {handleRegInputChange(e, 'password')}} />
+
+				<FormButton justify='end' on:formClick={handleRegistrationSubmit}>
+					Register
+				</FormButton>
+
+				<FormText description>{@html regBottomDescription}</FormText>
+			</SubmitForm>
 		</div>
 	</section>
 </main>

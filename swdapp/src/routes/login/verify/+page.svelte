@@ -85,7 +85,7 @@
 			<div class="w-1/2">
 				<InputForm
 					numInputs={2}
-					labels={['Username or Email', 'Password']}
+					labels={['Username', 'Password']}
 					inputTypes={['text', 'password']}
 					fromDescription={{
 						title: 'Log In to Verify Your Brand New Account',

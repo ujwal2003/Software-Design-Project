@@ -1,46 +1,26 @@
 <script lang="ts">
-	import { goto } from "$app/navigation";
-
-	// import { successAlert, failureAlert, genericAlert } from "$lib/components/toasts/customToasts";
-	import { deleteCookie, getCookie } from "$lib/cookieUtil";
-	import { isClientAllowed } from "$lib/protected";
-	import { onMount } from "svelte";
-
-	// let alertText = "You got a toast alert!";
-
-	let username: string;
-	onMount(() => {
-		let cookieDat = getCookie('user_session');
-		username = cookieDat ? JSON.parse(cookieDat).username : 'null';
-	});
-
-	function handleLogoutClick() {
-		deleteCookie('user_session');
-		location.reload();
-	}
+	import FormButton from "$lib/components/submission-form/formButton.svelte";
+	import FormInput from "$lib/components/submission-form/formInput.svelte";
+	import FormText from "$lib/components/submission-form/formText.svelte";
+	import SubmitForm from "$lib/components/submission-form/submitForm.svelte";
 </script>
 
 <main class="flex justify-center mt-14">
-	<!-- <button on:click={() => successAlert(alertText)}>CLICK FOR TOAST!</button> -->
+	<SubmitForm>
+		<FormText title>Test</FormText>
+		<FormText description>
+			{@html "This is a description with a <a href='https://www.google.com/' target='_blank'><u>link!</u></a>"}
+		</FormText>
 
-	<div class="flex-col gap-2">
-		<div>
-			{#await isClientAllowed()}
-				<p>...loading</p>
-			{:then output}
-				{#if output}
-					<p>hello {username}</p>
-				{:else}
-					{goto('/login')}
-					<p>You are not logged in, please <a href="/login" class="underline text-sky-700">login</a>.</p>
-				{/if}
-			{:catch error}
-				<p style="color: red">{error.message}</p>
-			{/await}
-		</div>
+		<FormInput inputType='text' placeholderText='placeholder 1' on:formInput={(e) => {console.log(e.detail)}} />
+		<FormInput inputType='password' placeholderText='placeholder 2' />
 
-		<button class="border-2 rounded-lg p-1 border-black mt-2" on:click={handleLogoutClick}>
-			logout
-		</button>
-	</div>
+		<FormButton justify='end' on:formClick={(e) => {console.log(e)}}>
+			button
+		</FormButton>
+
+		<FormText description>
+			bottom text
+		</FormText>
+	</SubmitForm>
 </main>
