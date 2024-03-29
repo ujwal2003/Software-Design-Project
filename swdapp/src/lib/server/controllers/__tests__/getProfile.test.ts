@@ -27,14 +27,36 @@ test('successful profile info test', async () => {
         accessToken: loginRes.response.accessToken
     }
 
-    expect(await (await getProfileData(testRequest)).json()).toEqual({
-            success: true,
-            _id: "cf7226e79ea6c264b5675b12",
-            firstName: "fname2",
-            middleName: "mName2",
-            lastName: "lName2",
-            location: "loc2"
-    } as ProfileResponse);
+    const profileDataRes = await (await getProfileData(testRequest)).json();
+
+    expect(profileDataRes.success).toBeTruthy();
+    expect(profileDataRes.profile).toBeDefined();
+    expect(profileDataRes.profile).toEqual({
+        firstName: "fname2",
+        middleName: "mName2",
+        lastName: "lName2",
+        city: "Dallas",
+        state: "TX",
+        street: "423263 coolStreetName Dr",
+        zip: "98765"
+    });
+    expect(profileDataRes.paymentInfo).toBeDefined();
+
+    // expect(await (await getProfileData(testRequest)).json()).toEqual({
+    //         success: true,
+    //         profile: {
+    //             firstName: "fname2",
+    //             middleName: "mName2",
+    //             lastName: "lName2",
+    //             city: "Dallas",
+    //             state: "TX",
+    //             street: "423263 coolStreetName Dr",
+    //             zip: "98765"
+    //         },
+    //         paymentInfo: {
+                
+    //         }
+    // } as ProfileResponse);
 })
 
 test('profile not found test', async () => {

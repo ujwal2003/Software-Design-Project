@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment } from '../services/userService';
+import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment, updatePayment } from '../services/userService';
 import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
 import { isAccessTokenValid_simple } from './authController';
 
@@ -18,14 +18,27 @@ export async function getProfileData(requestBody: ProfileRequest): Promise<Respo
         const profile = await getProfile(username);
 
         if (profile) {
+            const profilePaymentInfo = profile.paymentInfo;
+            const resPaymentInfo = profilePaymentInfo ? {
+                cardName: profilePaymentInfo.cardName,
+                cardNumber: profilePaymentInfo.creditCardNumber,
+                expiration: profilePaymentInfo.cardExpiration,
+                cardCVV: profilePaymentInfo.cardCVV
+            } : null;
 
             const response: ProfileResponse = {
                 success: true,
-                _id: profile._id,
-                firstName: profile.firstName,
-                middleName: profile.middleName,
-                lastName: profile.lastName,
-                location: profile.location,
+                profile: {
+                    firstName: profile.firstName,
+                    middleName: profile.middleName,
+                    lastName: profile.lastName,
+                    city: profile.city,
+                    state: profile.state,
+                    street: profile.street,
+                    zip: profile.zip
+                },
+
+                paymentInfo: resPaymentInfo
             };
             return json(response, { status: 200 });
         } else {
@@ -168,7 +181,6 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
     }
 }
 
-
 export async function updateAccountData(requestBody: UpdateAccountRequest): Promise<Response>{
     try {
         const { username, accessToken } = requestBody;
@@ -181,10 +193,22 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
             } as UnauthorizedResponse, {status: 401});
         }
 
-        const { firstName, middleName, lastName, location } = requestBody;
-        const updatedAccount = await updateAccount(username, firstName, middleName, lastName, location);
+        let updatedProfile: any;
+        if(requestBody.profileUpdates) {
+            const { firstName, middleName, lastName, street, city, state, zip } = requestBody.profileUpdates;
+            updatedProfile = await updateAccount(username, firstName, middleName, lastName, city, state, street, zip);
+        }
 
-        if (updatedAccount) {
+        let updatedPayment: boolean;
+        if(requestBody.paymentUpdates) {
+            const { cardName, cardNum, cvv, expiry } = requestBody.paymentUpdates;
+            updatedPayment = await updatePayment(username, cardName, cardNum, cvv, expiry);
+        } else {
+            updatedPayment = true;
+        }
+
+
+        if (updatedProfile && updatedPayment) {
             const response: GeneralAPIResponse = {
                 success: true,
                 message: "Account update successful"
