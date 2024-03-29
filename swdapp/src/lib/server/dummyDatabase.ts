@@ -10,7 +10,8 @@ export interface dummyReceiptSchema {
     quoteID: string,
     purchaseDate: Date,
     deliveryDate: Date,
-    tax: number
+    tax: number,
+    price: number
 };
 
 export interface dummyPaymentInfoSchema {
@@ -190,21 +191,24 @@ export const dummyUsersModel: dummyUserSchema[] = [
                     quoteID: "311650601c91eb0501b75a98",
                     purchaseDate: new Date("2024-03-10"),
                     deliveryDate: new Date("2024-03-11"),
-                    tax: 2.10
+                    tax: 2.10,
+                    price: 25.23
                 },
                 {
                     _id: "aeae92d4b6478cb65d2fc6c8",
                     quoteID: "b991d60266e4a73503571c61",
                     purchaseDate: new Date("2024-03-18"),
                     deliveryDate: new Date("2024-03-19"),
-                    tax: 4.52
+                    tax: 4.52,
+                    price: 10.24
                 },
                 {
                     _id: "777287681d68d56ebac8e635",
                     quoteID: "2593b58ba4dc28e2b4e1edbd",
                     purchaseDate: new Date("2024-03-22"),
                     deliveryDate: new Date("2024-03-24"),
-                    tax: 5.72
+                    tax: 5.72,
+                    price: 300.21
                 }
             ],
             paymentInfo: {
