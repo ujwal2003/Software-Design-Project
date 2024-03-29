@@ -60,8 +60,28 @@ test('successful account update when profile is completely empty test', async ()
         success: true,
         message: "Account update successful"
     });
-    
+})
 
+test('successful account update when payment is completely empty test', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser2',
+        password: 'unsecurePassword2'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: UpdateAccountRequest = {
+        username: 'dummyUser2',
+        accessToken: loginRes.response.accessToken,
+        paymentUpdates: {
+            cardName: 'new card'
+        }
+    }
+    
+    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+        success: true,
+        message: "Account update successful"
+    });
 })
 
 test('failure to update account due to invalid access token', async () => {
