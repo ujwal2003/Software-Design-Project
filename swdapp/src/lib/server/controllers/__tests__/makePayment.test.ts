@@ -89,5 +89,22 @@ test('unsuccesful payment due to internal error', async () => {
 })
 
 test('unsuccesful payment due to no payment info set', async () => {
-    
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser2',
+        password: 'unsecurePassword2'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: MakePaymentRequest = {
+        username: 'dummyUser2',
+        accessToken: loginRes.response.accessToken,
+        company: "Exxon",
+        price: 30
+    }
+
+    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
+        success: false,
+        message: "Payment failed"
+    } as GeneralAPIResponse);
 })
