@@ -331,7 +331,8 @@
                             <form on:submit={handleSubmit}>
                                 <div class="flex flex-col">
                                     <label class="mt-4 text-gray-800" for="street">Address</label>
-                                    <input disabled
+                                    <input
+                                        disabled={nameFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="street"
@@ -340,7 +341,8 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="city">City</label>
-                                    <input disabled
+                                    <input
+                                        disabled={nameFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="city"
@@ -349,7 +351,8 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="state">State</label>
-                                    <input disabled
+                                    <input
+                                        disabled={nameFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="state"
@@ -358,8 +361,9 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="zip">Zip Code</label>
-                                    <input disabled
-                                        class={textBoxStyle} 
+                                    <input
+                                        disabled={nameFormDisabled}
+                                        class={textBoxStyle}
                                         type="text" 
                                         id="zip" 
                                         bind:value={userAddress.zip} />
