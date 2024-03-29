@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment } from '../services/userService';
+import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment, updatePayment } from '../services/userService';
 import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
 import { isAccessTokenValid_simple } from './authController';
 
@@ -193,10 +193,22 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
             } as UnauthorizedResponse, {status: 401});
         }
 
-        const { firstName, middleName, lastName, street, city, state, zip } = requestBody;
-        const updatedAccount = await updateAccount(username, firstName, middleName, lastName, city, state, street, zip);
+        let updatedProfile: any;
+        if(requestBody.profileUpdates) {
+            const { firstName, middleName, lastName, street, city, state, zip } = requestBody.profileUpdates;
+            updatedProfile = await updateAccount(username, firstName, middleName, lastName, city, state, street, zip);
+        }
 
-        if (updatedAccount) {
+        let updatedPayment: boolean;
+        if(requestBody.paymentUpdates) {
+            const { cardName, cardNum, cvv, expiry } = requestBody.paymentUpdates;
+            updatedPayment = await updatePayment(username, cardName, cardNum, cvv, expiry);
+        } else {
+            updatedPayment = true;
+        }
+
+
+        if (updatedProfile && updatedPayment) {
             const response: GeneralAPIResponse = {
                 success: true,
                 message: "Account update successful"

@@ -74,14 +74,21 @@ export interface GenerateQuoteResponse {
 export interface UpdateAccountRequest {
     username: string,
     accessToken: string,
-    firstName?: string,
-    middleName?: string,
-    lastName?: string,
-    // location?: string
-    street?: string,
-    state?: string,
-    city?: string,
-    zip?: string
+    profileUpdates? : {
+        firstName?: string,
+        middleName?: string,
+        lastName?: string,
+        street?: string,
+        state?: string,
+        city?: string,
+        zip?: string
+    },
+    paymentUpdates? : {
+        cardName?: string,
+        cardNum?: string, 
+        cvv?: string, 
+        expiry?: Date
+    }
 }
 
 export interface MakePaymentRequest {

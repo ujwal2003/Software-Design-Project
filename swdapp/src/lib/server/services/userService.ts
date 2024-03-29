@@ -121,12 +121,29 @@ export async function updateAccount(username: string, firstName?: string, middle
     return profile;
 }
 
-export async function updatePayment(username: string) {
+export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
     const user = dummyUsersModel.find(user => user.username === username);
     if(!user || !user.profile)
-        return;
+        return false;
 
-    const userPayment = user.profile.paymentInfo;
+    let userPayment = user.profile.paymentInfo;
+
+    if(!userPayment) {
+        userPayment = {
+            _id: crypto.randomBytes(24 / 2).toString('hex'),
+            cardName: '',
+            creditCardNumber: '',
+            cardCVV: '',
+            cardExpiration: new Date(-8640000000000000)
+        }
+    }
+
+    userPayment.cardName = cardName ? cardName : userPayment.cardName;
+    userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
+    userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
+    userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
+
+    return true;
 }
 
 export async function makePayment(username: string, price: number, companyName: string){
