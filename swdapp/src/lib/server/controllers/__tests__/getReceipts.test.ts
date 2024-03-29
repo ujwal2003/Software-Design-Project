@@ -35,21 +35,24 @@ test('successful purchase history test', async () => {
                 quoteID: "311650601c91eb0501b75a98",
                 purchaseDate: "2024-03-10T00:00:00.000Z",
                 deliveryDate: "2024-03-11T00:00:00.000Z",
-                tax: 2.10
+                tax: 2.10,
+                price: 25.23
             },
             {
                 _id: "aeae92d4b6478cb65d2fc6c8",
                 quoteID: "b991d60266e4a73503571c61",
                 purchaseDate: "2024-03-18T00:00:00.000Z",
                 deliveryDate: "2024-03-19T00:00:00.000Z",
-                tax: 4.52
+                tax: 4.52,
+                price: 10.24
             },
             {
                 _id: "777287681d68d56ebac8e635",
                 quoteID: "2593b58ba4dc28e2b4e1edbd",
                 purchaseDate: "2024-03-22T00:00:00.000Z",
                 deliveryDate: "2024-03-24T00:00:00.000Z",
-                tax: 5.72
+                tax: 5.72,
+                price: 300.21
             }
         ] 
     });
@@ -84,6 +87,25 @@ test('purchase history not found test', async () => {
 
     const testRequest: PurchaseHistoryRequest = {
         username: 'dummyUser1',
+        accessToken: loginRes.response.accessToken
+    }
+
+    expect(await (await getReceipts(testRequest)).json()).toEqual({
+        success: false,
+        message: "Purchase history not found"
+    } as GeneralAPIResponse);
+})
+
+test('purchase history not found test', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser1',
+        password: 'unsecurePassword1'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: PurchaseHistoryRequest = {
+        username: 'dummyUserNew',
         accessToken: loginRes.response.accessToken
     }
 
