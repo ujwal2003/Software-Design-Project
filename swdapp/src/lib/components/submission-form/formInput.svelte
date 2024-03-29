@@ -13,7 +13,7 @@
             focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 
             disabled:pointer-events-none bg-slate-100
         `;
-
+    
     function handleInput (event: any) {
         dispatch("formInput", event.target.value);
     }
@@ -33,6 +33,7 @@
             type="password"
             class={inputStyle}
             placeholder={placeholderText}
+            on:input={(e) => handleInput(e)}
         />
     {/if}
 </div>

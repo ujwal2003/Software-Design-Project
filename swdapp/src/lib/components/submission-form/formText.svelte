@@ -10,7 +10,7 @@
             <slot></slot>
         </p>
     {:else if description}
-        <p class="text-sm text-[#64748B]">
+        <p class="text-sm font-normal text-[#64748B]">
             <slot></slot>
         </p>
     {:else if formLabel}
