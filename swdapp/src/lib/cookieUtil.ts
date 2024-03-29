@@ -4,7 +4,7 @@
  * @param value value of the cookie (if it is JSON it must be passed in as a string with `JSON.stringify`)
  * @param durationMillis how long the cookie will last in milliseconds, default is 5 minutes
  */
-export function setCookie(name: string, value: any, durationMillis: number = 5*60*1000) {
+export function setCookie(name: string, value: any, durationMillis: number = 20*60*1000) {
     const expires = new Date(Date.now() + durationMillis).toUTCString();
     document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
