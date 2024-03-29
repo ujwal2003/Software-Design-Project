@@ -118,3 +118,26 @@ test('failure to update account due to internal error', async () => {
         message: "Request failed due to error"
     } as GeneralAPIResponse);
 })
+
+test('failure due to user not found', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser3',
+        password: 'unsecurePassword3'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: UpdateAccountRequest = {
+        username: 'dummyUserNewUser',
+        accessToken: loginRes.response.accessToken,
+        profileUpdates: {
+            firstName: "fnameNew",
+            lastName: "lnameNew"
+        }
+    }
+    
+    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+        success: false,
+        message: "Account update failed"
+    });
+})
