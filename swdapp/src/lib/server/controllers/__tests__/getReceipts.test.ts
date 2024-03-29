@@ -96,6 +96,25 @@ test('purchase history not found test', async () => {
     } as GeneralAPIResponse);
 })
 
+test('purchase history not found test', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser1',
+        password: 'unsecurePassword1'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: PurchaseHistoryRequest = {
+        username: 'dummyUserNew',
+        accessToken: loginRes.response.accessToken
+    }
+
+    expect(await (await getReceipts(testRequest)).json()).toEqual({
+        success: false,
+        message: "Purchase history not found"
+    } as GeneralAPIResponse);
+})
+
 test('unsuccesful quote retrieval due to invalid access token', async () => {
     const testRequest: QuoteHistoryRequest = {
         username: 'dummyUser3',

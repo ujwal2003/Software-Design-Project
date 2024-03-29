@@ -92,6 +92,25 @@ test('profile not found test', async () => {
     } as GeneralAPIResponse);
 })
 
+test('user not found test', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser1',
+        password: 'unsecurePassword1'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: QuoteHistoryRequest = {
+        username: 'dummyUserNew',
+        accessToken: loginRes.response.accessToken
+    }
+
+    expect(await (await getQuoteHistoryData(testRequest)).json()).toEqual({
+        success: false,
+        message: "Quote history not found"
+    } as GeneralAPIResponse);
+})
+
 test('unsuccesful quote retrieval due to invalid access token', async () => {
     const testRequest: QuoteHistoryRequest = {
         username: 'dummyUser3',

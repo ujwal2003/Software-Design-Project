@@ -78,6 +78,25 @@ test('profile not found test', async () => {
     } as GeneralAPIResponse);
 })
 
+test('user not found test', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser1',
+        password: 'unsecurePassword1'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: ProfileRequest = {
+        username: 'dummyUserNew',
+        accessToken: loginRes.response.accessToken
+    }
+
+    expect(await (await getProfileData(testRequest)).json()).toEqual({
+        success: false,
+        message: "Profile not found"
+    } as GeneralAPIResponse);
+})
+
 test('profile not found due to invalid access token', async () => {
     const testRequest: ProfileRequest = {
         username: "dummyUser3",
