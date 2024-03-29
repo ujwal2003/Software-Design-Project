@@ -6,14 +6,20 @@
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { postRequest, patchRequest } from '$lib/requests';
-	import { getCookie } from '$lib/cookieUtil';
+	import { deleteCookie, getCookie } from '$lib/cookieUtil';
 
 	onMount(async () => {
-		if(!await isClientAllowed()) {
-			failureAlert("please log in to access this page");
-			goto('/login');
-		}
-		getUserData();
+		try {
+            if(!await isClientAllowed()) {
+            			failureAlert("please log in to access this page");
+            			goto('/login');
+            		}
+            		getUserData();
+        } catch (error) {
+            deleteCookie('user_session');
+            failureAlert('Error, please log in...');
+            goto('/login');
+        }
 	});
 
 	interface UserProfile {
@@ -83,6 +89,9 @@
 			};
 		} catch (error) {
 			console.error("Error fetching user data:", error);
+            deleteCookie('user_session');
+            failureAlert('Error, please log in again...');
+            goto('/login');
 		}
 	}
 

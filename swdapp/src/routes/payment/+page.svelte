@@ -5,6 +5,8 @@
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
+	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
+	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
@@ -13,19 +15,9 @@
 		}
 	});
 
-	let gallonsRequested = 0;
-	let deliveryAddress = '';
-	let deliveryDate = '';
-
-	function generateQuote() {
-		// You can implement your logic for generating the quote here
-		const suggestedPricePerGallon = 2.50; // Example value
-		const totalAmountDue = gallonsRequested * suggestedPricePerGallon;
-		
-		// Display the suggested price per gallon and total amount due
-		alert(`Suggested Price Per Gallon: $${suggestedPricePerGallon.toFixed(2)}\nTotal Amount Due: $${totalAmountDue.toFixed(2)}`);
+	function purchaseQuote() {
+		console.log("clicked purchase!")
 	}
-
 </script>
 
 
@@ -48,31 +40,31 @@
 		</aside>
 
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
-			<p class="pl-8 pt-4 text-3xl">Generate Quote</p>
-			<form class="p-8">
-			  <div class="mb-4">
-				<label for="gallonsRequested" class="block text-sm font-semibold mb-2">Gallons Requested:</label>
-				<input type="number" id="gallonsRequested" bind:value={gallonsRequested} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
-			  </div>
-			  <div class="mb-4">
-				<label for="deliveryAddress" class="block text-sm font-semibold mb-2">Delivery Address:</label>
-				<input type="text" id="deliveryAddress" bind:value={deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
-			  </div>
-			  <div class="mb-4">
-				<label for="deliveryDate" class="block text-sm font-semibold mb-2">Delivery Date:</label>
-				<input type="date" id="deliveryDate" bind:value={deliveryDate} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
-			  </div>
-			  <button type="button" on:click={generateQuote} class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-				Generate Quote
-			  </button>
-			</form>
+			<p class="pl-8 pt-4 text-3xl">Purchase Quote</p>
+
+			<div class="p-8">
+				<DescriptionList>
+					<DescListItem details={{title: "Quote Generation Date", text: "XX/XX/XXXX"}} />
+					<DescListItem details={{title: "Delivery Location", text: "location"}} />
+					<DescListItem details={{title: "Gallons", text: "XX gal"}} />
+					<DescListItem details={{title: "Price per gal", text: "$XX.XX"}} />
+					<DescListItem details={{title: "Tax", text: "$XX.XX"}} />
+					<DescListItem details={{title: "Total", text: "$XX.XX"}} />
+				</DescriptionList>
+			</div>
+
+			<div class="px-8">
+				<button type="button" on:click={purchaseQuote} class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+				  Confirm Purchase
+				</button>
+			</div>
+
 			<div class="p-8 bg-white mt-8">
-			  <p class="font-semibold">Suggested Price Per Gallon:</p>
-			  <!-- This span will display the suggested price per gallon -->
-			  <span class="block">$2.50</span>
-			  <p class="font-semibold mt-4">Total Amount Due:</p>
-			  <!-- This span will display the total amount due -->
-			  <span class="block">$0.00</span>
+			  <p class="font-semibold">Payment Method:</p>
+			  <span class="block">specified in <a href='/profile'><u>profile</u></a></span>
+
+			  <!-- <p class="font-semibold mt-4">Total Amount Due:</p> -->
+			  <!-- <span class="block">$0.00</span> -->
 			</div>
 		  </section>
 
