@@ -1,7 +1,7 @@
 import { beforeAll, expect, test, vi } from 'vitest';
 
 import { updateAccountData } from '../profileController';
-import type { UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
+import type { UnauthorizedResponse, UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 
@@ -62,4 +62,28 @@ test('successful account update when profile is completely empty test', async ()
     });
     
 
+})
+
+test('failure to update account due to invalid access token', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser1',
+        password: 'unsecurePassword1'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: UpdateAccountRequest = {
+        username: 'dummyUser1',
+        accessToken: loginRes.response.accessToken + 'abcd',
+        profileUpdates: {
+            firstName: "John",
+            lastName: "Doe"
+        }
+    }
+
+    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+        success: true,
+        unauthorized: true,
+        message: 'invalid access token'
+    } as UnauthorizedResponse);
 })
