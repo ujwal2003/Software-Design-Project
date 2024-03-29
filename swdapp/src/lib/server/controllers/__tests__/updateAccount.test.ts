@@ -1,7 +1,7 @@
 import { beforeAll, expect, test, vi } from 'vitest';
 
 import { updateAccountData } from '../profileController';
-import type { UnauthorizedResponse, UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, UnauthorizedResponse, UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 
@@ -86,4 +86,27 @@ test('failure to update account due to invalid access token', async () => {
         unauthorized: true,
         message: 'invalid access token'
     } as UnauthorizedResponse);
+})
+
+test('succesful payment information update', async () => {
+    const testLoginRequest: LoginRequest = {
+        username: 'dummyUser3',
+        password: 'unsecurePassword3'
+    }
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+
+    const testRequest: UpdateAccountRequest = {
+        username: 'dummyUser3',
+        accessToken: loginRes.response.accessToken,
+        paymentUpdates: {
+            cardName: "user 1's card",
+            cvv: "123"
+        }
+    }
+
+    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+        success: true,
+        message: "Account update successful"
+    } as GeneralAPIResponse);
 })

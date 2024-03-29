@@ -197,6 +197,8 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
         if(requestBody.profileUpdates) {
             const { firstName, middleName, lastName, street, city, state, zip } = requestBody.profileUpdates;
             updatedProfile = await updateAccount(username, firstName, middleName, lastName, city, state, street, zip);
+        } else {
+            updatedProfile = true;
         }
 
         let updatedPayment: boolean;
