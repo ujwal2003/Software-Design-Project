@@ -110,3 +110,11 @@ test('succesful payment information update', async () => {
         message: "Account update successful"
     } as GeneralAPIResponse);
 })
+
+test('failure to update account due to internal error', async () => {
+    //@ts-expect-error
+    expect(await (await updateAccountData()).json()).toEqual({
+        success: false,
+        message: "Request failed due to error"
+    } as GeneralAPIResponse);
+})
