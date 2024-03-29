@@ -85,7 +85,7 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     return quote;
 }
 
-export async function updateAccount(username: string, firstName?: string, middleName?: string, lastName?: string, location?: string){
+export async function updateAccount(username: string, firstName?: string, middleName?: string, lastName?: string, city?: string, state?: string, street?: string, zip?: string) {
     const user = dummyUsersModel.find(user => user.username === username);
     
     if (!user) {
@@ -99,7 +99,10 @@ export async function updateAccount(username: string, firstName?: string, middle
             firstName: '',
             middleName: '',
             lastName: '',
-            location: '',
+            city: '',
+            state: '',
+            street: '',
+            zip: '',
             quoteHistory: null,
             purchaseHistory: null,
             paymentInfo: null
@@ -107,23 +110,40 @@ export async function updateAccount(username: string, firstName?: string, middle
         user.profile = profile;
     }
 
-    if (firstName !== undefined) {
-        profile.firstName = firstName;
-    }
-
-    if (middleName !== undefined) {
-        profile.middleName = middleName;
-    }
-
-    if (lastName !== undefined) {
-        profile.lastName = lastName;
-    }
-
-    if (location !== undefined) {
-        profile.location = location;
-    }
+    profile.firstName = firstName ? firstName : profile.firstName;
+    profile.middleName = middleName ? middleName : profile.middleName;
+    profile.lastName = lastName ? lastName : profile.lastName;
+    profile.city = city ? city : profile.city;
+    profile.state = state ? state : profile.state;
+    profile.street = street ? street : profile.street;
+    profile.zip = zip ? zip : profile.zip;
 
     return profile;
+}
+
+export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
+    const user = dummyUsersModel.find(user => user.username === username);
+    if(!user || !user.profile)
+        return false;
+
+    let userPayment = user.profile.paymentInfo;
+
+    if(!userPayment) {
+        userPayment = {
+            _id: crypto.randomBytes(24 / 2).toString('hex'),
+            cardName: '',
+            creditCardNumber: '',
+            cardCVV: '',
+            cardExpiration: new Date(-8640000000000000)
+        }
+    }
+
+    userPayment.cardName = cardName ? cardName : userPayment.cardName;
+    userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
+    userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
+    userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
+
+    return true;
 }
 
 export async function makePayment(username: string, price: number, companyName: string){

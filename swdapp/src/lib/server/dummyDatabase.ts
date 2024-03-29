@@ -15,6 +15,7 @@ export interface dummyReceiptSchema {
 
 export interface dummyPaymentInfoSchema {
     _id: string,
+    cardName: string,
     creditCardNumber: string,
     cardExpiration: Date,
     cardCVV: string
@@ -25,7 +26,11 @@ interface dummyProfileSchema {
     firstName: string,
     middleName: string,
     lastName: string,
-    location: string,
+    // location: string,
+    street: string,
+    state: string,
+    city: string,
+    zip: string,
     quoteHistory: dummyQuoteSchema[] | null,
     purchaseHistory: dummyReceiptSchema[] | null,
     paymentInfo: dummyPaymentInfoSchema | null
@@ -70,7 +75,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fName1",
             middleName: "",
             lastName: "lName1",
-            location: "loc1",
+            city: "houston",
+            state: "TX",
+            street: "314152 amazingStreetName Dr",
+            zip: "12345",
             quoteHistory: [],
             purchaseHistory: [],
             paymentInfo: null
@@ -88,7 +96,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fname2",
             middleName: "mName2",
             lastName: "lName2",
-            location: "address2 city2 state2 zip2",
+            city: "Dallas",
+            state: "TX",
+            street: "423263 coolStreetName Dr",
+            zip: "98765",
             quoteHistory: [
                 {
                     _id: "9e8e9a6bcc756b25eb1bef22",
@@ -112,6 +123,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
             purchaseHistory: [],
             paymentInfo: {
                 _id: "9e35198f5ad29c78b6fd2828",
+                cardName: "fname2's card",
                 creditCardNumber: "5844203091667951",
                 cardExpiration: new Date("2026-05-01"),
                 cardCVV: "345"
@@ -130,7 +142,10 @@ export const dummyUsersModel: dummyUserSchema[] = [
             firstName: "fName3",
             middleName: "",
             lastName: "lName3",
-            location: "loc3",
+            city: "Austin",
+            state: "TX",
+            street: "102030 middleOfNowhere St",
+            zip: "45678",
             quoteHistory: [
                 {
                     _id: "28526d313bc11f3f84a38cb7",
@@ -194,6 +209,7 @@ export const dummyUsersModel: dummyUserSchema[] = [
             ],
             paymentInfo: {
                 _id: "03d895ad8ea604df81b5742d",
+                cardName: "fName3's card",
                 creditCardNumber: "0410012782701014",
                 cardExpiration: new Date("2027-05-01"),
                 cardCVV: "543"
