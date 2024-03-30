@@ -11,10 +11,10 @@
 	onMount(async () => {
 		try {
             if(!await isClientAllowed()) {
-            			failureAlert("please log in to access this page");
-            			goto('/login');
-            		}
-            		getUserData();
+                failureAlert("please log in to access this page");
+                goto('/login');
+            }
+            await getUserData();
         } catch (error) {
             deleteCookie('user_session');
             failureAlert('Error, please log in...');
@@ -57,36 +57,61 @@
 			let profileReq = JSON.parse(cookie);
 
 			const profileAPIRes = await postRequest('api/profile/info', profileReq);
+            
+			// if (!profileAPIRes.ok) {
+            // 	throw new Error("Failed to fetch profile data");
+            // }
+                
+            const profileResJSON = await profileAPIRes.json();
 
-			if (!profileAPIRes.ok) {
-				throw new Error("Failed to fetch profile data");
+			if (!profileResJSON.success && profileResJSON.unauthorized) {
+				failureAlert("please try logging in again...");
+                goto('login');
+                return;
 			}
 
-			const profileResJSON = await profileAPIRes.json();
+            if(!profileResJSON.success) {
+                userProfile = {
+                    firstName: '',
+                    middleName: '',
+                    lastName: ''
+                };
+    
+                userPayment = {
+                    cardName: '',
+                    cardNumber: '',
+                    expirationDate: '',
+                    CVV: ''
+                };
+    
+                userAddress = {
+                    street: '',
+                    city: '',
+                    state: '',
+                    zip: ''
+                };
+            } else {
+                userProfile = {
+                    firstName: profileResJSON.profile.firstName,
+                    middleName: profileResJSON.profile.middleName,
+                    lastName: profileResJSON.profile.lastName
+                };
+    
+                userPayment = {
+                    cardName: profileResJSON.paymentInfo.cardName,
+                    cardNumber: profileResJSON.paymentInfo.cardNumber,
+                    expirationDate: profileResJSON.paymentInfo.expiration.slice(0, 10),
+                    CVV: profileResJSON.paymentInfo.cardCVV
+                };
+    
+                userAddress = {
+                    street: profileResJSON.profile.street,
+                    city: profileResJSON.profile.city,
+                    state: profileResJSON.profile.state,
+                    zip: profileResJSON.profile.zip
+                };
+            }
 
-			if (!profileResJSON.success || profileResJSON.unauthorized) {
-				throw new Error("Unauthorized access or unsuccessful response");
-			}
-
-			userProfile = {
-				firstName: profileResJSON.profile.firstName,
-				middleName: profileResJSON.profile.middleName,
-				lastName: profileResJSON.profile.lastName
-			};
-
-			userPayment = {
-				cardName: profileResJSON.paymentInfo.cardName,
-				cardNumber: profileResJSON.paymentInfo.cardNumber,
-				expirationDate: profileResJSON.paymentInfo.expiration.slice(0, 10),
-				CVV: profileResJSON.paymentInfo.cardCVV
-			};
-
-			userAddress = {
-				street: profileResJSON.profile.street,
-				city: profileResJSON.profile.city,
-				state: profileResJSON.profile.state,
-				zip: profileResJSON.profile.zip
-			};
 		} catch (error) {
 			console.error("Error fetching user data:", error);
             deleteCookie('user_session');
