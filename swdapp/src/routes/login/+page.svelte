@@ -2,6 +2,10 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	import InputForm from '$lib/components/inputForm.svelte';
+	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
+	import { postRequest } from '$lib/requests';
+	import { deleteCookie, setCookie } from '$lib/cookieUtil';
+	import { goto } from '$app/navigation';
 
 	const loginTopDescription =
 		'Once you login you can create new quotes, and set your quote search settings!';
@@ -18,8 +22,45 @@
 		loginVals = e.detail;
 	}
 
-	function handleLoginSubmit() {
-		console.log('Login Submission Clicked!');
+	async function handleLoginSubmit() {
+		if(loginVals.length < 2 || !loginVals[0].inputValue || !loginVals[1].inputValue) {
+			failureAlert('login fields cannot be empty!');
+			return;
+		}
+
+		const loginReq = {
+			username: loginVals[0].inputValue,
+			password: loginVals[1].inputValue
+		}
+
+		const loginAPIRes = await postRequest('api/auth/login', loginReq);
+		const loginResJSON = await loginAPIRes.json();
+		
+		if(!loginResJSON.success) {
+			const failReason = loginResJSON.response.failType;
+
+			if(failReason == "invalid_user") {
+				failureAlert(`${loginReq.username} not found, please register first if you do not have an account.`);
+				return;
+			} else if(failReason == "invalid_pass") {
+				failureAlert("The password you entered is incorrect.");
+				return;
+			}
+
+			failureAlert("login failed due to internal error, please try again");
+			return;
+		}
+
+		successAlert("login succesful. Redirecting...");
+
+		deleteCookie('user_session');
+		setCookie('user_session', JSON.stringify({
+			username: loginReq.username,
+			accessToken: loginResJSON.response.accessToken,
+			refreshToken: loginResJSON.response.refreshToken
+		}));
+
+		goto('/profile');
 	}
 </script>
 
@@ -43,7 +84,7 @@
 		<div class="w-1/2">
 			<InputForm
 				numInputs={2}
-				labels={['Username or Email', 'Password']}
+				labels={['Username', 'Password']}
 				inputTypes={['text', 'password']}
 				fromDescription={{
 					title: 'Login to An Existing Account',

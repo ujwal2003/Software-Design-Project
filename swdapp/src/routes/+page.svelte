@@ -1,6 +1,14 @@
-<script>
+<script lang="ts">
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
+	import { onMount } from 'svelte';
+	import { getCookie } from '$lib/cookieUtil';
+
+	let isLoggedIn: boolean = false;
+	onMount(() => {
+		const cookie = getCookie('user_session');
+		isLoggedIn = cookie ? true : false;
+	});
 </script>
 
 <div class="">
@@ -54,31 +62,59 @@
 
 					<!-- Buttons -->
 					<div class="mt-8 flex justify-center gap-3">
-						<a
-							class="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
-							href="/register"
-						>
-							Register Now
-							<svg
-								class="size-4 flex-shrink-0"
-								xmlns="http://www.w3.org/2000/svg"
-								width="24"
-								height="24"
-								viewBox="0 0 24 24"
-								fill="none"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+						{#if isLoggedIn}
+							<a
+								class="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+								href="/quotes/new"
 							>
-						</a>
+								Get A Quote
+								<svg
+									class="size-4 flex-shrink-0"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+								>
+							</a>
 
-						<button
-							type="button"
-							class="inline-flex items-center gap-x-2 rounded-lg border border-gray-100 px-4 py-3 text-sm font-semibold text-gray-100 hover:border-gray-300 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-50"
-						>
-							<a href="/login">Login</a>
-						</button>
+							<button
+								type="button"
+								class="inline-flex items-center gap-x-2 rounded-lg border border-gray-100 px-4 py-3 text-sm font-semibold text-gray-100 hover:border-gray-300 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-50"
+							>
+								<a href="/profile">View Profile</a>
+							</button>
+						{:else}
+							<a
+								class="inline-flex items-center gap-x-2 rounded-lg border border-transparent bg-blue-600 px-4 py-3 text-sm font-semibold text-white hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600"
+								href="/register"
+							>
+								Register Now
+								<svg
+									class="size-4 flex-shrink-0"
+									xmlns="http://www.w3.org/2000/svg"
+									width="24"
+									height="24"
+									viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+								>
+							</a>
+
+							<button
+								type="button"
+								class="inline-flex items-center gap-x-2 rounded-lg border border-gray-100 px-4 py-3 text-sm font-semibold text-gray-100 hover:border-gray-300 hover:text-gray-300 disabled:pointer-events-none disabled:opacity-50"
+							>
+								<a href="/login">Login</a>
+							</button>
+						{/if}
 					</div>
 					<!-- End Buttons -->
 				</div>

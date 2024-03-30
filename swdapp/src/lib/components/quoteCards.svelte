@@ -1,4 +1,5 @@
 <script lang="ts">
+	console.warn("WARNING: QuoteCard has been deprecated in favor of the Card and CardList components");
 	import { createEventDispatcher } from 'svelte';
 
 	/**

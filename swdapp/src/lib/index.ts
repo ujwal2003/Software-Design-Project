@@ -70,40 +70,40 @@ export let dummyQuoteData: DummyQuoteData[] = [
 		quoteDate: '2/17/2024',
 		quoteTime: '9:30am',
 		loc: 'houston',
-		deliveryDate: '2/18/2024',
+		deliveryDate: '2/19/2024',
 		gallons: 9,
 		price: 4.86,
 		tax: 3.58
 	},
 	{
-		_id: 'c69380778bd5ed7be644',
-		quoteDate: '2/17/2024',
-		quoteTime: '9:30am',
+		_id: '9e93bebe1a3ee38e761f',
+		quoteDate: '2/16/2024',
+		quoteTime: '8:30am',
 		loc: 'houston',
-		deliveryDate: '2/18/2024',
-		gallons: 9,
-		price: 4.86,
-		tax: 3.58
+		deliveryDate: '2/17/2024',
+		gallons: 11,
+		price: 6.86,
+		tax: 2.58
 	},
 	{
-		_id: 'c69380778bd5ed7be644',
-		quoteDate: '2/17/2024',
-		quoteTime: '9:30am',
+		_id: 'd2e94c214cdae452bacb',
+		quoteDate: '2/15/2024',
+		quoteTime: '7:30am',
 		loc: 'houston',
-		deliveryDate: '2/18/2024',
-		gallons: 9,
-		price: 4.86,
-		tax: 3.58
+		deliveryDate: '2/16/2024',
+		gallons: 2,
+		price: 3.86,
+		tax: 1.58
 	},
 	{
-		_id: 'c69380778bd5ed7be644',
-		quoteDate: '2/17/2024',
-		quoteTime: '9:30am',
+		_id: '50b4e00f06f3383dbc16',
+		quoteDate: '2/11/2024',
+		quoteTime: '6:30am',
 		loc: 'houston',
-		deliveryDate: '2/18/2024',
-		gallons: 9,
-		price: 4.86,
-		tax: 3.58
+		deliveryDate: '2/13/2024',
+		gallons: 19,
+		price: 7.86,
+		tax: 3.78
 	}
 ];
 

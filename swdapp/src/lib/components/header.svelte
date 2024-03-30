@@ -1,10 +1,46 @@
 <script lang="ts">
+	import { deleteCookie, getCookie } from "$lib/cookieUtil";
+	import { onMount } from "svelte";
+	import { failureAlert, genericAlert } from "./toasts/customToasts";
+	import { deleteRequest } from "$lib/requests";
+	import { goto } from "$app/navigation";
+
 	// Variable to control the header transparency for home
 	export let homeHeader: boolean = false;
 	export let buttonColor: string = 'bg-blue-600';
 	export let buttonTextColor: string = 'text-white';
 
 	let headerStyles: string = '';
+
+	let currUser: string;
+	let refToken: string;
+	export let rootAPIRoutePrefix = '';
+
+	let loggedIn: boolean;
+	onMount(async () => {
+		const cookieDat = getCookie('user_session');
+		if(!cookieDat) {
+			loggedIn = false;
+		} else {
+			loggedIn = true;
+			currUser = JSON.parse(cookieDat).username;
+			refToken = JSON.parse(cookieDat).refreshToken;
+		}
+	});
+
+	async function handleLogOutClick() {
+		try {			
+			genericAlert("Logging out...");
+			const res = await (await (deleteRequest(`${rootAPIRoutePrefix}api/auth/logout/`, {
+				username: currUser,
+				refreshToken: refToken
+			}))).json();
+			deleteCookie('user_session');
+			goto('/login');
+		} catch (error) {
+			failureAlert("An error was encountered, please try again.");
+		}
+	}
 
 	homeHeader
 		? (headerStyles = 'absolute bg-transparent top-0 z-10 w-screen bg-transparent overflow-hidden')
@@ -74,14 +110,21 @@
 					<a class="font-medium text-gray-600 hover:text-gray-400" href="/" aria-current="page"
 						>Home</a
 					>
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
-					<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
-					<button
-						type="button"
-						class="inline-flex items-center gap-x-2 rounded-lg border border-transparent px-3 py-2 text-sm font-semibold {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
-					>
-						<a href="/register">Register</a>
-					</button>
+					{#if loggedIn}
+						<a class="font-medium text-gray-600 hover:text-gray-400" href="/profile">Account</a>
+						<button class="font-medium text-gray-600 hover:text-gray-400" on:click={handleLogOutClick}>
+							Logout
+						</button>
+					{:else}
+						<a class="font-medium text-gray-600 hover:text-gray-400" href="/login">Login</a>
+						<button
+							type="button"
+							class="inline-flex items-center gap-x-2 rounded-lg border border-transparent px-3 py-2 text-sm font-semibold {buttonColor} {buttonTextColor} hover:bg-blue-700 disabled:pointer-events-none disabled:opacity-50"
+						>
+							<a href="/register">Register</a>
+						</button>
+					{/if}
+					
 				</div>
 			</div>
 		</nav>

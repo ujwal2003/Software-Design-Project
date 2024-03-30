@@ -2,32 +2,128 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
-	import QuoteCards from "$lib/components/quoteCards.svelte";
+	import CardContainer from "$lib/components/cards/cardContainer.svelte";
+	import Card from "$lib/components/cards/card.svelte";
+	import CardText from "$lib/components/cards/cardText.svelte";
 
 	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 	
-    import { dummyPaymentData } from "$lib";
+	import { onMount } from "svelte";
+	import { isClientAllowed } from "$lib/protected";
+	import { failureAlert, successAlert } from "$lib/components/toasts/customToasts";
+	import { goto } from "$app/navigation";
+	import { postRequest } from '$lib/requests';
+	import { getCookie } from '$lib/cookieUtil';
 
-	let dummyPayments = dummyPaymentData.map((dat) => {
-		return {
-			id: dat._id,
-			date: dat.paymentDate,
-			time: dat.paymentTime,
-			gallons: 0,
-			price: dat.payment
-		};
+	let receipts: any[] = [];
+	let selectedReceipt: any = null;
+	let selectedQuote: any = null;
+ 	let showDescriptionList = false;
+
+	onMount(async () => {
+		if(!await isClientAllowed()) {
+			failureAlert("please log in to access this page");
+			goto("/login");
+		}
+
+		receipts = await getReceipts();
 	});
 
-	// see `selectedQuoteDetails` in /quotes/+page for updating text descriptions
-	function handleCardDetailClick(e: CustomEvent<any>) {
-		console.log(`card with id ${e.detail.quoteID} clicked!`)
+	async function handleCardDetailClick(e: CustomEvent<any>) {
+		const cardID = e.detail.cardID;
+		selectedReceipt = receipts.find(receipt => receipt._id === cardID);
+		selectedQuote = await getQuote(selectedReceipt.quoteID);
+		showDescriptionList = true;
 	}
 
-	// function handleQuoteDetailClick() {
-	// 	console.log("clicked quote detail button!");
-	// }
+	async function getReceipts(){
+
+		const cookie = getCookie('user_session');
+
+		if (!cookie) {
+			return;
+		}
+
+		let receiptReq = JSON.parse(cookie);
+
+		const username = receiptReq.username;
+    	let accessToken = receiptReq.accessToken;
+
+		console.log(username);
+		console.log(accessToken);
+
+		const receiptAPIRes = await postRequest('api/payment/receipts', {username: username, accessToken: accessToken});
+		const receiptResJSON = await receiptAPIRes.json();
+
+		if(!receiptResJSON.success) {
+			const failMsg = receiptResJSON.message;
+			if (failMsg == "Purchase history not found"){
+				failureAlert("No purchase history found.")
+				return [];
+			}
+			else if (failMsg == "Request failed due to error"){
+				failureAlert("Could not retrieve purchase history due to unexpected error.")
+				return [];
+			}
+		}
+
+		return receiptResJSON.purchaseHistory;
+	}
+
+	async function getQuote(_id: string){
+
+		const cookie = getCookie('user_session');
+
+		if (!cookie) {
+			return;
+		}
+
+		let quoteHistReq = JSON.parse(cookie);
+
+		const username = quoteHistReq.username;
+    	let accessToken = quoteHistReq.accessToken;
+
+		const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quiteHistResJSON = await quoteHistAPIRes.json();
+
+		if(!quiteHistResJSON.success) {
+			const failMsg = quiteHistResJSON.message;
+			if (failMsg == "Quote history not found"){
+				failureAlert("No quote history found.")
+				return [];
+			}
+			else if (failMsg == "Request failed due to error"){
+				failureAlert("Could not retrieve quote history due to unexpected error.")
+				return [];
+			}
+		}
+
+		const foundQuote = quiteHistResJSON.quoteHistory.find((quote: any) => quote._id === _id);
+		return foundQuote;
+	}
+
+	function formatDate(dateString: string): string {
+		const date = new Date(dateString);
+
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const year = String(date.getFullYear());
+
+		const formattedDate = `${month}/${day}/${year}`;
+
+		return formattedDate;
+	}
+
+	function formatPrice(price: number): string {
+		if (price % 1 !== 0) {
+			return price.toFixed(2);
+		} else {
+			return price.toFixed(1);
+		}
+	}
+
 </script>
 
 <div class="flex h-screen flex-col">
@@ -39,8 +135,8 @@
 		<!-- left sidebar -->
 		<aside class="justify-left flex h-full w-1/6 bg-[#282828] pl-10 pt-6 text-lg">
 			<nav class="flex flex-col gap-2">
-				<a href="/" class="text-[#CBD5E1]"> Profile </a>
-				<a href="/" class="text-[#CBD5E1]"> Quote History </a>
+				<a href="/profile" class="text-[#CBD5E1]"> Profile </a>
+				<a href="/quotes" class="text-[#CBD5E1]"> Quote History </a>
 			</nav>
 		</aside>
 
@@ -48,28 +144,43 @@
 			<p class="pl-8 pt-4 text-3xl">Payment History</p>
 
 			<div class="flex">
-				<div class="w-1/3 pl-7 pt-4">
-					<QuoteCards
-						quoteCards={dummyPayments}
-						textOverride={{override: true, text: 'Payment: $', showProperty: "price"}}
-						btnName={"Payment Details"}
-						on:cardDetailClick={handleCardDetailClick}
-					/>
+				<div class="{showDescriptionList ? 'w-1/3 pl-7' : 'w-1/3 pl-5'} pt-4">
+					
+					<CardContainer>
+						{#each receipts as receipt}
+						  <Card cardID={receipt._id} btnName={"Payment Details"} on:cardClick={e => {handleCardDetailClick(e)}}>
+							<CardText title>
+							  {`${formatDate(receipt.purchaseDate)} at ${formatDate(receipt.deliveryDate)}`}
+							</CardText>
+							<CardText>
+							  {`Payment: $${receipt.price}`}
+							</CardText>
+						  </Card>
+						{/each}
+					  </CardContainer>
+					
 				</div>
 
-				<div class="ml-6 mr-6 mt-4 w-2/3">
-					<DescriptionList>
-						<DescListItem details={{ title: 'Payment Date', text: 'XX/XX/XXXX' }} />
-						<DescListItem details={{ title: 'Delivery Date', text: 'XX/XX/XXXX' }} />
-						<DescListItem details={{ title: 'Payment', text: '$XXX.XX' }} />
-						<DescListItem details={{ title: 'Tax', text: '$XXX.XX' }} />
-						<DescListItem details={{ title: 'Total', text: '$XXX.XX' }} />
-						<DescListItem details={{ title: 'Description', text: 'You purchased [X] gallons of fuel for $X.XX' }} />
+
+				{#if showDescriptionList && selectedReceipt}
+					<div class="ml-6 mr-6 mt-4 w-2/3">
+						<DescriptionList>
+						<DescListItem details={{ title: 'Purchase Date', text: formatDate(selectedReceipt.purchaseDate) }} />
+						<DescListItem details={{ title: 'Delivery Date', text: formatDate(selectedReceipt.deliveryDate) }} />
+						<DescListItem details={{ title: 'Payment', text: `$${formatPrice(selectedReceipt.price)}` }} />
+						<DescListItem details={{ title: 'Tax', text: `$${formatPrice(selectedReceipt.tax)}` }} />
+						<DescListItem details={{ title: 'Total', text: `$${formatPrice(selectedReceipt.price + selectedReceipt.tax)}` }} />
+						<DescListItem details={{ title: 'Description', text: 'You purchased ' + selectedQuote.gallonsRequested + ' gallons of fuel for ' + `$${formatPrice(selectedReceipt.price + selectedReceipt.tax)}` }} />
+						
 						<div>
 							<!-- <DescListButton btnLabel={"See Quote Details"} btnEvent={"quoteDetailClicked"} on:quoteDetailClicked={handleQuoteDetailClick} /> -->
 						</div>
-					</DescriptionList>
-				</div>
+
+						</DescriptionList>
+					</div>
+					{/if}
+
+
 			</div>
 		</div>
 	</main>
