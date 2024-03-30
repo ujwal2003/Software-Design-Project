@@ -4,37 +4,103 @@
 
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
+	import { getCookie } from '$lib/cookieUtil';
+	import { postRequest } from '$lib/requests';
+
+	let locAddress: string = '';
+
+	let newQuote = {
+		gallonsRequested: 0,
+		deliveryAddress: '',
+		deliveryDate: '',
+		suggestedPrice: 0.0,
+		totalAmountDue: 0
+	};
 
 	onMount(async () => {
 		if(!await isClientAllowed('../')) {
 			failureAlert("You must be logged in to access this page. Please log in.");
 			goto('../login');
 		}
+
+		const cookie = getCookie('user_session');
+		if(!cookie) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+
+		let profileReq = JSON.parse(cookie);
+		const profileAPIRes = await postRequest('../api/profile/info', profileReq);
+		const profileResJSON = await profileAPIRes.json();
+
+		if (!profileResJSON.success && profileResJSON.unauthorized) {
+            failureAlert('Unauthorized, please log in again...');
+			goto('../login');
+			return;
+        }
+
+		if(!profileResJSON.success) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+
+		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
+		newQuote.deliveryAddress = locAddress;
 	});
 
-	let newQuote = {
-		gallonsRequested: 0,
-		deliveryAddress: 'test',
-		deliveryDate: '',
-		suggestedPrice: 0.0,
-		totalAmountDue: 0
-	};
+	async function handleQuoteSubmit() {
+		if(newQuote.gallonsRequested <= 0 || !newQuote.deliveryAddress || !newQuote.deliveryDate) {
+			failureAlert('Form must be completely filled out!');
+			return;
+		}
 
-	function handleQuoteSubmit() {
-		console.log('Payment Submitted');
-		console.log('Gallons Requested:', newQuote.gallonsRequested);
-		console.log('Delivery Address:', newQuote.deliveryAddress);
-		console.log('Delivery Date:', newQuote.deliveryDate);
-		console.log('Suggested Price:', newQuote.suggestedPrice);
-		console.log('Total Amount Due:', newQuote.totalAmountDue);
+		const today = new Date();
+		let selectedDate = new Date(newQuote.deliveryDate);
+		selectedDate.setDate(selectedDate.getDate()+1);
+
+		if(selectedDate < today) {
+			failureAlert('You can only select dates after today!');
+			return;
+		}
+
+		const cookie = getCookie('user_session');
+		if(!cookie) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+		const userCookieData = JSON.parse(cookie);
+
+		const newQuoteRequest = {
+			username: userCookieData.username,
+			accessToken: userCookieData.accessToken,
+			gallonsRequested: newQuote.gallonsRequested,
+			deliveryDate: newQuote.deliveryDate,
+			loc: newQuote.deliveryAddress
+		};
+
+		const genQuoteReq = await postRequest('../api/quotes/generate/', newQuoteRequest);
+		const genQuoteJSON = await genQuoteReq.json();
+
+		if(!genQuoteJSON.success) {
+			failureAlert("failed to generate quote, please try again...");
+			return;
+		}
+
+		successAlert("Generated new quote...");
+
+		newQuote.suggestedPrice = parseFloat(genQuoteJSON.priceCalculated);
+		newQuote.totalAmountDue = newQuote.gallonsRequested * newQuote.suggestedPrice;
 	}
 </script>
 
 <div class="flex h-screen flex-col">
 	<nav>
-		<Header />
+		<Header rootAPIRoutePrefix='../' />
 	</nav>
 
 	<main class="mt-0 flex max-w-full flex-wrap">
@@ -57,7 +123,7 @@
 
 			  <div class="mb-4">
 				<label for="deliveryAddress" class="block text-sm font-semibold mb-2">Delivery Address:</label>
-				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
 			  </div>
 
 			  <div class="mb-4">
@@ -71,10 +137,22 @@
 			</form>
 			<div class="p-8 bg-white mt-8">
 			  <p class="font-semibold">Suggested Price Per Gallon:</p>
-			  <span class="block">$2.50</span>
+			  <span class="block">
+				{#if newQuote.suggestedPrice}
+					${newQuote.suggestedPrice}
+				{:else}
+					generate a quote to see a price!
+				{/if}
+			  </span>
 
 			  <p class="font-semibold mt-4">Total Amount Due:</p>
-			  <span class="block">$0.00</span>
+			  <span class="block">
+				{#if newQuote.totalAmountDue}
+					${newQuote.totalAmountDue}
+				{:else}
+					$0.00
+				{/if}
+			  </span>
 			</div>
 		  </section>
 	</main>
