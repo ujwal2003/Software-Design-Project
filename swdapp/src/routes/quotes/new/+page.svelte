@@ -7,23 +7,9 @@
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/cookieUtil';
+	import { postRequest } from '$lib/requests';
 
-	onMount(async () => {
-		if(!await isClientAllowed('../')) {
-			failureAlert("You must be logged in to access this page. Please log in.");
-			goto('../login');
-		}
-
-		// const cookie = getCookie('user_session');
-		// if(!cookie) {
-		// 	failureAlert('Error, please log in again...');
-		// 	goto('../login');
-		// 	return;
-		// }
-
-		// let profileReq = JSON.parse(cookie);
-
-	});
+	let locAddress: string = '';
 
 	let newQuote = {
 		gallonsRequested: 0,
@@ -32,6 +18,39 @@
 		suggestedPrice: 0.0,
 		totalAmountDue: 0
 	};
+
+	onMount(async () => {
+		if(!await isClientAllowed('../')) {
+			failureAlert("You must be logged in to access this page. Please log in.");
+			goto('../login');
+		}
+
+		const cookie = getCookie('user_session');
+		if(!cookie) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+
+		let profileReq = JSON.parse(cookie);
+		const profileAPIRes = await postRequest('../api/profile/info', profileReq);
+		const profileResJSON = await profileAPIRes.json();
+
+		if (!profileResJSON.success && profileResJSON.unauthorized) {
+            failureAlert('Unauthorized, please log in again...');
+			goto('../login');
+			return;
+        }
+
+		if(!profileResJSON.success) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+
+		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
+		newQuote.deliveryAddress = locAddress;
+	});
 
 	function handleQuoteSubmit() {
 		// console.log('Payment Submitted');
@@ -80,7 +99,7 @@
 
 			  <div class="mb-4">
 				<label for="deliveryAddress" class="block text-sm font-semibold mb-2">Delivery Address:</label>
-				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
 			  </div>
 
 			  <div class="mb-4">
