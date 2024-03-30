@@ -4,7 +4,7 @@
 
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/cookieUtil';
 	import { postRequest } from '$lib/requests';
@@ -52,31 +52,55 @@
 		newQuote.deliveryAddress = locAddress;
 	});
 
-	function handleQuoteSubmit() {
-		// console.log('Payment Submitted');
-		// console.log('Gallons Requested:', newQuote.gallonsRequested);
-		// console.log('Delivery Address:', newQuote.deliveryAddress);
-		// console.log('Delivery Date:', newQuote.deliveryDate);
-		// console.log('Suggested Price:', newQuote.suggestedPrice);
-		// console.log('Total Amount Due:', newQuote.totalAmountDue);
-
+	async function handleQuoteSubmit() {
 		if(newQuote.gallonsRequested <= 0 || !newQuote.deliveryAddress || !newQuote.deliveryDate) {
 			failureAlert('Form must be completely filled out!');
 			return;
 		}
 
 		const today = new Date();
-		const selectedDate = new Date(newQuote.deliveryDate);
+		let selectedDate = new Date(newQuote.deliveryDate);
+		selectedDate.setDate(selectedDate.getDate()+1);
+
 		if(selectedDate < today) {
 			failureAlert('You can only select dates after today!');
 			return;
 		}
+
+		const cookie = getCookie('user_session');
+		if(!cookie) {
+			failureAlert('Error, please log in again...');
+			goto('../login');
+			return;
+		}
+		const userCookieData = JSON.parse(cookie);
+
+		const newQuoteRequest = {
+			username: userCookieData.username,
+			accessToken: userCookieData.accessToken,
+			gallonsRequested: newQuote.gallonsRequested,
+			deliveryDate: newQuote.deliveryDate,
+			loc: newQuote.deliveryAddress
+		};
+
+		const genQuoteReq = await postRequest('../api/quotes/generate/', newQuoteRequest);
+		const genQuoteJSON = await genQuoteReq.json();
+
+		if(!genQuoteJSON.success) {
+			failureAlert("failed to generate quote, please try again...");
+			return;
+		}
+
+		successAlert("Generated new quote...");
+
+		newQuote.suggestedPrice = parseFloat(genQuoteJSON.priceCalculated);
+		newQuote.totalAmountDue = newQuote.gallonsRequested * newQuote.suggestedPrice;
 	}
 </script>
 
 <div class="flex h-screen flex-col">
 	<nav>
-		<Header />
+		<Header rootAPIRoutePrefix='../' />
 	</nav>
 
 	<main class="mt-0 flex max-w-full flex-wrap">
@@ -113,10 +137,22 @@
 			</form>
 			<div class="p-8 bg-white mt-8">
 			  <p class="font-semibold">Suggested Price Per Gallon:</p>
-			  <span class="block">$2.50</span>
+			  <span class="block">
+				{#if newQuote.suggestedPrice}
+					${newQuote.suggestedPrice}
+				{:else}
+					generate a quote to see a price!
+				{/if}
+			  </span>
 
 			  <p class="font-semibold mt-4">Total Amount Due:</p>
-			  <span class="block">$0.00</span>
+			  <span class="block">
+				{#if newQuote.totalAmountDue}
+					${newQuote.totalAmountDue}
+				{:else}
+					$0.00
+				{/if}
+			  </span>
 			</div>
 		  </section>
 	</main>
