@@ -161,10 +161,20 @@ export async function makePayment(username: string, price: number, companyName: 
     const company = dummyCompanyModel.find(cn => cn.name === companyName);
 
     if (!company){
+        console.log("Company not found");
         return;
     }
     
     company.revenue += price;
+    let purchase = {
+        _id: crypto.randomBytes(24 / 2).toString('hex'),
+        quoteID: "",
+        purchaseDate: new Date(),
+        deliveryDate: new Date(),
+        tax: (0.0625 * price),
+        price: price - (0.0625 * price)
+    }
+    user?.profile?.purchaseHistory?.push(purchase);
 
     return paymentInfo;
 }

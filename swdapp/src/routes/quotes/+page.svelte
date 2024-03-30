@@ -37,6 +37,7 @@
 	}
 
 	interface QuoteCardDetail {
+		_id: string,
 		date: string;
 		location: string;
 		//deliveryDate: string;
@@ -56,6 +57,7 @@
 	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
 
 	let selectedQuoteDetails: QuoteCardDetail = {
+		_id: '-',
 		date: '-',
 		location: '-',
 		//deliveryDate: '-',
@@ -151,6 +153,7 @@
 		let quoteData = quotes.find((obj) => obj._id === e.detail.cardID);
 		console.log(quoteData);
 		if (quoteData != undefined) {
+			selectedQuoteDetails._id = quoteData._id;
 			selectedQuoteDetails.date = quoteData.generationDate.slice(0,10);
 			selectedQuoteDetails.location = userAddress.city.concat(", ", userAddress.state);
 			//selectedQuoteDetails.deliveryDate = quoteData.date; 
@@ -160,6 +163,7 @@
 			selectedQuoteDetails.total = quoteData.priceCalculated * quoteData.gallonsRequested + 3.14;
 		} else {
 			selectedQuoteDetails = {
+				_id: '-',
 				date: '-',
 				location: '-',
 				//deliveryDate: '-',
@@ -171,9 +175,8 @@
 		}
 	}
 
-	function handleQuotePurchase() {
-		//TODO pass in quote id as route parameter
-		goto('payment/');
+	function handleQuotePurchase(quoteID: string) {
+		goto(`/payment/${quoteID}`);
 	}
 </script>
 
@@ -236,7 +239,7 @@
 								btnColorHoever={'hover:bg-blue-700'}
 								btnLabel={'Purchase Quote'}
 								btnEvent={'quotePurchaseClick'}
-								on:quotePurchaseClick={handleQuotePurchase}
+								on:quotePurchaseClick={() => handleQuotePurchase(selectedQuoteDetails._id)}
 							/>
 							<DescListButton
 								btnLabel={'Create New Quote'}
