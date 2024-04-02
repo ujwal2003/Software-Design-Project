@@ -5,7 +5,7 @@
           <table class="min-w-full divide-y divide-gray-200">
             <slot></slot>
 
-            <tbody class="divide-y divide-gray-200">
+            <!-- <tbody class="divide-y divide-gray-200">
               <tr class="hover:bg-gray-100">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">45</td>
@@ -50,7 +50,7 @@
                   <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">Delete</button>
                 </td>
               </tr>
-            </tbody>
+            </tbody> -->
           </table>
         </div>
       </div>
