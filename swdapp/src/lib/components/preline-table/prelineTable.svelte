@@ -3,14 +3,8 @@
       <div class="p-1.5 min-w-full inline-block align-middle">
         <div class="overflow-hidden">
           <table class="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Age</th>
-                <th scope="col" class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Address</th>
-                <th scope="col" class="px-6 py-3 text-end text-xs font-medium text-gray-500 uppercase">Action</th>
-              </tr>
-            </thead>
+            <slot></slot>
+
             <tbody class="divide-y divide-gray-200">
               <tr class="hover:bg-gray-100">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">John Brown</td>
