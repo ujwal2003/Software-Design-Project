@@ -2,22 +2,15 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	
-	import ScrollContainer from '$lib/components/scrollContainer.svelte';
-	import Card from '$lib/components/cards/card.svelte';
-	import CardText from '$lib/components/cards/cardText.svelte';
-
-	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
-	import DescListItem from '$lib/components/description-list/descListItem.svelte';
-	import DescListButton from '$lib/components/description-list/descListButton.svelte';
-
-	import { dummyQuoteData } from '$lib';
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
-
+	
 	import { postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
+	
+	import ScrollContainer from '$lib/components/scrollContainer.svelte';
 	import PrelineTable from '$lib/components/preline-table/prelineTable.svelte';
 	import TableSection from '$lib/components/preline-table/tableSection.svelte';
 	import TableData from '$lib/components/preline-table/tableData.svelte';
@@ -130,34 +123,6 @@
 		}
 	}
 
-	// replace code in function with actual data from db later
-	function getQuoteDetailsFromCard(e: any) {
-
-		let quoteData = quotes.find((obj) => obj._id === e.detail.cardID);
-		console.log(quoteData);
-		if (quoteData != undefined) {
-			selectedQuoteDetails._id = quoteData._id;
-			selectedQuoteDetails.date = quoteData.generationDate.slice(0,10);
-			selectedQuoteDetails.location = userAddress.city.concat(", ", userAddress.state);
-			//selectedQuoteDetails.deliveryDate = quoteData.date; 
-			selectedQuoteDetails.gallons = quoteData.gallonsRequested;
-			selectedQuoteDetails.price = quoteData.priceCalculated;
-			selectedQuoteDetails.tax = 3.14;
-			selectedQuoteDetails.total = quoteData.priceCalculated * quoteData.gallonsRequested + 3.14;
-		} else {
-			selectedQuoteDetails = {
-				_id: '-',
-				date: '-',
-				location: '-',
-				//deliveryDate: '-',
-				gallons: 0,
-				price: 0.0,
-				tax: 0.0,
-				total: 0.0
-			};
-		}
-	}
-
 	function handleQuotePurchase(quoteID: string) {
 		goto(`/payment/${quoteID}`);
 	}
@@ -183,29 +148,31 @@
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
 			<div class="flex h-screen flex-row mt-2 ml-8">
-				<PrelineTable>
-					<TableSection style='head'>
-						<TableData header>Generation Date</TableData>
-						<TableData header>Location</TableData>
-						<TableData header>Gallons</TableData>
-						<TableData header>Suggested Price</TableData>
-						<TableData header>Total</TableData>
-						<TableData header>Purchase</TableData>
-					</TableSection>
-
-					<TableSection style='body'>
-						{#each quotes as quote}
-							<TableRow>
-								<TableData>{quote.generationDate.slice(0, 10)}</TableData>
-								<TableData>{userAddress.city}, {userAddress.state}</TableData>
-								<TableData>{quote.gallonsRequested}</TableData>
-								<TableData>${quote.priceCalculated} per gal</TableData>
-								<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
-								<TableData button>Purchase Quote</TableData>
-							</TableRow>
-						{/each}
-					</TableSection>
-				</PrelineTable>
+				<ScrollContainer tailwindAppend='overflow-x-hidden' noFlex>
+					<PrelineTable>
+						<TableSection style='head' headBg='bg-gray-100'>
+							<TableData header>Generation Date</TableData>
+							<TableData header>Location</TableData>
+							<TableData header>Gallons</TableData>
+							<TableData header>Suggested Price</TableData>
+							<TableData header>Total</TableData>
+							<TableData header>Purchase</TableData>
+						</TableSection>
+	
+						<TableSection style='body'>
+							{#each quotes as quote}
+								<TableRow>
+									<TableData>{quote.generationDate.slice(0, 10)}</TableData>
+									<TableData>{userAddress.city}, {userAddress.state}</TableData>
+									<TableData>{quote.gallonsRequested}</TableData>
+									<TableData>${quote.priceCalculated} per gal</TableData>
+									<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
+									<TableData button>Purchase Quote</TableData>
+								</TableRow>
+							{/each}
+						</TableSection>
+					</PrelineTable>
+				</ScrollContainer>
 			</div>
 		</section>
 	</main>
