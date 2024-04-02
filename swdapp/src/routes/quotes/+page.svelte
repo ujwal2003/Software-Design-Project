@@ -18,6 +18,10 @@
 
 	import { postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
+	import PrelineTable from '$lib/components/preline-table/prelineTable.svelte';
+	import TableSection from '$lib/components/preline-table/tableSection.svelte';
+	import TableData from '$lib/components/preline-table/tableData.svelte';
+	import TableRow from '$lib/components/preline-table/tableRow.svelte';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
@@ -27,14 +31,6 @@
 		await fetchQuoteHistory();
 		getUserData();
 	});
-
-	interface QuoteCard {
-		id: string;
-		date: string;
-		time: string;
-		gallons: number;
-		price: number;
-	}
 
 	interface QuoteCardDetail {
 		_id: string,
@@ -66,19 +62,6 @@
 		tax: 0.0,
 		total: 0.0
 	};
-
-	//let quotes: QuoteCard[] = [];
-
-	// replace this with filtering from database data later
-	// let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
-	// 	return {
-	// 		id: dat._id,
-	// 		date: dat.quoteDate,
-	// 		time: dat.quoteTime,
-	// 		gallons: dat.gallons,
-	// 		price: dat.price
-	// 	};
-	// });
 
 	let quotes: any[] = [];
 
@@ -199,56 +182,30 @@
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
-			<div class="flex h-screen flex-row">
-				<div class="w-1/3 pl-7 pt-4">
-					<ScrollContainer heightOffset={5}>
-						{#each quotes as quote}
-							<Card cardID={quote._id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
-								<CardText title={true}>
-									{`${quote.generationDate.slice(0, 10)} at ${quote.generationDate.slice(11,16)}`}
-								</CardText>
-								<CardText>
-									{`Requested Gallons: ${quote.gallonsRequested}`}
-								</CardText>
-								<CardText>
-									{`Suggested Price: ${quote.priceCalculated} /gal`}
-								</CardText>
-							</Card>
-						{/each}
-					</ScrollContainer>
-				</div>
+			<div class="flex h-screen flex-row mt-2 ml-8">
+				<PrelineTable>
+					<TableSection style='head'>
+						<TableData header>Generation Date</TableData>
+						<TableData header>Location</TableData>
+						<TableData header>Gallons</TableData>
+						<TableData header>Suggested Price</TableData>
+						<TableData header>Total</TableData>
+						<TableData header>Purchase</TableData>
+					</TableSection>
 
-				<div class="ml-6 mr-6 mt-4 flex h-1/2 w-2/3 flex-row">
-					<DescriptionList>
-						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
-						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
-						<!-- <DescListItem
-							details={{ title: 'Delivery Date', text: selectedQuoteDetails.deliveryDate }}
-						/> -->
-						<DescListItem details={{ title: 'Gallons', text: selectedQuoteDetails.gallons }} />
-						<DescListItem
-							details={{ title: 'Price', text: selectedQuoteDetails.price.toFixed(2) }}
-						/>
-						<DescListItem details={{ title: 'Tax', text: selectedQuoteDetails.tax.toFixed(2) }} />
-						<DescListItem
-							details={{ title: 'Total', text: selectedQuoteDetails.total.toFixed(2) }}
-						/>
-						<div class="flex w-full flex-row gap-3">
-							<DescListButton
-								btnColor={'bg-[#2563eb]'}
-								btnColorHoever={'hover:bg-blue-700'}
-								btnLabel={'Purchase Quote'}
-								btnEvent={'quotePurchaseClick'}
-								on:quotePurchaseClick={() => handleQuotePurchase(selectedQuoteDetails._id)}
-							/>
-							<DescListButton
-								btnLabel={'Create New Quote'}
-								btnEvent={'quoteCreateClick'}
-								on:quoteCreateClick={() => goto('quotes/new/')}
-							/>
-						</div>
-					</DescriptionList>
-				</div>
+					<TableSection style='body'>
+						{#each quotes as quote}
+							<TableRow>
+								<TableData>{quote.generationDate.slice(0, 10)}</TableData>
+								<TableData>{userAddress.city}, {userAddress.state}</TableData>
+								<TableData>{quote.gallonsRequested}</TableData>
+								<TableData>${quote.priceCalculated} per gal</TableData>
+								<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
+								<TableData button>Purchase Quote</TableData>
+							</TableRow>
+						{/each}
+					</TableSection>
+				</PrelineTable>
 			</div>
 		</section>
 	</main>
