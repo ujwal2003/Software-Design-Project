@@ -3,11 +3,9 @@
 </script>
 
 {#if header}
-  <thead>
-      <tr>
-        <slot></slot>
-      </tr>
-  </thead>
+    <tr>
+      <slot></slot>
+    </tr>
 {:else}
   <tr class="hover:bg-gray-100">
     <slot></slot>
