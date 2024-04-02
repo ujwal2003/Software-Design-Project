@@ -3,31 +3,29 @@
 	import TableData from "$lib/components/preline-table/tableData.svelte";
 	import TableRow from "$lib/components/preline-table/tableRow.svelte";
 	import TableSection from "$lib/components/preline-table/tableSection.svelte";
+	import ScrollContainer from "$lib/components/scrollContainer.svelte";
 </script>
 
 <main class="flex justify-center items-center h-screen">
-	<PrelineTable>
-		<TableSection style='head'>
-			<TableData header>col 1</TableData>
-			<TableData header>col 2</TableData>
-			<TableData header>col 3</TableData>
-			<TableData header>col 4</TableData>
-		</TableSection>
-
-		<TableSection style='body'>
-			<TableRow>
-				<TableData>val 11</TableData>
-				<TableData>val 12</TableData>
-				<TableData>val 13</TableData>
-				<TableData button>button 14</TableData>
-			</TableRow>
-
-			<TableRow>
-				<TableData>val 21</TableData>
-				<TableData>val 22</TableData>
-				<TableData>val 23</TableData>
-				<TableData button>button 24</TableData>
-			</TableRow>
-		</TableSection>
-	</PrelineTable>
+	<ScrollContainer tailwindAppend='overflow-x-hidden' heightOffset={40} noFlex>
+		<PrelineTable>
+			<TableSection style='head'>
+				<TableData header>col 1</TableData>
+				<TableData header>col 2</TableData>
+				<TableData header>col 3</TableData>
+				<TableData header>col 4</TableData>
+			</TableSection>
+			
+			<TableSection style='body'>
+					{#each Array(15) as _, i}
+						<TableRow>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}1</TableData>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}2</TableData>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}3</TableData>
+							<TableData button>click here</TableData>
+						</TableRow>
+					{/each}
+			</TableSection>
+		</PrelineTable>
+	</ScrollContainer>
 </main>
