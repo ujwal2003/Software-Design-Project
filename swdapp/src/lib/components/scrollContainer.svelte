@@ -2,8 +2,10 @@
     export let darkMode = false;
     export let heightOffset = 10;
 
+    export let tailwindAppend: string = '';
+    export let noFlex: boolean = false;
+
     let scrollBarStyle = `
-        flex flex-col gap-3
         overflow-y-auto
         [&::-webkit-scrollbar]:w-2
         [&::-webkit-scrollbar-track]:rounded-full
@@ -12,6 +14,10 @@
         [&::-webkit-scrollbar-thumb]:bg-gray-300
     `;
 
+    if(!noFlex) {
+        scrollBarStyle = 'flex flex-col gap-3 ' + scrollBarStyle;
+    }
+
     if(darkMode) {
         scrollBarStyle =
 			scrollBarStyle +
@@ -19,6 +25,6 @@
     }
 </script>
 
-<div class={scrollBarStyle} style="max-height: calc(95vh - {heightOffset}%);">
+<div class={scrollBarStyle+tailwindAppend} style="max-height: calc(95vh - {heightOffset}%);">
     <slot></slot>
 </div>

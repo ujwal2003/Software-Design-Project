@@ -2,7 +2,7 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	
-	import CardContainer from '$lib/components/cards/cardContainer.svelte';
+	import ScrollContainer from '$lib/components/scrollContainer.svelte';
 	import Card from '$lib/components/cards/card.svelte';
 	import CardText from '$lib/components/cards/cardText.svelte';
 
@@ -201,7 +201,7 @@
 
 			<div class="flex h-screen flex-row">
 				<div class="w-1/3 pl-7 pt-4">
-					<CardContainer heightOffset={5}>
+					<ScrollContainer heightOffset={5}>
 						{#each quotes as quote}
 							<Card cardID={quote._id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
 								<CardText title={true}>
@@ -215,7 +215,7 @@
 								</CardText>
 							</Card>
 						{/each}
-					</CardContainer>
+					</ScrollContainer>
 				</div>
 
 				<div class="ml-6 mr-6 mt-4 flex h-1/2 w-2/3 flex-row">

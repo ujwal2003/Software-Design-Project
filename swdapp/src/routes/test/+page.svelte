@@ -1,26 +1,37 @@
 <script lang="ts">
-	import FormButton from "$lib/components/submission-form/formButton.svelte";
-	import FormInput from "$lib/components/submission-form/formInput.svelte";
-	import FormText from "$lib/components/submission-form/formText.svelte";
-	import SubmitForm from "$lib/components/submission-form/submitForm.svelte";
+	import PrelineTable from "$lib/components/preline-table/prelineTable.svelte";
+	import TableData from "$lib/components/preline-table/tableData.svelte";
+	import TableRow from "$lib/components/preline-table/tableRow.svelte";
+	import TableSection from "$lib/components/preline-table/tableSection.svelte";
+	import ScrollContainer from "$lib/components/scrollContainer.svelte";
+
+	function handleTableButtonClick(str: string = '') {
+		console.log(`clicked button ${str}!!!!!!`);
+	}
 </script>
 
-<main class="flex justify-center mt-14">
-	<SubmitForm>
-		<FormText title>Test</FormText>
-		<FormText description>
-			{@html "This is a description with a <a href='https://www.google.com/' target='_blank'><u>link!</u></a>"}
-		</FormText>
-
-		<FormInput inputType='text' placeholderText='placeholder 1' on:formInput={(e) => {console.log(e.detail)}} />
-		<FormInput inputType='password' placeholderText='placeholder 2' />
-
-		<FormButton justify='end' on:formClick={(e) => {console.log(e)}}>
-			button
-		</FormButton>
-
-		<FormText description>
-			bottom text
-		</FormText>
-	</SubmitForm>
+<main class="flex justify-center items-center h-screen">
+	<ScrollContainer tailwindAppend='overflow-x-hidden' heightOffset={40} noFlex>
+		<PrelineTable>
+			<TableSection style='head'>
+				<TableData header>col 1</TableData>
+				<TableData header>col 2</TableData>
+				<TableData header>col 3</TableData>
+				<TableData header>col 4</TableData>
+			</TableSection>
+			
+			<TableSection style='body'>
+					{#each Array(15) as _, i}
+						<TableRow>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}1</TableData>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}2</TableData>
+							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}3</TableData>
+							<TableData button on:tableBtnClick={() => handleTableButtonClick(i.toString())}>
+								click here
+							</TableData>
+						</TableRow>
+					{/each}
+			</TableSection>
+		</PrelineTable>
+	</ScrollContainer>
 </main>

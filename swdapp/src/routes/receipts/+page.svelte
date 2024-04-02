@@ -2,7 +2,7 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
-	import CardContainer from "$lib/components/cards/cardContainer.svelte";
+	import ScrollContainer from "$lib/components/scrollContainer.svelte";
 	import Card from "$lib/components/cards/card.svelte";
 	import CardText from "$lib/components/cards/cardText.svelte";
 
@@ -146,7 +146,7 @@
 			<div class="flex">
 				<div class="{showDescriptionList ? 'w-1/3 pl-7' : 'w-1/3 pl-5'} pt-4">
 					
-					<CardContainer>
+					<ScrollContainer>
 						{#each receipts as receipt}
 						  <Card cardID={receipt._id} btnName={"Payment Details"} on:cardClick={e => {handleCardDetailClick(e)}}>
 							<CardText title>
@@ -157,7 +157,7 @@
 							</CardText>
 						  </Card>
 						{/each}
-					  </CardContainer>
+					  </ScrollContainer>
 					
 				</div>
 
