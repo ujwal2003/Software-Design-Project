@@ -1,4 +1,7 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
+    const dispatch = createEventDispatcher();
+
     export let header: boolean = false;
     export let button: boolean = false;
 </script>
@@ -9,7 +12,7 @@
     </th>
 {:else if button}
     <td class="px-6 py-4 whitespace-nowrap text-end text-sm font-medium">
-        <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none">
+        <button type="button" class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none" on:click={() => dispatch('tableBtnClick')}>
             <slot></slot>
         </button>
     </td>

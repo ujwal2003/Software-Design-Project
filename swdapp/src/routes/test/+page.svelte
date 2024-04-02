@@ -4,6 +4,10 @@
 	import TableRow from "$lib/components/preline-table/tableRow.svelte";
 	import TableSection from "$lib/components/preline-table/tableSection.svelte";
 	import ScrollContainer from "$lib/components/scrollContainer.svelte";
+
+	function handleTableButtonClick(str: string = '') {
+		console.log(`clicked button ${str}!!!!!!`);
+	}
 </script>
 
 <main class="flex justify-center items-center h-screen">
@@ -22,7 +26,9 @@
 							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}1</TableData>
 							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}2</TableData>
 							<TableData>{String.fromCharCode('a'.charCodeAt(0)+i)}3</TableData>
-							<TableData button>click here</TableData>
+							<TableData button on:tableBtnClick={() => handleTableButtonClick(i.toString())}>
+								click here
+							</TableData>
 						</TableRow>
 					{/each}
 			</TableSection>
