@@ -15,7 +15,6 @@
 	import TableSection from '$lib/components/preline-table/tableSection.svelte';
 	import TableData from '$lib/components/preline-table/tableData.svelte';
 	import TableRow from '$lib/components/preline-table/tableRow.svelte';
-	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
@@ -45,17 +44,6 @@
 	}
 
 	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
-
-	let selectedQuoteDetails: QuoteCardDetail = {
-		_id: '-',
-		date: '-',
-		location: '-',
-		//deliveryDate: '-',
-		gallons: 0,
-		price: 0.0,
-		tax: 0.0,
-		total: 0.0
-	};
 
 	let quotes: any[] = [];
 
