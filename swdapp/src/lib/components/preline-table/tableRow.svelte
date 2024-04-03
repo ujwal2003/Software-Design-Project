@@ -7,7 +7,7 @@
       <slot></slot>
     </tr>
 {:else}
-  <tr class="hover:bg-gray-100">
+  <tr class="bg-slate-50 hover:bg-gray-100">
     <slot></slot>
   </tr>
 {/if}
