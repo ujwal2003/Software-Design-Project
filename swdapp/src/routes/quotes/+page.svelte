@@ -156,7 +156,7 @@
 			</div>
 			
 			<div class="flex h-screen flex-row mt-2 ml-8">
-				<ScrollContainer tailwindAppend='overflow-x-hidden' noFlex>
+				<ScrollContainer tailwindAppend='overflow-x-hidden' heightOffset={12}>
 					<PrelineTable>
 						<TableSection style='head' headBg='bg-gray-100'>
 							<TableData header>Generation Date</TableData>
