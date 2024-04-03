@@ -15,6 +15,7 @@
 	import TableSection from '$lib/components/preline-table/tableSection.svelte';
 	import TableData from '$lib/components/preline-table/tableData.svelte';
 	import TableRow from '$lib/components/preline-table/tableRow.svelte';
+	import DescListButton from '$lib/components/description-list/descListButton.svelte';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
@@ -147,6 +148,25 @@
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
+			<div class="pl-8 py-2">
+				<button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-gray-800 text-white 
+				hover:border-gray-800 hover:text-gray-800 hover:bg-transparent" on:click={() => {goto('/quotes/new/')}}>
+					Create Quote
+					<svg
+						class="size-4 flex-shrink-0"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+					>
+				</button>
+			</div>
+			
 			<div class="flex h-screen flex-row mt-2 ml-8">
 				<ScrollContainer tailwindAppend='overflow-x-hidden' noFlex>
 					<PrelineTable>
@@ -167,7 +187,9 @@
 									<TableData>{quote.gallonsRequested}</TableData>
 									<TableData>${quote.priceCalculated} per gal</TableData>
 									<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
-									<TableData button>Purchase Quote</TableData>
+									<TableData button on:tableBtnClick={() => handleQuotePurchase(quote._id)}>
+										Purchase Quote
+									</TableData>
 								</TableRow>
 							{/each}
 						</TableSection>
