@@ -14,7 +14,7 @@
 	import { isClientAllowed } from "$lib/protected";
 	import { failureAlert, successAlert } from "$lib/components/toasts/customToasts";
 	import { goto } from "$app/navigation";
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
 
 	let receipts: any[] = [];
@@ -54,7 +54,8 @@
 		console.log(username);
 		console.log(accessToken);
 
-		const receiptAPIRes = await postRequest('api/payment/receipts', {username: username, accessToken: accessToken});
+		// const receiptAPIRes = await postRequest('api/payment/receipts', {username: username, accessToken: accessToken});
+		const receiptAPIRes = await getRequest(`api/payment/receipts/${username}`, {'access-token': accessToken});
 		const receiptResJSON = await receiptAPIRes.json();
 
 		if(!receiptResJSON.success) {
@@ -85,7 +86,8 @@
 		const username = quoteHistReq.username;
     	let accessToken = quoteHistReq.accessToken;
 
-		const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		// const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quoteHistAPIRes = await getRequest(`api/quotes/retrieve/${username}`, {'access-token': accessToken});
 		const quiteHistResJSON = await quoteHistAPIRes.json();
 
 		if(!quiteHistResJSON.success) {

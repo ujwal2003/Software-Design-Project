@@ -35,3 +35,20 @@ export async function patchRequest(apiRoute: string, jsonData: Object) {
 
     return res;
 }
+
+export async function getRequest(apiRoute: string, getHeaders: Object|null = null) {
+    const reqHeaders = new Headers();
+
+    if(getHeaders) {
+        for(const [key, value] of Object.entries(getHeaders)) {
+            reqHeaders.append(key, value.toString());
+        }
+    }
+
+    const res = await fetch(apiRoute, {
+        method: 'GET',
+        headers: reqHeaders
+    });
+
+    return res;
+}
