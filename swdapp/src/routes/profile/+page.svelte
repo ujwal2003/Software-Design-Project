@@ -92,25 +92,25 @@
                     zip: ''
                 };
             } else {
-                userProfile = {
+                userProfile = profileResJSON.profile ? {
                     firstName: profileResJSON.profile.firstName,
                     middleName: profileResJSON.profile.middleName,
                     lastName: profileResJSON.profile.lastName
-                };
+                } : {firstName: '', middleName: '', lastName: ''};
     
-                userPayment = {
+                userPayment = profileResJSON.paymentInfo ? {
                     cardName: profileResJSON.paymentInfo.cardName,
                     cardNumber: profileResJSON.paymentInfo.cardNumber,
                     expirationDate: profileResJSON.paymentInfo.expiration.slice(0, 10),
                     CVV: profileResJSON.paymentInfo.cardCVV
-                };
+                } : {cardName: '', cardNumber: '', expirationDate: '', CVV: ''};
     
-                userAddress = {
+                userAddress = profileResJSON.profile ? {
                     street: profileResJSON.profile.street,
                     city: profileResJSON.profile.city,
                     state: profileResJSON.profile.state,
                     zip: profileResJSON.profile.zip
-                };
+                } : {street: '', city: '', state: '', zip: ''};
             }
 
 		} catch (error) {

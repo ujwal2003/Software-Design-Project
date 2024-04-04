@@ -86,7 +86,8 @@
 		const username = quoteHistReq.username;
     	let accessToken = quoteHistReq.accessToken;
 
-		const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		// const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quoteHistAPIRes = await getRequest(`api/quotes/retrieve/${username}`, {'access-token': accessToken});
 		const quiteHistResJSON = await quoteHistAPIRes.json();
 
 		if(!quiteHistResJSON.success) {
