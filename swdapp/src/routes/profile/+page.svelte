@@ -5,7 +5,7 @@
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
-	import { postRequest, patchRequest } from '$lib/requests';
+	import { postRequest, patchRequest, getRequest } from '$lib/requests';
 	import { deleteCookie, getCookie } from '$lib/cookieUtil';
 
 	onMount(async () => {
@@ -56,7 +56,8 @@
 
 			let profileReq = JSON.parse(cookie);
 
-			const profileAPIRes = await postRequest('api/profile/info', profileReq);
+			// const profileAPIRes = await postRequest('api/profile/info', profileReq);
+			const profileAPIRes = await getRequest(`api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
             
 			// if (!profileAPIRes.ok) {
             // 	throw new Error("Failed to fetch profile data");

@@ -7,7 +7,7 @@
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/cookieUtil';
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 
 	let locAddress: string = '';
 
@@ -33,7 +33,9 @@
 		}
 
 		let profileReq = JSON.parse(cookie);
-		const profileAPIRes = await postRequest('../api/profile/info', profileReq);
+		// const profileAPIRes = await postRequest('../api/profile/info', profileReq);
+		const profileAPIRes = await getRequest(`../api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
+
 		const profileResJSON = await profileAPIRes.json();
 
 		if (!profileResJSON.success && profileResJSON.unauthorized) {

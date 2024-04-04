@@ -43,7 +43,9 @@
 		const username = profileReq.username;
     	let accessToken = profileReq.accessToken;
 
-		const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		// const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		const profileAPIRes = await getRequest(`../api/profile/info/${username}`, {'access-token': accessToken});
+
 		const profileResJSON = await profileAPIRes.json();
 
 		if(!profileResJSON.success) {
@@ -74,7 +76,9 @@
 		const username = profileReq.username;
     	let accessToken = profileReq.accessToken;
 
-		const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		// const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		const profileAPIRes = await getRequest(`../api/profile/info/${username}`, {'access-token': accessToken});
+
 		const profileResJSON = await profileAPIRes.json();
 
 		if(!profileResJSON.success) {
