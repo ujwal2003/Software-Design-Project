@@ -9,7 +9,7 @@
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import { page } from '$app/stores';
 	import { getCookie } from '$lib/cookieUtil';
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 
 	const currentPage = $page;
 	const id = currentPage.params.id;
@@ -105,7 +105,8 @@
 		const username = quoteHistReq.username;
     	let accessToken = quoteHistReq.accessToken;
 
-		const quoteHistAPIRes = await postRequest('../api/quotes/retrieve', {username: username, accessToken: accessToken});
+		// const quoteHistAPIRes = await postRequest('../api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quoteHistAPIRes = await getRequest(`../api/quotes/retrieve/${username}`, {'access-token': accessToken});
 		const quiteHistResJSON = await quoteHistAPIRes.json();
 
 		if(!quiteHistResJSON.success) {

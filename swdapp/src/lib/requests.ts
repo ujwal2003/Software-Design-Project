@@ -36,7 +36,7 @@ export async function patchRequest(apiRoute: string, jsonData: Object) {
     return res;
 }
 
-export async function getRequest(apiRoute: string, jsonData: Object, getHeaders: Object|null = null) {
+export async function getRequest(apiRoute: string, getHeaders: Object|null = null) {
     const reqHeaders = new Headers();
 
     if(getHeaders) {

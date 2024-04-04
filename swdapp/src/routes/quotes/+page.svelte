@@ -7,7 +7,7 @@
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
 	
 	import ScrollContainer from '$lib/components/scrollContainer.svelte';
@@ -57,7 +57,8 @@
 
 			let quoteReq = JSON.parse(cookie);
 
-			const quoteAPIRes = await postRequest('api/quotes/retrieve', quoteReq);
+			// const quoteAPIRes = await postRequest('api/quotes/retrieve', quoteReq);
+			const quoteAPIRes = await getRequest(`api/quotes/retrieve/${quoteReq.username}`, {'access-token': quoteReq.accessToken});
 
 			if (!quoteAPIRes.ok) {
 				throw new Error("Failed to fetch quote history");
