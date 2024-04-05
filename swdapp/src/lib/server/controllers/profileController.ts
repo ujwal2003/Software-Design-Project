@@ -1,5 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory, generateQuote, updateAccount } from '../services/userService';
+import { getProfile, updateAccount } from '../services/userService';
+import { generateQuote } from "../services/quoteService";
+import { getQuoteHistory } from "../services/quoteService";
 import { makePayment } from "../services/paymentService";
 import { updatePayment } from "../services/paymentService";
 import { getPurchaseHistory } from "../services/paymentService";
