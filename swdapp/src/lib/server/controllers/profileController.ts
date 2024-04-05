@@ -1,5 +1,8 @@
 import { json } from '@sveltejs/kit';
-import { getProfile, getQuoteHistory, getPurchaseHistory, generateQuote, updateAccount, makePayment, updatePayment } from '../services/userService';
+import { getProfile, getQuoteHistory, generateQuote, updateAccount } from '../services/userService';
+import { makePayment } from "../services/paymentService";
+import { updatePayment } from "../services/paymentService";
+import { getPurchaseHistory } from "../services/paymentService";
 import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
 import { isAccessTokenValid_simple } from './authController';
 
