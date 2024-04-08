@@ -26,6 +26,15 @@ export async function revokeRefreshToken(refreshToken: string) {
 }
 
 export async function isRefreshTokenValid(refreshToken: string) {
-    const foundToken = dummyRefreshTokens.find(token => token === refreshToken);
-    return foundToken ? true : false;
+    //! Remove these lines after confirmation of db working
+    // const foundToken = dummyRefreshTokens.find(token => token === refreshToken);
+    // return foundToken ? true : false;
+
+    const validToken = await AuthorizationModel.findOne({ refToken: refreshToken }).exec();
+    // console.log(validToken);
+    
+    if(validToken == null)
+        return false;
+
+    return true;
 }
