@@ -49,6 +49,7 @@
 		"bcrypt": "^5.1.1",
 		"jsonwebtoken": "^9.0.2",
 		"lodash": "^4.17.21",
+		"mongoose": "^8.3.1",
 		"preline": "^2.0.3"
 	}
 }
