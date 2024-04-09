@@ -20,11 +20,16 @@ export async function revokeRefreshToken(refreshToken: string) {
 }
 
 export async function isRefreshTokenValid(refreshToken: string) {
-    const validToken = await AuthorizationModel.findOne({ refToken: refreshToken }).exec();
+    const validToken = await AuthorizationModel.findOne({ refToken: refreshToken });
+    const validTokenAgain = await AuthorizationModel.findOne({ refToken: refreshToken });
+
     // console.log(validToken);
+    // console.log(validTokenAgain);
     
-    if(validToken == null)
+    if(!validToken && !validTokenAgain)
         return false;
+
+    // if(!validToken) return false;
 
     return true;
 }
