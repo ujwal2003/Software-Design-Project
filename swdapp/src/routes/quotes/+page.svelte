@@ -117,6 +117,26 @@
 	function handleQuotePurchase(quoteID: string) {
 		goto(`/payment/${quoteID}`);
 	}
+
+	async function createQuoteBttn(){
+		const cookie = getCookie('user_session');
+		if (!cookie) {
+			throw new Error("User session cookie not found");
+		}
+
+		let profileReq = JSON.parse(cookie);
+
+		const profileAPIRes = await getRequest(`api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
+		const profileResJSON = await profileAPIRes.json();
+
+		if (!profileResJSON.success && profileResJSON.message == "Profile not found"){
+			failureAlert("Please complete your profile first.");
+		}
+		else {
+			goto('/quotes/new');
+		}
+	}
+
 </script>
 
 <div class="flex h-screen flex-col">
@@ -140,7 +160,7 @@
 
 			<div class="pl-8 py-2">
 				<button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-gray-800 text-white 
-				hover:border-gray-800 hover:text-gray-800 hover:bg-transparent" on:click={() => {goto('/quotes/new/')}}>
+				hover:border-gray-800 hover:text-gray-800 hover:bg-transparent" on:click={() => {createQuoteBttn()}}>
 					Create Quote
 					<svg
 						class="size-4 flex-shrink-0"
