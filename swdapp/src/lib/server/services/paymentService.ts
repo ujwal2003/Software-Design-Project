@@ -30,6 +30,8 @@ export async function updatePayment(username: string, cardName?: string, cardNum
     userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
     userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
     userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
+    
+    user.profile.paymentInfo = userPayment;
 
     return true;
 }
