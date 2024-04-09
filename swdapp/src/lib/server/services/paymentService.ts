@@ -39,6 +39,7 @@ export async function updatePayment(username: string, cardName?: string, cardNum
 export async function makePayment(username: string, price: number, companyName: string, quoteID: string) {
     const user = dummyUsersModel.find(user => user.username === username);
     const paymentInfo = user ? user.profile?.paymentInfo : null;
+    let purchaseHistory = user ? user.profile?.purchaseHistory : null;
 
     if (!paymentInfo) {
         return;
@@ -63,6 +64,10 @@ export async function makePayment(username: string, price: number, companyName: 
         tax: (0.0625 * price),
         price: price - (0.0625 * price)
     };
+
+    if (!purchaseHistory){
+        user.profile.purchaseHistory = [];
+    }
     user?.profile?.purchaseHistory?.push(purchase);
 
     return paymentInfo;

@@ -11,7 +11,7 @@ export async function getQuoteHistory(username: string) {
 
 export async function generateQuote(username: string, gallonsRequested: number, deliveryDate: string, loc: string) {
     const user = dummyUsersModel.find(user => user.username === username);
-    const quoteHistory = user ? user.profile?.quoteHistory : null;
+    let quoteHistory = user ? user.profile?.quoteHistory : null;
 
     //TODO: implement pricing module, for now it's a random constant
     const priceCalculated = Math.random();
@@ -23,8 +23,11 @@ export async function generateQuote(username: string, gallonsRequested: number, 
         priceCalculated: priceCalculated
     };
 
-    quoteHistory?.push(quote);
-
+    if (!quoteHistory) {
+        user.profile.quoteHistory = [];
+    }
+    
+    user?.profile?.quoteHistory?.push(quote);
     return quote;
 }
 
