@@ -238,7 +238,7 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
 
 export async function makePaymentMethod(requestBody: MakePaymentRequest): Promise<Response>{
     try {
-        const { username, accessToken, company, price } = requestBody;
+        const { username, accessToken, company, price, quoteID } = requestBody;
 
         if(!await isAccessTokenValid_simple(accessToken)) {
             return json({
@@ -248,7 +248,7 @@ export async function makePaymentMethod(requestBody: MakePaymentRequest): Promis
             } as UnauthorizedResponse, {status: 401});
         }
 
-        const pay = await makePayment(username, price, company);
+        const pay = await makePayment(username, price, company, quoteID);
 
         if (pay) {
             const response: GeneralAPIResponse = {

@@ -36,7 +36,7 @@ export async function updatePayment(username: string, cardName?: string, cardNum
     return true;
 }
 
-export async function makePayment(username: string, price: number, companyName: string) {
+export async function makePayment(username: string, price: number, companyName: string, quoteID: string) {
     const user = dummyUsersModel.find(user => user.username === username);
     const paymentInfo = user ? user.profile?.paymentInfo : null;
 
@@ -57,7 +57,7 @@ export async function makePayment(username: string, price: number, companyName: 
     company.revenue += price;
     let purchase = {
         _id: crypto.randomBytes(24 / 2).toString('hex'),
-        quoteID: "",
+        quoteID: quoteID,
         purchaseDate: new Date(),
         deliveryDate: new Date(),
         tax: (0.0625 * price),

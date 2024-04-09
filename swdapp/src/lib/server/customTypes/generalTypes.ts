@@ -95,5 +95,6 @@ export interface MakePaymentRequest {
     username: string,
     accessToken: string,
     company: string,
-    price: number
+    price: number,
+    quoteID: string
 }

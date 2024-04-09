@@ -148,7 +148,7 @@
 		const username = makePaymentReq.username;
     	let accessToken = makePaymentReq.accessToken;
 
-		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, company: "Exxon", price: calcPrice(quote.gallonsRequested, quote.priceCalculated)});
+		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, company: "Exxon", price: calcPrice(quote.gallonsRequested, quote.priceCalculated), quoteID: id});
 		const makePaymentResJSON = await makePaymentAPIRes.json();
 		
 		if(!makePaymentResJSON.success) {
