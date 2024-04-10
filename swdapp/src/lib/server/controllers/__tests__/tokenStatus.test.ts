@@ -1,15 +1,26 @@
-import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { beforeAll, expect, test, vi } from 'vitest';
-import { accessTokenStatus, loginUser } from '../authController';
+import { parseEnv } from './util/envMock';
+
+import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
+import { accessTokenStatus, logOutUser, loginUser } from '../authController';
 import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
+import { connect } from '../../database/mongo';
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
+        const envVars = parseEnv('../swdapp/.env');
+
         return {
             REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
+            ACCESS_TOKEN_SECRET: 'test2',
+            MONGO_CLUSTER: envVars.MONGO_CLUSTER,
+            DB_NAME: envVars.DB_NAME,
+            CLUSTER_USER: envVars.CLUSTER_USER,
+            CLUSTER_PASS: envVars.CLUSTER_PASS
         }
     });
+
+    connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
 })
 
 test('Access token is still valid', async () => {
@@ -30,6 +41,13 @@ test('Access token is still valid', async () => {
     expect(res.valid).toBe(true);
     expect(res.message).toEqual('token is still valid');
     expect(res.payload).toBeDefined();
+
+    const logOut = await (await logOutUser({
+        username: testLoginRequest.username,
+        refreshToken: loginRes.response.refreshToken
+    })).json();
+
+    expect(logOut.success).toBeTruthy();
 })
 
 test('Access token is invalid', async () => {
@@ -49,6 +67,13 @@ test('Access token is invalid', async () => {
     expect(res.success).toBeTruthy();
     expect(res.valid).toBeFalsy();
     expect(res.message).toEqual('token has expired');
+
+    const logOut = await (await logOutUser({
+        username: testLoginRequest.username,
+        refreshToken: loginRes.response.refreshToken
+    })).json();
+
+    expect(logOut.success).toBeTruthy();
 })
 
 test('Token verification failure', async () => {

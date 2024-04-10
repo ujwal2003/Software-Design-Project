@@ -1,15 +1,26 @@
 import { beforeAll, expect, test, vi } from 'vitest';
-import { reauthorizeUser, loginUser } from '../authController';
+import { parseEnv } from './util/envMock';
+
+import { reauthorizeUser, loginUser, logOutUser } from '../authController';
 import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
+import { connect } from '../../database/mongo';
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
+        const envVars = parseEnv('../swdapp/.env');
+
         return {
             REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
+            ACCESS_TOKEN_SECRET: 'test2',
+            MONGO_CLUSTER: envVars.MONGO_CLUSTER,
+            DB_NAME: envVars.DB_NAME,
+            CLUSTER_USER: envVars.CLUSTER_USER,
+            CLUSTER_PASS: envVars.CLUSTER_PASS
         }
     });
+
+    connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
 })
 
 test('failure to reauthorize due to no token provided', async () => {
@@ -36,10 +47,18 @@ test('failure to reauthorize due refresh token being invalid', async () => {
         refreshToken: loginRes.response.refreshToken + 'abcd'
     }
 
-    expect(await (await reauthorizeUser(testReauthorizeResponse)).json()).toEqual({
+    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
+    const logOut = await (await logOutUser({
+        username: testReauthorizeResponse.username,
+        refreshToken: loginRes.response.refreshToken
+    })).json();
+
+    expect(res).toEqual({
         success: false,
         message: 'invalid token provided'
     } as GeneralAPIResponse);
+
+    expect(logOut.success).toBeTruthy();
 })
 
 test('succesful user reauthorization', async () => {
@@ -54,11 +73,23 @@ test('succesful user reauthorization', async () => {
         refreshToken: loginRes.response.refreshToken
     }
 
-    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
+    console.log(loginRes);
+    console.log(testReauthorizeResponse)
 
+    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
+    
+    console.log(res);
+    
     expect(res.success).toBeTruthy();
     expect(res.payload).toBeDefined();
     expect(res.newAccessToken).toBeTypeOf("string");
+
+    const logOut = await (await logOutUser({
+        username: testReauthorizeResponse.username,
+        refreshToken: loginRes.response.refreshToken
+    })).json();
+
+    expect(logOut.success).toBeTruthy();
 })
 
 test('failure to reauthorize due to internal error', async () => {
