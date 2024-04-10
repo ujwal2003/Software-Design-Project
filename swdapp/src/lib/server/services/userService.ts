@@ -32,7 +32,8 @@ export async function addUser(username: string, encryptedPass: string) {
 }
 
 export async function getProfile(username: string){
-    const user = dummyUsersModel.find(user => user.username === username);
+    // const user = dummyUsersModel.find(user => user.username === username);
+    let user = await userExists(username);
 
     return user ? user.profile : null;
 }
