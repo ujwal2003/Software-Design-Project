@@ -1,24 +1,34 @@
 import crypto from "crypto";
 import { dummyUsersModel } from "../dummyDatabase";
+import { UserModel } from "../database/models/userModel";
 
 export async function userExists(username: string) {
-    const foundUser = dummyUsersModel.find(user => user.username === username);
+    // const foundUser = dummyUsersModel.find(user => user.username === username);
+    let foundUser = await UserModel.findOne({ username: username });
 
-    return foundUser ? true: false;
+    return foundUser ? foundUser : false;
 }
 
 export async function addUser(username: string, encryptedPass: string) {
-    let userID = crypto.randomBytes(24 / 2).toString('hex');
+    // let userID = crypto.randomBytes(24 / 2).toString('hex');
 
-    let newLen = dummyUsersModel.push({
-        _id: userID,
+    // let newLen = dummyUsersModel.push({
+    //     _id: userID,
+    //     username: username,
+    //     encryptedPassword: encryptedPass,
+    //     isAdmin: false,
+    //     profile: null
+    // });
+
+    const newUser = await UserModel.create({
         username: username,
         encryptedPassword: encryptedPass,
         isAdmin: false,
         profile: null
     });
 
-    return dummyUsersModel[newLen - 1];
+    // return dummyUsersModel[newLen - 1];
+    return newUser;
 }
 
 export async function getProfile(username: string){
