@@ -87,7 +87,7 @@ export async function loginUser(requestBody: LoginRequest): Promise<Response> {
         }
 
         let userCreds = await getUserCredentials(requestBody.username);
-        if(await bcrypt.compare(requestBody.password, userCreds.encryptedPass)) {
+        if(userCreds && await bcrypt.compare(requestBody.password, userCreds.encryptedPass)) {
             console.log(`[SERVER] ${requestBody.username} has succesfully authenticated`);
 
             const refreshToken = jwt.sign({username: requestBody.username}, REFRESH_TOKEN_SECRET);
