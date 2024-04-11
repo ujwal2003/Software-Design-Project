@@ -214,7 +214,8 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
             updatedPayment = true;
         }
 
-
+        // TODO change how to determine success
+        // ? BUG: Currently failure may be returned even if update was succesful
         if (updatedProfile && updatedPayment) {
             const response: GeneralAPIResponse = {
                 success: true,
