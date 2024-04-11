@@ -1,10 +1,7 @@
-import { dummyRefreshTokens, dummyUsersModel } from "../dummyDatabase";
 import { AuthorizationModel } from "../database/models/authorizeModel";
 import { userExists } from "./userService";
 
 export async function getUserCredentials(username: string) {
-    //! Refactor this function when implementing user schema
-    // const foundUser = dummyUsersModel.find(user => user.username === username);
     let foundUser = await userExists(username);
 
     if(foundUser) {
