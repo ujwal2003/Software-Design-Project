@@ -52,7 +52,7 @@ export interface PurchaseHistoryRequest {
 
 export interface PurchaseHistoryResponse {
     success: boolean,
-    purchaseHistory: dummyReceiptSchema[]
+    purchaseHistory: Array<any>
 }
 
 export interface GenerateQuoteRequest {

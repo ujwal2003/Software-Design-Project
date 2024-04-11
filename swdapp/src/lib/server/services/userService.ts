@@ -33,6 +33,7 @@ export async function updateAccount(username: string, firstName?: string, middle
     let updateObj = {};
     
     let profile = user.profile;
+
     if (!profile) {
         updateObj = {
             firstName: '',
@@ -47,8 +48,8 @@ export async function updateAccount(username: string, firstName?: string, middle
             paymentInfo: null
         }
 
-        let newProfile = await UserModel.updateOne({ username: username }, {
-            profile: updateObj
+        let newProfile = await UserModel.findOneAndUpdate({ username: username }, {
+            $set: { profile: updateObj }
         });
     }
 
@@ -63,9 +64,20 @@ export async function updateAccount(username: string, firstName?: string, middle
     }
 
     updateObj = updateObj ? updateObj : {};
-    let updatedProfile = await UserModel.updateOne({ username: username }, {
-        profile: updateObj
-    });
+
+    if(updateObj) {
+        if(!profile) {
+            (updateObj as any)['quoteHistory'] = [];
+            (updateObj as any)['purchaseHistory'] = [];
+        } else {
+            (updateObj as any)['quoteHistory'] = profile.quoteHistory;
+            (updateObj as any)['purchaseHistory'] = profile.purchaseHistory;
+        }
+
+        let updatedProfile = await UserModel.findOneAndUpdate({ username: username }, {
+            $set: { profile: updateObj }
+        });
+    }
 
     return profile;
 }
