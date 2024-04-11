@@ -32,7 +32,7 @@ export async function updatePayment(username: string, cardName?: string, cardNum
             cardCVV: ''
         };
 
-        let newPaymentProfile = await UserModel.updateOne({ username: username }, {
+        let newPaymentProfile = await UserModel.findOneAndUpdate({ username: username }, {
             $set: { 'profile.paymentInfo': updateObj }
         });
     }
@@ -63,7 +63,7 @@ export async function updatePayment(username: string, cardName?: string, cardNum
 
     updateObj = updateObj ? updateObj : {};
     if(updateObj) {
-        let updatedPaymentProfile = await UserModel.updateOne({ username: username }, {
+        let updatedPaymentProfile = await UserModel.findOneAndUpdate({ username: username }, {
             'profile.paymentInfo': updateObj
         })
     }
