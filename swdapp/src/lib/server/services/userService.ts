@@ -48,7 +48,7 @@ export async function updateAccount(username: string, firstName?: string, middle
         }
 
         let newProfile = await UserModel.updateOne({ username: username }, {
-            profile: updateObj
+            $set: { profile: updateObj }
         });
     }
 
@@ -63,9 +63,12 @@ export async function updateAccount(username: string, firstName?: string, middle
     }
 
     updateObj = updateObj ? updateObj : {};
-    let updatedProfile = await UserModel.updateOne({ username: username }, {
-        profile: updateObj
-    });
+
+    if(updateObj) {
+        let updatedProfile = await UserModel.updateOne({ username: username }, {
+            $set: { profile: updateObj }
+        });
+    }
 
     return profile;
 }

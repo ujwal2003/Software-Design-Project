@@ -1,5 +1,7 @@
 import crypto from "crypto";
 import { dummyCompanyModel, dummyUsersModel } from "../dummyDatabase";
+import { userExists } from "./userService";
+import { UserModel } from "../database/models/userModel";
 
 
 export async function getPurchaseHistory(username: string) {
@@ -10,28 +12,73 @@ export async function getPurchaseHistory(username: string) {
 }
 
 export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
-    const user = dummyUsersModel.find(user => user.username === username);
+    // const user = dummyUsersModel.find(user => user.username === username);
+    let user = await userExists(username);
+
     if (!user || !user.profile)
         return false;
 
     let userPayment = user.profile.paymentInfo;
+    let updateObj = {};
 
     if (!userPayment) {
-        userPayment = {
-            _id: crypto.randomBytes(24 / 2).toString('hex'),
+        // userPayment = {
+        //     _id: crypto.randomBytes(24 / 2).toString('hex'),
+        //     cardName: '',
+        //     creditCardNumber: '',
+        //     cardCVV: '',
+        //     cardExpiration: new Date(-8640000000000000)
+        // };
+
+        updateObj = {
             cardName: '',
             creditCardNumber: '',
-            cardCVV: '',
-            cardExpiration: new Date(-8640000000000000)
+            cardExpiration: new Date(-8640000000000000),
+            cardCVV: ''
         };
+
+        let newPaymentProfile = await UserModel.updateOne({ username: username }, {
+            $set: { 'profile.paymentInfo': updateObj }
+        });
     }
 
-    userPayment.cardName = cardName ? cardName : userPayment.cardName;
-    userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
-    userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
-    userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
+    updateObj = {};
+    const updateParams = {cardName, cardNum, cvv, expiry};
+
+    for(let key in updateParams) {
+        let val = updateParams[key as keyof typeof updateParams];
+
+        if(key == 'cardNum')
+            key = 'creditCardNumber';
+
+        if(key == 'cvv')
+            key = 'cardCVV';
+
+        if(key == 'expiry')
+            key = 'cardExpiration';
+
+        if(val) {
+            if(key == 'expiry') {
+                val = new Date(val);
+            }
+
+            (updateObj as any)[key] = val;
+        }
+    }
+
+    updateObj = updateObj ? updateObj : {};
+    if(updateObj) {
+        let updatedPaymentProfile = await UserModel.updateOne({ username: username }, {
+            'profile.paymentInfo': updateObj
+        })
+    }
+
+    // userPayment.cardName = cardName ? cardName : userPayment.cardName;
+    // userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
+    // userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
+    // userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
     
-    user.profile.paymentInfo = userPayment;
+    // user.profile.paymentInfo = userPayment;
 
     return true;
 }
