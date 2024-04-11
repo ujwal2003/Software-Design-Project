@@ -1,11 +1,9 @@
 import crypto from "crypto";
-import { dummyCompanyModel, dummyUsersModel } from "../dummyDatabase";
 import { userExists } from "./userService";
 import { UserModel } from "../database/models/userModel";
 
 
 export async function getPurchaseHistory(username: string) {
-    // const user = dummyUsersModel.find(user => user.username === username);
     let user = await userExists(username);
 
     if(!user)
@@ -18,7 +16,6 @@ export async function getPurchaseHistory(username: string) {
 }
 
 export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
-    // const user = dummyUsersModel.find(user => user.username === username);
     let user = await userExists(username);
 
     if (!user || !user.profile)
@@ -28,14 +25,6 @@ export async function updatePayment(username: string, cardName?: string, cardNum
     let updateObj = {};
 
     if (!userPayment) {
-        // userPayment = {
-        //     _id: crypto.randomBytes(24 / 2).toString('hex'),
-        //     cardName: '',
-        //     creditCardNumber: '',
-        //     cardCVV: '',
-        //     cardExpiration: new Date(-8640000000000000)
-        // };
-
         updateObj = {
             cardName: '',
             creditCardNumber: '',
@@ -79,18 +68,10 @@ export async function updatePayment(username: string, cardName?: string, cardNum
         })
     }
 
-    // userPayment.cardName = cardName ? cardName : userPayment.cardName;
-    // userPayment.creditCardNumber = cardNum ? cardNum : userPayment.creditCardNumber;
-    // userPayment.cardCVV = cvv ? cvv : userPayment.cardCVV;
-    // userPayment.cardExpiration = expiry ? expiry : userPayment.cardExpiration;
-    
-    // user.profile.paymentInfo = userPayment;
-
     return true;
 }
 
 export async function makePayment(username: string, price: number, companyName: string, quoteID: string) {
-    // const user = dummyUsersModel.find(user => user.username === username);
     let user = await userExists(username);
 
     if(!user || !user.profile)
@@ -126,11 +107,6 @@ export async function makePayment(username: string, price: number, companyName: 
         price: price - (0.0625 * price)
     };
 
-    // if (!purchaseHistory){
-    //     user.profile.purchaseHistory = [];
-    // }
-    // user?.profile?.purchaseHistory?.push(purchase);
-
     let newPayment = await UserModel.findOneAndUpdate({ username: username },
         {
             $push: {
@@ -142,4 +118,3 @@ export async function makePayment(username: string, price: number, companyName: 
 
     return paymentInfo;
 }
-
