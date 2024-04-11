@@ -25,22 +25,22 @@ export async function getProfileData(requestBody: ProfileRequest): Promise<Respo
         if (profile) {
             const profilePaymentInfo = profile.paymentInfo;
             const resPaymentInfo = profilePaymentInfo ? {
-                cardName: profilePaymentInfo.cardName,
-                cardNumber: profilePaymentInfo.creditCardNumber,
-                expiration: profilePaymentInfo.cardExpiration,
-                cardCVV: profilePaymentInfo.cardCVV
+                cardName: profilePaymentInfo.cardName ? profilePaymentInfo.cardName : '',
+                cardNumber: profilePaymentInfo.creditCardNumber ? profilePaymentInfo.creditCardNumber : '',
+                expiration: profilePaymentInfo.cardExpiration ? profilePaymentInfo.cardExpiration : new Date(-8640000000000000),
+                cardCVV: profilePaymentInfo.cardCVV ? profilePaymentInfo.cardCVV : ''
             } : null;
 
             const response: ProfileResponse = {
                 success: true,
                 profile: {
-                    firstName: profile.firstName,
-                    middleName: profile.middleName,
-                    lastName: profile.lastName,
-                    city: profile.city,
-                    state: profile.state,
-                    street: profile.street,
-                    zip: profile.zip
+                    firstName: profile.firstName ? profile.firstName : '',
+                    middleName: profile.middleName ? profile.middleName : '',
+                    lastName: profile.lastName ? profile.lastName : '',
+                    city: profile.city ? profile.city : '',
+                    state: profile.state ? profile.state : '',
+                    street: profile.street ? profile.street : '',
+                    zip: profile.zip ? profile.zip : ''
                 },
 
                 paymentInfo: resPaymentInfo
@@ -214,7 +214,8 @@ export async function updateAccountData(requestBody: UpdateAccountRequest): Prom
             updatedPayment = true;
         }
 
-
+        // TODO change how to determine success
+        // ? BUG: Currently failure may be returned even if update was succesful
         if (updatedProfile && updatedPayment) {
             const response: GeneralAPIResponse = {
                 success: true,
