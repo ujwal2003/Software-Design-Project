@@ -5,10 +5,16 @@ import { UserModel } from "../database/models/userModel";
 
 
 export async function getPurchaseHistory(username: string) {
-    const user = dummyUsersModel.find(user => user.username === username);
+    // const user = dummyUsersModel.find(user => user.username === username);
+    let user = await userExists(username);
 
-    return user ? user.profile?.purchaseHistory : null;
+    if(!user)
+        return null;
 
+    if(!user.profile)
+        return null;
+
+    return user.profile.purchaseHistory;
 }
 
 export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
@@ -84,9 +90,14 @@ export async function updatePayment(username: string, cardName?: string, cardNum
 }
 
 export async function makePayment(username: string, price: number, companyName: string, quoteID: string) {
-    const user = dummyUsersModel.find(user => user.username === username);
-    const paymentInfo = user ? user.profile?.paymentInfo : null;
-    let purchaseHistory = user ? user.profile?.purchaseHistory : null;
+    // const user = dummyUsersModel.find(user => user.username === username);
+    let user = await userExists(username);
+
+    if(!user || !user.profile)
+        return;
+
+    const paymentInfo = user.profile.purchaseHistory ? user.profile.paymentInfo : null;
+    let purchaseHistory = user ? user.profile.purchaseHistory : null;
 
     if (!paymentInfo) {
         return;
@@ -95,14 +106,17 @@ export async function makePayment(username: string, price: number, companyName: 
     //beep beep credit card machine
     //imagine the credit card is being processed
     //$$$$$$$
-    const company = dummyCompanyModel.find(cn => cn.name === companyName);
 
-    if (!company) {
-        console.log("Company not found");
-        return;
-    }
+    //? This part doesn't exist in the db yet
+    // const company = dummyCompanyModel.find(cn => cn.name === companyName);
 
-    company.revenue += price;
+    // if (!company) {
+    //     console.log("Company not found");
+    //     return;
+    // }
+
+    // company.revenue += price;
+
     let purchase = {
         _id: crypto.randomBytes(24 / 2).toString('hex'),
         quoteID: quoteID,
@@ -112,10 +126,19 @@ export async function makePayment(username: string, price: number, companyName: 
         price: price - (0.0625 * price)
     };
 
-    if (!purchaseHistory){
-        user.profile.purchaseHistory = [];
-    }
-    user?.profile?.purchaseHistory?.push(purchase);
+    // if (!purchaseHistory){
+    //     user.profile.purchaseHistory = [];
+    // }
+    // user?.profile?.purchaseHistory?.push(purchase);
+
+    let newPayment = await UserModel.findOneAndUpdate({ username: username },
+        {
+            $push: {
+                'profile.purchaseHistory': purchase
+            }
+        },
+        { new: true }
+    );
 
     return paymentInfo;
 }
