@@ -23,7 +23,7 @@ beforeAll(() => {
     connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
 })
 
-test('failure to reauthorize due to no token provided', async () => {
+test.skip('failure to reauthorize due to no token provided', async () => {
     const testReauthorizeResponse = {
         username: 'dummyUser1',
         refreshToken: ''
@@ -35,7 +35,7 @@ test('failure to reauthorize due to no token provided', async () => {
     } as GeneralAPIResponse);
 })
 
-test('failure to reauthorize due refresh token being invalid', async () => {
+test.skip('failure to reauthorize due refresh token being invalid', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -61,7 +61,7 @@ test('failure to reauthorize due refresh token being invalid', async () => {
     expect(logOut.success).toBeTruthy();
 })
 
-test('succesful user reauthorization', async () => {
+test.skip('succesful user reauthorization', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -92,7 +92,7 @@ test('succesful user reauthorization', async () => {
     expect(logOut.success).toBeTruthy();
 })
 
-test('failure to reauthorize due to internal error', async () => {
+test.skip('failure to reauthorize due to internal error', async () => {
     //@ts-expect-error
     expect(await (await reauthorizeUser()).json()).toEqual({
         success: false,

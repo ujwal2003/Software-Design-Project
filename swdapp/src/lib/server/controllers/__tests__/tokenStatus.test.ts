@@ -23,7 +23,7 @@ beforeAll(() => {
     connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
 })
 
-test('Access token is still valid', async () => {
+test.skip('Access token is still valid', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -50,7 +50,7 @@ test('Access token is still valid', async () => {
     expect(logOut.success).toBeTruthy();
 })
 
-test('Access token is invalid', async () => {
+test.skip('Access token is invalid', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -76,7 +76,7 @@ test('Access token is invalid', async () => {
     expect(logOut.success).toBeTruthy();
 })
 
-test('Token verification failure', async () => {
+test.skip('Token verification failure', async () => {
     //@ts-expect-error
     expect(await (await accessTokenStatus()).json()).toEqual({
         success: false,

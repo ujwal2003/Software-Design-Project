@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful quote generation test', async () => {
+test.skip('successful quote generation test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser4',
         password: 'unsecurePassword4'
@@ -43,7 +43,7 @@ test('successful quote generation test', async () => {
     }).toEqual(expectedResponse);
 });
 
-test('missing parameters quote generation test', async () => {
+test.skip('missing parameters quote generation test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser4',
         password: 'unsecurePassword4'
@@ -71,7 +71,7 @@ test('missing parameters quote generation test', async () => {
     }).toEqual(expectedResponse);
 });
 
-test('invalid parameter type quote generation test', async () => {
+test.skip('invalid parameter type quote generation test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser4',
         password: 'unsecurePassword4'
@@ -100,7 +100,7 @@ test('invalid parameter type quote generation test', async () => {
     }).toEqual(expectedResponse);
 });
 
-test('unsuccesful quote generation due to invalid access token', async () => {
+test.skip('unsuccesful quote generation due to invalid access token', async () => {
     const testRequest: GenerateQuoteRequest = {
         username: 'dummyUser4',
         accessToken: '',

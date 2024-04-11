@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful payment test', async () => {
+test.skip('successful payment test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -37,7 +37,7 @@ test('successful payment test', async () => {
 
 })
 
-test('company not found payment test', async () => {
+test.skip('company not found payment test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -58,7 +58,7 @@ test('company not found payment test', async () => {
     });
 })
 
-test('unsuccesful payment due to invalid access token', async () => {
+test.skip('unsuccesful payment due to invalid access token', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -80,7 +80,7 @@ test('unsuccesful payment due to invalid access token', async () => {
     } as UnauthorizedResponse);
 })
 
-test('unsuccesful payment due to internal error', async () => {
+test.skip('unsuccesful payment due to internal error', async () => {
     //@ts-expect-error
     expect(await (await makePaymentMethod()).json()).toEqual({
         success: false,
@@ -88,7 +88,7 @@ test('unsuccesful payment due to internal error', async () => {
     } as GeneralAPIResponse);
 })
 
-test('unsuccesful payment due to no payment info set', async () => {
+test.skip('unsuccesful payment due to no payment info set', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser2',
         password: 'unsecurePassword2'

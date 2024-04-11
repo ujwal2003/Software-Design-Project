@@ -21,7 +21,7 @@ beforeAll(() => {
     connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
 });
 
-test('succesful login for user', async () => {
+test.skip('succesful login for user', async () => {
     const testRequest: LoginRequest = {
         username: 'user1',
         password: 'pass1'

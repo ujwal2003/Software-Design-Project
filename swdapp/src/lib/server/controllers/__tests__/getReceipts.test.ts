@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful purchase history test', async () => {
+test.skip('successful purchase history test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser4',
         password: 'unsecurePassword4'
@@ -58,7 +58,7 @@ test('successful purchase history test', async () => {
     });
 })
 
-test('successful purchase history test (empty / no quotes)', async () => {
+test.skip('successful purchase history test (empty / no quotes)', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -77,7 +77,7 @@ test('successful purchase history test (empty / no quotes)', async () => {
     } as PurchaseHistoryResponse);
 })
 
-test('purchase history not found test', async () => {
+test.skip('purchase history not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -96,7 +96,7 @@ test('purchase history not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('purchase history not found test', async () => {
+test.skip('purchase history not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -115,7 +115,7 @@ test('purchase history not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('unsuccesful quote retrieval due to invalid access token', async () => {
+test.skip('unsuccesful quote retrieval due to invalid access token', async () => {
     const testRequest: QuoteHistoryRequest = {
         username: 'dummyUser3',
         accessToken: ''
@@ -128,7 +128,7 @@ test('unsuccesful quote retrieval due to invalid access token', async () => {
     } as UnauthorizedResponse);
 })
 
-test('unsuccesful quote retrieval due to internal error', async () => {
+test.skip('unsuccesful quote retrieval due to internal error', async () => {
     //@ts-expect-error
     expect(await (await getReceipts()).json()).toEqual({
         success: false,

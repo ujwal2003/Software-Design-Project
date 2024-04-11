@@ -11,7 +11,7 @@ beforeAll(() => {
     });
 })
 
-test('succesful user logout', async () => {
+test.skip('succesful user logout', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'

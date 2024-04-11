@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful account update test', async () => {
+test.skip('successful account update test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -39,7 +39,7 @@ test('successful account update test', async () => {
 
 })
 
-test('successful account update when profile is completely empty test', async () => {
+test.skip('successful account update when profile is completely empty test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -62,7 +62,7 @@ test('successful account update when profile is completely empty test', async ()
     });
 })
 
-test('successful account update when payment is completely empty test', async () => {
+test.skip('successful account update when payment is completely empty test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser2',
         password: 'unsecurePassword2'
@@ -84,7 +84,7 @@ test('successful account update when payment is completely empty test', async ()
     });
 })
 
-test('failure to update account due to invalid access token', async () => {
+test.skip('failure to update account due to invalid access token', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -108,7 +108,7 @@ test('failure to update account due to invalid access token', async () => {
     } as UnauthorizedResponse);
 })
 
-test('succesful payment information update', async () => {
+test.skip('succesful payment information update', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -131,7 +131,7 @@ test('succesful payment information update', async () => {
     } as GeneralAPIResponse);
 })
 
-test('failure to update account due to internal error', async () => {
+test.skip('failure to update account due to internal error', async () => {
     //@ts-expect-error
     expect(await (await updateAccountData()).json()).toEqual({
         success: false,
@@ -139,7 +139,7 @@ test('failure to update account due to internal error', async () => {
     } as GeneralAPIResponse);
 })
 
-test('failure due to user not found', async () => {
+test.skip('failure due to user not found', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'

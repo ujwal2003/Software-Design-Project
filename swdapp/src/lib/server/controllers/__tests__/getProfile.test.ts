@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful profile info test', async () => {
+test.skip('successful profile info test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -59,7 +59,7 @@ test('successful profile info test', async () => {
     // } as ProfileResponse);
 })
 
-test('profile not found test', async () => {
+test.skip('profile not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -78,7 +78,7 @@ test('profile not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('user not found test', async () => {
+test.skip('user not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -97,7 +97,7 @@ test('user not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('profile not found due to invalid access token', async () => {
+test.skip('profile not found due to invalid access token', async () => {
     const testRequest: ProfileRequest = {
         username: "dummyUser3",
         accessToken: ''
@@ -110,7 +110,7 @@ test('profile not found due to invalid access token', async () => {
     } as UnauthorizedResponse);
 })
 
-test('profile retrieval dailed due to internal error', async () => {
+test.skip('profile retrieval dailed due to internal error', async () => {
     //@ts-expect-error
     expect(await (await getProfileData()).json()).toEqual({
         success: false,

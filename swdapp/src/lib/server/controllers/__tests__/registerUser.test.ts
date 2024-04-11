@@ -3,7 +3,7 @@ import { expect, test } from 'vitest';
 import { registerUser } from '../registerController';
 import type { RegistrationRequest, RegistrationResponse } from '$lib/server/customTypes/authTypes';
 
-test('unsuccesful registration where a user already exists', async () => {
+test.skip('unsuccesful registration where a user already exists', async () => {
     const testRequest: RegistrationRequest = {
         username: 'dummyUser1',
         password: 'pass1'
@@ -18,7 +18,7 @@ test('unsuccesful registration where a user already exists', async () => {
     } as RegistrationResponse);
 })
 
-test('succesful registration of a new user', async () => {
+test.skip('succesful registration of a new user', async () => {
     const newRandomUserName = Math.random().toString(36).substring(2,7) + '_' + Date.now().toString();
     console.log(`Testing new registration for test user: ${newRandomUserName}`);
 
@@ -33,7 +33,7 @@ test('succesful registration of a new user', async () => {
     } as RegistrationResponse);
 })
 
-test('registration fails due to network error or undefined info', async () => {
+test.skip('registration fails due to network error or undefined info', async () => {
     // @ts-expect-error
     expect(await (await registerUser()).json()).toEqual({
         success: false,

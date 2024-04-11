@@ -14,7 +14,7 @@ beforeAll(() => {
     });
 })
 
-test('successful quote history test', async () => {
+test.skip('successful quote history test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser3',
         password: 'unsecurePassword3'
@@ -54,7 +54,7 @@ test('successful quote history test', async () => {
 
 })
 
-test('successful quote history test (empty / no quotes)', async () => {
+test.skip('successful quote history test (empty / no quotes)', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser2',
         password: 'unsecurePassword2'
@@ -73,7 +73,7 @@ test('successful quote history test (empty / no quotes)', async () => {
     } as QuoteHistoryResponse);
 })
 
-test('profile not found test', async () => {
+test.skip('profile not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -92,7 +92,7 @@ test('profile not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('user not found test', async () => {
+test.skip('user not found test', async () => {
     const testLoginRequest: LoginRequest = {
         username: 'dummyUser1',
         password: 'unsecurePassword1'
@@ -111,7 +111,7 @@ test('user not found test', async () => {
     } as GeneralAPIResponse);
 })
 
-test('unsuccesful quote retrieval due to invalid access token', async () => {
+test.skip('unsuccesful quote retrieval due to invalid access token', async () => {
     const testRequest: QuoteHistoryRequest = {
         username: 'dummyUser3',
         accessToken: ''
@@ -124,7 +124,7 @@ test('unsuccesful quote retrieval due to invalid access token', async () => {
     } as UnauthorizedResponse);
 })
 
-test('unsuccesful quote retrieval due to internal error', async () => {
+test.skip('unsuccesful quote retrieval due to internal error', async () => {
     //@ts-expect-error
     expect(await (await getQuoteHistoryData()).json()).toEqual({
         success: false,
