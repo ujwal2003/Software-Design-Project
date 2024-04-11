@@ -42,7 +42,7 @@ export interface QuoteHistoryRequest {
 
 export interface QuoteHistoryResponse {
     success: boolean,
-    quoteHistory: dummyQuoteSchema[]
+    quoteHistory: Array<any>
 }
 
 export interface PurchaseHistoryRequest {
