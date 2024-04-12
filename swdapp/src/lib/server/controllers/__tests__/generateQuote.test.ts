@@ -96,6 +96,41 @@ test('unsuccessful quote generation', async () => {
     expect(resJSON.message).toEqual("Quote could not be generated");
 });
 
+test('invalid parameter type quote generation', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: GenerateQuoteRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken,
+        gallonsRequested: "5" as unknown as number,
+        deliveryDate: "2024-11-21",
+        loc: "Houston"
+    };
+
+    getQuoteSpy.mockImplementation(async () => {
+        return {
+            generationDate: new Date(),
+            gallonsRequested: testRequest.gallonsRequested,
+            priceCalculated: Math.random()
+        }
+    });
+
+    const res = await generateQuoteData(testRequest);
+    const resJSON: GeneralAPIResponse = await res.json();
+
+    expect(resJSON.success).toBeFalsy();
+    expect(resJSON.message).toEqual("Request failed due to error");
+});
 
 test('unsuccesful quote generation due to invalid access token', async () => {
     const testRequest: GenerateQuoteRequest = {
