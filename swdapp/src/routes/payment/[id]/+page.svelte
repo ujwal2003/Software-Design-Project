@@ -9,7 +9,7 @@
 	import DescListItem from '$lib/components/description-list/descListItem.svelte';
 	import { page } from '$app/stores';
 	import { getCookie } from '$lib/cookieUtil';
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 
 	const currentPage = $page;
 	const id = currentPage.params.id;
@@ -43,7 +43,9 @@
 		const username = profileReq.username;
     	let accessToken = profileReq.accessToken;
 
-		const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		// const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		const profileAPIRes = await getRequest(`../api/profile/info/${username}`, {'access-token': accessToken});
+
 		const profileResJSON = await profileAPIRes.json();
 
 		if(!profileResJSON.success) {
@@ -74,7 +76,9 @@
 		const username = profileReq.username;
     	let accessToken = profileReq.accessToken;
 
-		const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		// const profileAPIRes = await postRequest('../api/profile/info', {username: username, accessToken: accessToken});
+		const profileAPIRes = await getRequest(`../api/profile/info/${username}`, {'access-token': accessToken});
+
 		const profileResJSON = await profileAPIRes.json();
 
 		if(!profileResJSON.success) {
@@ -105,7 +109,8 @@
 		const username = quoteHistReq.username;
     	let accessToken = quoteHistReq.accessToken;
 
-		const quoteHistAPIRes = await postRequest('../api/quotes/retrieve', {username: username, accessToken: accessToken});
+		// const quoteHistAPIRes = await postRequest('../api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quoteHistAPIRes = await getRequest(`../api/quotes/retrieve/${username}`, {'access-token': accessToken});
 		const quiteHistResJSON = await quoteHistAPIRes.json();
 
 		if(!quiteHistResJSON.success) {
@@ -143,7 +148,7 @@
 		const username = makePaymentReq.username;
     	let accessToken = makePaymentReq.accessToken;
 
-		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, company: "Exxon", price: calcPrice(quote.gallonsRequested, quote.priceCalculated)});
+		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, company: "Exxon", price: calcPrice(quote.gallonsRequested, quote.priceCalculated), quoteID: id});
 		const makePaymentResJSON = await makePaymentAPIRes.json();
 		
 		if(!makePaymentResJSON.success) {

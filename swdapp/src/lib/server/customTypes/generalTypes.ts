@@ -42,7 +42,7 @@ export interface QuoteHistoryRequest {
 
 export interface QuoteHistoryResponse {
     success: boolean,
-    quoteHistory: dummyQuoteSchema[]
+    quoteHistory: Array<any>
 }
 
 export interface PurchaseHistoryRequest {
@@ -52,7 +52,7 @@ export interface PurchaseHistoryRequest {
 
 export interface PurchaseHistoryResponse {
     success: boolean,
-    purchaseHistory: dummyReceiptSchema[]
+    purchaseHistory: Array<any>
 }
 
 export interface GenerateQuoteRequest {
@@ -65,7 +65,7 @@ export interface GenerateQuoteRequest {
 
 export interface GenerateQuoteResponse {
     success: boolean,
-    _id: string,
+    // _id: string,
     generationDate: Date,
     gallonsRequested: number,
     priceCalculated: number
@@ -95,5 +95,6 @@ export interface MakePaymentRequest {
     username: string,
     accessToken: string,
     company: string,
-    price: number
+    price: number,
+    quoteID: string
 }

@@ -1,9 +1,17 @@
-import { beforeAll, expect, test, vi } from 'vitest';
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 
+import * as bcrypt from "bcrypt";
 import { getProfileData } from '../profileController';
-import type { ProfileRequest, ProfileResponse, GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import * as UserService from '../../services/userService';
+import * as AuthService from "../../services/authorizationService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
+import type { GeneralAPIResponse, ProfileRequest, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+
+const getProfileSpy = vi.spyOn(UserService, 'getProfile');
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
@@ -14,101 +22,141 @@ beforeAll(() => {
     });
 })
 
-test('successful profile info test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
+afterAll(() => {
+    getProfileSpy.mockRestore();
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+});
+
+test('successful profile info', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    
+    expect(loginRes.success).toBeTruthy();
+
     const testRequest: ProfileRequest = {
-        username: 'dummyUser3',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken
-    }
+    };
 
-    const profileDataRes = await (await getProfileData(testRequest)).json();
-
-    expect(profileDataRes.success).toBeTruthy();
-    expect(profileDataRes.profile).toBeDefined();
-    expect(profileDataRes.profile).toEqual({
-        firstName: "fname2",
-        middleName: "mName2",
-        lastName: "lName2",
-        city: "Dallas",
-        state: "TX",
-        street: "423263 coolStreetName Dr",
-        zip: "98765"
+    (getProfileSpy as any).mockImplementation(async () => {
+        return {
+            firstName: 'fname',
+            middleName: 'mName',
+            lastName: 'lName',
+            street: 'street st',
+            city: 'city',
+            state: 'state',
+            zip: '12345',
+            paymentInfo: {
+                cardName: 'Dummy Card',
+                creditCardNumber: '928374927349283984729',
+                cardExpiration: new Date('2027-04-26'),
+                cardCVV: '123'
+            }
+        }
     });
-    expect(profileDataRes.paymentInfo).toBeDefined();
 
-    // expect(await (await getProfileData(testRequest)).json()).toEqual({
-    //         success: true,
-    //         profile: {
-    //             firstName: "fname2",
-    //             middleName: "mName2",
-    //             lastName: "lName2",
-    //             city: "Dallas",
-    //             state: "TX",
-    //             street: "423263 coolStreetName Dr",
-    //             zip: "98765"
-    //         },
-    //         paymentInfo: {
-                
-    //         }
-    // } as ProfileResponse);
-})
+    const res = await getProfileData(testRequest);
+    const resJSON = await res.json();
 
-test('profile not found test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.profile).toBeDefined();
+    expect(resJSON.profile).toEqual({
+        firstName: 'fname',
+        middleName: 'mName',
+        lastName: 'lName',
+        city: 'city',
+        state: 'state',
+        street: 'street st',
+        zip: '12345'
+    });
+    expect(resJSON.paymentInfo).toBeDefined();
+});
 
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+test('profile not found', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
-    const testRequest: ProfileRequest = {
-        username: 'dummyUser1',
-        accessToken: loginRes.response.accessToken
-    }
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
 
-    expect(await (await getProfileData(testRequest)).json()).toEqual({
-        success: false,
-        message: "Profile not found"
-    } as GeneralAPIResponse);
-})
-
-test('user not found test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: ProfileRequest = {
-        username: 'dummyUserNew',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken
-    }
+    };
 
-    expect(await (await getProfileData(testRequest)).json()).toEqual({
+    getProfileSpy.mockImplementation(async () => { return null; });
+
+    const res = await getProfileData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: false,
-        message: "Profile not found"
+        message: 'Profile not found'
     } as GeneralAPIResponse);
-})
+});
+
+test('user not found', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: ProfileRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken
+    };
+
+    getProfileSpy.mockImplementation(async () => { return null; });
+
+    const res = await getProfileData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
+        success: false,
+        message: 'Profile not found'
+    } as GeneralAPIResponse);
+});
 
 test('profile not found due to invalid access token', async () => {
     const testRequest: ProfileRequest = {
-        username: "dummyUser3",
+        username: 'dummyUser',
         accessToken: ''
-    }
+    };
 
-    expect(await (await getProfileData(testRequest)).json()).toEqual({
+    getProfileSpy.mockImplementation(async () => { return null; });
+
+    const res = await getProfileData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: true,
         unauthorized: true,
         message: 'invalid access token'
     } as UnauthorizedResponse);
-})
+});
 
 test('profile retrieval dailed due to internal error', async () => {
     //@ts-expect-error
@@ -116,4 +164,4 @@ test('profile retrieval dailed due to internal error', async () => {
         success: false,
         message: "Request failed due to error"
     } as GeneralAPIResponse);
-})
+});

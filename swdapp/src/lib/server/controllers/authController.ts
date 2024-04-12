@@ -3,7 +3,11 @@ import { json } from '@sveltejs/kit';
 import jwt from 'jsonwebtoken';
 import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '$env/static/private';
 
-import { userExists, getUserCredentials, addUserRefreshSession, isRefreshTokenValid, revokeRefreshToken } from '../services/userService';
+import { userExists } from '../services/userService';
+import { isRefreshTokenValid } from "../services/authorizationService";
+import { revokeRefreshToken } from "../services/authorizationService";
+import { addUserRefreshSession } from "../services/authorizationService";
+import { getUserCredentials } from "../services/authorizationService";
 import type { LogOutRequest, LogOutResponse, LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '../customTypes/authTypes';
 import type { GeneralAPIResponse } from '../customTypes/generalTypes';
 
@@ -83,7 +87,7 @@ export async function loginUser(requestBody: LoginRequest): Promise<Response> {
         }
 
         let userCreds = await getUserCredentials(requestBody.username);
-        if(await bcrypt.compare(requestBody.password, userCreds.encryptedPass)) {
+        if(userCreds && await bcrypt.compare(requestBody.password, userCreds.encryptedPass)) {
             console.log(`[SERVER] ${requestBody.username} has succesfully authenticated`);
 
             const refreshToken = jwt.sign({username: requestBody.username}, REFRESH_TOKEN_SECRET);

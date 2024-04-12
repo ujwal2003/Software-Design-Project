@@ -2,22 +2,19 @@
 	import Header from '$lib/components/header.svelte';
 	import Footer from '$lib/components/footer.svelte';
 	
-	import CardContainer from '$lib/components/cards/cardContainer.svelte';
-	import Card from '$lib/components/cards/card.svelte';
-	import CardText from '$lib/components/cards/cardText.svelte';
-
-	import DescriptionList from '$lib/components/description-list/descriptionList.svelte';
-	import DescListItem from '$lib/components/description-list/descListItem.svelte';
-	import DescListButton from '$lib/components/description-list/descListButton.svelte';
-
-	import { dummyQuoteData } from '$lib';
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
-
-	import { postRequest } from '$lib/requests';
+	
+	import { getRequest, postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
+	
+	import ScrollContainer from '$lib/components/scrollContainer.svelte';
+	import PrelineTable from '$lib/components/preline-table/prelineTable.svelte';
+	import TableSection from '$lib/components/preline-table/tableSection.svelte';
+	import TableData from '$lib/components/preline-table/tableData.svelte';
+	import TableRow from '$lib/components/preline-table/tableRow.svelte';
 
 	onMount(async () => {
 		if(!await isClientAllowed()) {
@@ -27,14 +24,6 @@
 		await fetchQuoteHistory();
 		getUserData();
 	});
-
-	interface QuoteCard {
-		id: string;
-		date: string;
-		time: string;
-		gallons: number;
-		price: number;
-	}
 
 	interface QuoteCardDetail {
 		_id: string,
@@ -56,30 +45,6 @@
 
 	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
 
-	let selectedQuoteDetails: QuoteCardDetail = {
-		_id: '-',
-		date: '-',
-		location: '-',
-		//deliveryDate: '-',
-		gallons: 0,
-		price: 0.0,
-		tax: 0.0,
-		total: 0.0
-	};
-
-	//let quotes: QuoteCard[] = [];
-
-	// replace this with filtering from database data later
-	// let dummyQuotes: QuoteCard[] = dummyQuoteData.map((dat) => {
-	// 	return {
-	// 		id: dat._id,
-	// 		date: dat.quoteDate,
-	// 		time: dat.quoteTime,
-	// 		gallons: dat.gallons,
-	// 		price: dat.price
-	// 	};
-	// });
-
 	let quotes: any[] = [];
 
 	async function fetchQuoteHistory() {
@@ -92,7 +57,8 @@
 
 			let quoteReq = JSON.parse(cookie);
 
-			const quoteAPIRes = await postRequest('api/quotes/retrieve', quoteReq);
+			// const quoteAPIRes = await postRequest('api/quotes/retrieve', quoteReq);
+			const quoteAPIRes = await getRequest(`api/quotes/retrieve/${quoteReq.username}`, {'access-token': quoteReq.accessToken});
 
 			if (!quoteAPIRes.ok) {
 				throw new Error("Failed to fetch quote history");
@@ -123,7 +89,8 @@
 
 			let profileReq = JSON.parse(cookie);
 
-			const profileAPIRes = await postRequest('api/profile/info', profileReq);
+			// const profileAPIRes = await postRequest('api/profile/info', profileReq);
+			const profileAPIRes = await getRequest(`api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
 
 			if (!profileAPIRes.ok) {
 				throw new Error("Failed to fetch profile data");
@@ -147,37 +114,29 @@
 		}
 	}
 
-	// replace code in function with actual data from db later
-	function getQuoteDetailsFromCard(e: any) {
-
-		let quoteData = quotes.find((obj) => obj._id === e.detail.cardID);
-		console.log(quoteData);
-		if (quoteData != undefined) {
-			selectedQuoteDetails._id = quoteData._id;
-			selectedQuoteDetails.date = quoteData.generationDate.slice(0,10);
-			selectedQuoteDetails.location = userAddress.city.concat(", ", userAddress.state);
-			//selectedQuoteDetails.deliveryDate = quoteData.date; 
-			selectedQuoteDetails.gallons = quoteData.gallonsRequested;
-			selectedQuoteDetails.price = quoteData.priceCalculated;
-			selectedQuoteDetails.tax = 3.14;
-			selectedQuoteDetails.total = quoteData.priceCalculated * quoteData.gallonsRequested + 3.14;
-		} else {
-			selectedQuoteDetails = {
-				_id: '-',
-				date: '-',
-				location: '-',
-				//deliveryDate: '-',
-				gallons: 0,
-				price: 0.0,
-				tax: 0.0,
-				total: 0.0
-			};
-		}
-	}
-
 	function handleQuotePurchase(quoteID: string) {
 		goto(`/payment/${quoteID}`);
 	}
+
+	async function createQuoteBttn(){
+		const cookie = getCookie('user_session');
+		if (!cookie) {
+			throw new Error("User session cookie not found");
+		}
+
+		let profileReq = JSON.parse(cookie);
+
+		const profileAPIRes = await getRequest(`api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
+		const profileResJSON = await profileAPIRes.json();
+
+		if (!profileResJSON.success && profileResJSON.message == "Profile not found"){
+			failureAlert("Please complete your profile first.");
+		}
+		else {
+			goto('/quotes/new');
+		}
+	}
+
 </script>
 
 <div class="flex h-screen flex-col">
@@ -199,56 +158,53 @@
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
-			<div class="flex h-screen flex-row">
-				<div class="w-1/3 pl-7 pt-4">
-					<CardContainer heightOffset={5}>
-						{#each quotes as quote}
-							<Card cardID={quote._id} btnName={"Quote Details"} on:cardClick={(e) => {getQuoteDetailsFromCard(e)}}>
-								<CardText title={true}>
-									{`${quote.generationDate.slice(0, 10)} at ${quote.generationDate.slice(11,16)}`}
-								</CardText>
-								<CardText>
-									{`Requested Gallons: ${quote.gallonsRequested}`}
-								</CardText>
-								<CardText>
-									{`Suggested Price: ${quote.priceCalculated} /gal`}
-								</CardText>
-							</Card>
-						{/each}
-					</CardContainer>
-				</div>
-
-				<div class="ml-6 mr-6 mt-4 flex h-1/2 w-2/3 flex-row">
-					<DescriptionList>
-						<DescListItem details={{ title: 'Quote Date', text: selectedQuoteDetails.date }} />
-						<DescListItem details={{ title: 'Location', text: selectedQuoteDetails.location }} />
-						<!-- <DescListItem
-							details={{ title: 'Delivery Date', text: selectedQuoteDetails.deliveryDate }}
-						/> -->
-						<DescListItem details={{ title: 'Gallons', text: selectedQuoteDetails.gallons }} />
-						<DescListItem
-							details={{ title: 'Price', text: selectedQuoteDetails.price.toFixed(2) }}
-						/>
-						<DescListItem details={{ title: 'Tax', text: selectedQuoteDetails.tax.toFixed(2) }} />
-						<DescListItem
-							details={{ title: 'Total', text: selectedQuoteDetails.total.toFixed(2) }}
-						/>
-						<div class="flex w-full flex-row gap-3">
-							<DescListButton
-								btnColor={'bg-[#2563eb]'}
-								btnColorHoever={'hover:bg-blue-700'}
-								btnLabel={'Purchase Quote'}
-								btnEvent={'quotePurchaseClick'}
-								on:quotePurchaseClick={() => handleQuotePurchase(selectedQuoteDetails._id)}
-							/>
-							<DescListButton
-								btnLabel={'Create New Quote'}
-								btnEvent={'quoteCreateClick'}
-								on:quoteCreateClick={() => goto('quotes/new/')}
-							/>
-						</div>
-					</DescriptionList>
-				</div>
+			<div class="pl-8 py-2">
+				<button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-gray-800 text-white 
+				hover:border-gray-800 hover:text-gray-800 hover:bg-transparent" on:click={() => {createQuoteBttn()}}>
+					Create Quote
+					<svg
+						class="size-4 flex-shrink-0"
+						xmlns="http://www.w3.org/2000/svg"
+						width="24"
+						height="24"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
+					>
+				</button>
+			</div>
+			
+			<div class="flex h-screen flex-row mt-2 ml-8">
+				<ScrollContainer tailwindAppend='overflow-x-hidden' heightOffset={12}>
+					<PrelineTable>
+						<TableSection style='head' headBg='bg-gray-100'>
+							<TableData header>Generation Date</TableData>
+							<TableData header>Location</TableData>
+							<TableData header>Gallons</TableData>
+							<TableData header>Suggested Price</TableData>
+							<TableData header>Total</TableData>
+							<TableData header>Purchase</TableData>
+						</TableSection>
+	
+						<TableSection style='body'>
+							{#each quotes as quote}
+								<TableRow>
+									<TableData>{quote.generationDate.slice(0, 10)}</TableData>
+									<TableData>{userAddress.city}, {userAddress.state}</TableData>
+									<TableData>{quote.gallonsRequested}</TableData>
+									<TableData>${quote.priceCalculated} per gal</TableData>
+									<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
+									<TableData button on:tableBtnClick={() => handleQuotePurchase(quote._id)}>
+										Purchase Quote
+									</TableData>
+								</TableRow>
+							{/each}
+						</TableSection>
+					</PrelineTable>
+				</ScrollContainer>
 			</div>
 		</section>
 	</main>

@@ -2,7 +2,7 @@
     import Header from "$lib/components/header.svelte";
     import Footer from "$lib/components/footer.svelte";
 
-	import CardContainer from "$lib/components/cards/cardContainer.svelte";
+	import ScrollContainer from "$lib/components/scrollContainer.svelte";
 	import Card from "$lib/components/cards/card.svelte";
 	import CardText from "$lib/components/cards/cardText.svelte";
 
@@ -14,7 +14,7 @@
 	import { isClientAllowed } from "$lib/protected";
 	import { failureAlert, successAlert } from "$lib/components/toasts/customToasts";
 	import { goto } from "$app/navigation";
-	import { postRequest } from '$lib/requests';
+	import { getRequest, postRequest } from '$lib/requests';
 	import { getCookie } from '$lib/cookieUtil';
 
 	let receipts: any[] = [];
@@ -54,7 +54,8 @@
 		console.log(username);
 		console.log(accessToken);
 
-		const receiptAPIRes = await postRequest('api/payment/receipts', {username: username, accessToken: accessToken});
+		// const receiptAPIRes = await postRequest('api/payment/receipts', {username: username, accessToken: accessToken});
+		const receiptAPIRes = await getRequest(`api/payment/receipts/${username}`, {'access-token': accessToken});
 		const receiptResJSON = await receiptAPIRes.json();
 
 		if(!receiptResJSON.success) {
@@ -85,7 +86,8 @@
 		const username = quoteHistReq.username;
     	let accessToken = quoteHistReq.accessToken;
 
-		const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		// const quoteHistAPIRes = await postRequest('api/quotes/retrieve', {username: username, accessToken: accessToken});
+		const quoteHistAPIRes = await getRequest(`api/quotes/retrieve/${username}`, {'access-token': accessToken});
 		const quiteHistResJSON = await quoteHistAPIRes.json();
 
 		if(!quiteHistResJSON.success) {
@@ -146,7 +148,7 @@
 			<div class="flex">
 				<div class="{showDescriptionList ? 'w-1/3 pl-7' : 'w-1/3 pl-5'} pt-4">
 					
-					<CardContainer>
+					<ScrollContainer>
 						{#each receipts as receipt}
 						  <Card cardID={receipt._id} btnName={"Payment Details"} on:cardClick={e => {handleCardDetailClick(e)}}>
 							<CardText title>
@@ -157,7 +159,7 @@
 							</CardText>
 						  </Card>
 						{/each}
-					  </CardContainer>
+					  </ScrollContainer>
 					
 				</div>
 
