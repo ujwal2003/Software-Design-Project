@@ -1,9 +1,18 @@
-import { beforeAll, expect, test, vi } from 'vitest';
-
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
+import * as bcrypt from "bcrypt";
 import { updateAccountData } from '../profileController';
-import type { GeneralAPIResponse, UnauthorizedResponse, UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
+import * as UserService from '../../services/userService';
+import * as AuthService from "../../services/authorizationService";
+import * as PaymentService from "../../services/paymentService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
+import type { GeneralAPIResponse, UnauthorizedResponse, UpdateAccountRequest } from '$lib/server/customTypes/generalTypes';
+
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+const updateAcctSpy = vi.spyOn(UserService, 'updateAccount');
+const updatePaySpy = vi.spyOn(PaymentService, 'updatePayment');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
@@ -14,150 +23,104 @@ beforeAll(() => {
     });
 })
 
-test.skip('successful account update test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+    updateAcctSpy.mockRestore();
+    updatePaySpy.mockRestore();
+});
+
+test('successful account update test', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: UpdateAccountRequest = {
-        username: 'dummyUser3',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
         profileUpdates: {
-            firstName: "Bartholomew",
-            lastName: "Da Third"
+            firstName: 'coolName',
+            lastName: 'amazingLastName'
         }
-    }
-    
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+    };
+
+    (updateAcctSpy as any).mockImplementation(async () => { return true; });
+
+    const res = await updateAccountData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: true,
         message: "Account update successful"
-    });
-    
+    } as GeneralAPIResponse);
+});
 
-})
+test('succesful payment information update', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
-test.skip('successful account update when profile is completely empty test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
 
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
-    const testRequest: UpdateAccountRequest = {
-        username: 'dummyUser1',
-        accessToken: loginRes.response.accessToken,
-        profileUpdates: {
-            firstName: "Bartholomew",
-            lastName: "Da Third"
-        }
-    }
-    
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
-        success: true,
-        message: "Account update successful"
-    });
-})
-
-test.skip('successful account update when payment is completely empty test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser2',
-        password: 'unsecurePassword2'
-    }
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: UpdateAccountRequest = {
-        username: 'dummyUser2',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
         paymentUpdates: {
-            cardName: 'new card'
+            cardName: "dummy user's card",
+            cvv: '123'
         }
-    }
-    
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+    };
+
+    updatePaySpy.mockImplementation(async () => { return true; });
+
+    const res = await updateAccountData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: true,
         message: "Account update successful"
-    });
-})
+    } as GeneralAPIResponse);
+});
 
-test.skip('failure to update account due to invalid access token', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
-
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
+test('failure to update account due to invalid access token', async () => {
     const testRequest: UpdateAccountRequest = {
         username: 'dummyUser1',
-        accessToken: loginRes.response.accessToken + 'abcd',
+        accessToken: '',
         profileUpdates: {
             firstName: "John",
             lastName: "Doe"
         }
-    }
+    };
 
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
+    const res = await updateAccountData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: true,
         unauthorized: true,
         message: 'invalid access token'
     } as UnauthorizedResponse);
-})
+});
 
-test.skip('succesful payment information update', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
-
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
-    const testRequest: UpdateAccountRequest = {
-        username: 'dummyUser3',
-        accessToken: loginRes.response.accessToken,
-        paymentUpdates: {
-            cardName: "user 1's card",
-            cvv: "123"
-        }
-    }
-
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
-        success: true,
-        message: "Account update successful"
-    } as GeneralAPIResponse);
-})
-
-test.skip('failure to update account due to internal error', async () => {
+test('failure to update account due to internal error', async () => {
     //@ts-expect-error
     expect(await (await updateAccountData()).json()).toEqual({
         success: false,
         message: "Request failed due to error"
     } as GeneralAPIResponse);
-})
-
-test.skip('failure due to user not found', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
-
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
-    const testRequest: UpdateAccountRequest = {
-        username: 'dummyUserNewUser',
-        accessToken: loginRes.response.accessToken,
-        profileUpdates: {
-            firstName: "fnameNew",
-            lastName: "lnameNew"
-        }
-    }
-    
-    expect(await (await updateAccountData(testRequest)).json()).toEqual({
-        success: false,
-        message: "Account update failed"
-    });
-})
+});
