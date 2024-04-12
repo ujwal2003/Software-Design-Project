@@ -1,101 +1,94 @@
-import { beforeAll, expect, test, vi } from 'vitest';
-import { parseEnv } from './util/envMock';
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import { loginUser, reauthorizeUser } from "../authController";
 
-import { reauthorizeUser, loginUser, logOutUser } from '../authController';
-import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
-import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
-import { connect } from '../../database/mongo';
+import * as bcrypt from "bcrypt";
+import * as UserService from '../../services/userService';
+import * as AuthService from "../../services/authorizationService";
+import type { GeneralAPIResponse } from "$lib/server/customTypes/generalTypes";
+import type { LoginRequest, LoginResponse, LoginSuccess } from "$lib/server/customTypes/authTypes";
+
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+const isRefTokenValidSpy = vi.spyOn(AuthService, 'isRefreshTokenValid');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
-        const envVars = parseEnv('../swdapp/.env');
-
         return {
             REFRESH_TOKEN_SECRET: 'test',
             ACCESS_TOKEN_SECRET: 'test2',
-            MONGO_CLUSTER: envVars.MONGO_CLUSTER,
-            DB_NAME: envVars.DB_NAME,
-            CLUSTER_USER: envVars.CLUSTER_USER,
-            CLUSTER_PASS: envVars.CLUSTER_PASS
-        }
+        };
     });
+});
 
-    connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
-})
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+    isRefTokenValidSpy.mockRestore();
+});
 
-test.skip('failure to reauthorize due to no token provided', async () => {
-    const testReauthorizeResponse = {
-        username: 'dummyUser1',
+test('failure to reauthorize due to no token provided', async () => {
+    const testRequest = {
+        username: 'dummyUser',
         refreshToken: ''
     };
 
-    expect(await (await reauthorizeUser(testReauthorizeResponse)).json()).toEqual({
+    expect(await (await reauthorizeUser(testRequest)).json()).toEqual({
         success: false,
         message: 'no token provided'
     } as GeneralAPIResponse);
-})
+});
 
-test.skip('failure to reauthorize due refresh token being invalid', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+test('failure to reauthorize due refresh token being invalid', async () => {
+    const testRequest = {
+        username: 'dummyUser',
+        refreshToken: 'invalid_refresh_token'
+    };
 
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    const testReauthorizeResponse = {
-        username: testLoginRequest.username,
-        refreshToken: loginRes.response.refreshToken + 'abcd'
-    }
+    isRefTokenValidSpy.mockImplementation(async () => { return false; });
 
-    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
-    const logOut = await (await logOutUser({
-        username: testReauthorizeResponse.username,
-        refreshToken: loginRes.response.refreshToken
-    })).json();
+    const res = await reauthorizeUser(testRequest);
+    const resJSON = await res.json();
 
-    expect(res).toEqual({
+    expect(resJSON).toEqual({
         success: false,
         message: 'invalid token provided'
     } as GeneralAPIResponse);
+});
 
-    expect(logOut.success).toBeTruthy();
-})
+test('succesful user reauthorization', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
-test.skip('succesful user reauthorization', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    const testReauthorizeResponse = {
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest = {
         username: testLoginRequest.username,
         refreshToken: loginRes.response.refreshToken
-    }
+    };
 
-    console.log(loginRes);
-    console.log(testReauthorizeResponse)
+    isRefTokenValidSpy.mockImplementation(async () => { return true; });
 
-    const res = await (await reauthorizeUser(testReauthorizeResponse)).json();
-    
-    console.log(res);
-    
-    expect(res.success).toBeTruthy();
-    expect(res.payload).toBeDefined();
-    expect(res.newAccessToken).toBeTypeOf("string");
+    const res = await reauthorizeUser(testRequest);
+    const resJSON = await res.json();
 
-    const logOut = await (await logOutUser({
-        username: testReauthorizeResponse.username,
-        refreshToken: loginRes.response.refreshToken
-    })).json();
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.payload).toBeDefined();
+    expect(resJSON.newAccessToken).toBeTypeOf('string');
+});
 
-    expect(logOut.success).toBeTruthy();
-})
-
-test.skip('failure to reauthorize due to internal error', async () => {
+test('failure to reauthorize due to internal error', async () => {
     //@ts-expect-error
     expect(await (await reauthorizeUser()).json()).toEqual({
         success: false,
         message: "failed to authorize due to internal server error"
     } as GeneralAPIResponse);
-})
+});
