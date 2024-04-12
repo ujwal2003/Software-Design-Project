@@ -28,7 +28,7 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     const priceCalculated = Math.random();
 
     const quote = {
-        _id: crypto.randomBytes(24 / 2).toString('hex'),
+        // _id: crypto.randomBytes(24 / 2).toString('hex'),
         generationDate: new Date(),
         gallonsRequested: gallonsRequested,
         priceCalculated: priceCalculated
