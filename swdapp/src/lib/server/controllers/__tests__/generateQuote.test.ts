@@ -1,9 +1,17 @@
-import { beforeAll, expect, test, vi } from 'vitest';
-
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
+import * as bcrypt from "bcrypt";
 import { generateQuoteData } from '../profileController';
-import type { GenerateQuoteRequest, GenerateQuoteResponse, GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import * as UserService from '../../services/userService';
+import * as AuthService from "../../services/authorizationService";
+import * as QuoteService from "../../services/quoteService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
+import type { GeneralAPIResponse, GenerateQuoteRequest, GenerateQuoteResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+const getQuoteSpy = vi.spyOn(QuoteService, 'generateQuote');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
@@ -12,106 +20,139 @@ beforeAll(() => {
             ACCESS_TOKEN_SECRET: 'test2'
         }
     });
-})
+});
 
-test('successful quote generation test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser4',
-        password: 'unsecurePassword4'
-    }
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+    getQuoteSpy.mockRestore();
+});
+
+test('successful quote generation', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    
+    expect(loginRes.success).toBeTruthy();
+
     const testRequest: GenerateQuoteRequest = {
-        username: 'dummyUser4',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
         gallonsRequested: 5,
-        deliveryDate: "2023-10-21",
+        deliveryDate: "2024-11-21",
         loc: "Houston"
-    }
-
-    const quoteResponse = await (await generateQuoteData(testRequest)).json();
-
-    const expectedResponse = {
-        success: true,
-        gallonsRequested: 5
     };
 
-    expect({
-        success: quoteResponse.success,
-        gallonsRequested: quoteResponse.gallonsRequested,
-    }).toEqual(expectedResponse);
+    getQuoteSpy.mockImplementation(async () => {
+        return {
+            generationDate: new Date(),
+            gallonsRequested: testRequest.gallonsRequested,
+            priceCalculated: Math.random()
+        }
+    });
+
+    const res = await generateQuoteData(testRequest);
+    const resJSON: GenerateQuoteResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.gallonsRequested).toEqual(testRequest.gallonsRequested);
+    expect(resJSON.priceCalculated).toBeDefined();
 });
 
-test('missing parameters quote generation test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser4',
-        password: 'unsecurePassword4'
-    }
+test('unsuccessful quote generation', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
-    const testRequest: Partial<GenerateQuoteRequest> = {
-        username: 'dummyUser4',
-        accessToken: loginRes.response.accessToken,
-        deliveryDate: "2023-10-20",
-        loc: "Houston"
-    }
-
-    const quoteResponse = await (await generateQuoteData(testRequest as GenerateQuoteRequest)).json();
-
-    const expectedResponse = {
-        success: false,
-        message: "Request failed due to error"
-    };
-
-    expect({
-        success: quoteResponse.success,
-        message: quoteResponse.message
-    }).toEqual(expectedResponse);
-});
-
-test('invalid parameter type quote generation test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser4',
-        password: 'unsecurePassword4'
-    }
-
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: GenerateQuoteRequest = {
-        username: 'dummyUser4',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
-        gallonsRequested: "5" as unknown as number,
-        deliveryDate: "2023-10-20",
+        gallonsRequested: 5,
+        deliveryDate: "2024-11-21",
         loc: "Houston"
-    }
-
-    const quoteResponse = await (await generateQuoteData(testRequest as GenerateQuoteRequest)).json();
-
-    const expectedResponse = {
-        success: false,
-        message: "Request failed due to error"
     };
 
-    expect({
-        success: quoteResponse.success,
-        message: quoteResponse.message
-    }).toEqual(expectedResponse);
+    getQuoteSpy.mockImplementation(async () => { return null });
+
+    const res = await generateQuoteData(testRequest);
+    const resJSON: GeneralAPIResponse = await res.json();
+
+    expect(resJSON.success).toBeFalsy();
+    expect(resJSON.message).toEqual("Quote could not be generated");
+});
+
+test('invalid parameter type quote generation', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: GenerateQuoteRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken,
+        gallonsRequested: "5" as unknown as number,
+        deliveryDate: "2024-11-21",
+        loc: "Houston"
+    };
+
+    getQuoteSpy.mockImplementation(async () => {
+        return {
+            generationDate: new Date(),
+            gallonsRequested: testRequest.gallonsRequested,
+            priceCalculated: Math.random()
+        }
+    });
+
+    const res = await generateQuoteData(testRequest);
+    const resJSON: GeneralAPIResponse = await res.json();
+
+    expect(resJSON.success).toBeFalsy();
+    expect(resJSON.message).toEqual("Request failed due to error");
 });
 
 test('unsuccesful quote generation due to invalid access token', async () => {
     const testRequest: GenerateQuoteRequest = {
-        username: 'dummyUser4',
+        username: 'dummyUser',
         accessToken: '',
         gallonsRequested: 5,
-        deliveryDate: "2023-10-21",
+        deliveryDate: "2024-11-21",
         loc: "Houston"
-    }
+    };
 
-    expect(await (await generateQuoteData(testRequest)).json()).toEqual({
-        success: true,
-        unauthorized: true,
-        message: 'invalid access token'
-    } as UnauthorizedResponse);
+    const res = await generateQuoteData(testRequest);
+    const resJSON: UnauthorizedResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.unauthorized).toBeTruthy();
+    expect(resJSON.message).toEqual('invalid access token');
+});
+
+test('failure due to internal server error', async () => {
+    //@ts-expect-error
+    expect(await (await generateQuoteData()).json()).toEqual({
+        success: false,
+        message: "Request failed due to error"
+    } as GeneralAPIResponse);
 });

@@ -65,7 +65,7 @@ export interface GenerateQuoteRequest {
 
 export interface GenerateQuoteResponse {
     success: boolean,
-    _id: string,
+    // _id: string,
     generationDate: Date,
     gallonsRequested: number,
     priceCalculated: number

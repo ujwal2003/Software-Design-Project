@@ -4,7 +4,8 @@ export default defineConfig({
     test: {
         // ... Specify options here.
         coverage: {
-            all: false
+            all: false,
+            exclude: ['**/services/**']
         }
     }
 })

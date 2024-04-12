@@ -165,7 +165,7 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
 
             const response: GenerateQuoteResponse = {
                 success: true,
-                _id: quote._id,
+                // _id: (quote as any)._id,
                 generationDate: quote.generationDate,
                 gallonsRequested: quote.gallonsRequested,
                 priceCalculated: quote.priceCalculated

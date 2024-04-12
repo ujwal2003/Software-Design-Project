@@ -1,63 +1,87 @@
-import { expect, test, vi } from 'vitest';
+import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from "$lib/server/customTypes/authTypes";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
 
-import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
-import { loginUser } from '../authController';
+import * as bcrypt from "bcrypt";
 
-test('succesful login for user', async () => {
-    const testRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+import * as UserService from '../../services/userService';
+import * as AuthService from '../../services/authorizationService';
+import { loginUser } from "../authController";
 
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+
+beforeAll(() => {
     vi.mock('$env/static/private', () => {
         return {
             REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
-        }
+            ACCESS_TOKEN_SECRET: 'test2',
+        };
     });
+});
 
-    const res: LoginResponse<LoginSuccess> = await (await loginUser(testRequest)).json();
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+});
 
-    expect(res.success).toBe(true);
-    expect(Object.keys(res.response).length).toEqual(2);
-    expect(res.response.accessToken).toBeTypeOf('string');
-    expect(res.response.accessToken.length).toBeGreaterThan(0);
-    expect(res.response.refreshToken).toBeTypeOf('string');
-    expect(res.response.refreshToken.length).toBeGreaterThan(0);
-})
-
-test('unsuccesful login (user does not exist)', async () => {
+test('login fails because user does not exist', async () => {
     const testRequest: LoginRequest = {
-        username: 'nonExistentUser',
-        password: 'nonExistentPassword'
+        username: 'unregisteredUser',
+        password: 'unhashedPass'
     }
 
-    expect(await (await loginUser(testRequest)).json()).toEqual({
+    userExistsSpy.mockImplementation(async () => { return false; });
+    getCredsSpy.mockImplementation(async () => { return undefined; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const res = await loginUser(testRequest);
+    const resJSON: LoginResponse<LoginFailure> = await res.json();
+
+    expect(resJSON).toEqual({
         success: false,
         response: {
             failType: 'invalid_user',
             message: 'User not found'
         }
     } as LoginResponse<LoginFailure>);
-})
+});
 
-test('unsucessful login (wrong password)', async () => {
+test('login fails because a wrong password was entered', async () => {
     const testRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'wrongPassword'
-    }
+        username: 'dummyUser',
+        password: 'pass1'
+    };
 
-    expect(await (await loginUser(testRequest)).json()).toEqual({
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    
+    getCredsSpy.mockImplementation(async () => {
+        return {
+            username: 'dummyUser',
+            encryptedPass: hashedPass
+        }
+    });
+    
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const res = await loginUser({ username: 'dummyUser', password: 'wrongPassword' } as LoginRequest);
+    const resJSON: LoginResponse<LoginFailure> = await res.json();
+
+    expect(resJSON).toEqual({
         success: false,
         response: {
             failType: 'invalid_pass',
             message: `invalid password for user ${testRequest.username}`
         }
     } as LoginResponse<LoginFailure>);
-})
+});
 
-test('authentication fails due to error or invalid info', async () => {
-    // @ts-expect-error
+test('authentication fials due to internal error', async () => {
+    //@ts-expect-error
     expect(await (await loginUser()).json()).toEqual({
         success: false,
         response: {
@@ -65,4 +89,38 @@ test('authentication fails due to error or invalid info', async () => {
             message: 'login failed due to internal server error'
         }
     } as LoginResponse<LoginFailure>);
-})
+});
+
+test('succesful user login', async () => {
+    const testRequest: LoginRequest = {
+        username: 'dummyUser',
+        password: 'pass1'
+    };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => {
+        return true;
+    });
+
+    getCredsSpy.mockImplementation(async () => {
+        return {
+            username: 'user1',
+            encryptedPass: hashedPass
+        };
+    });
+
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+
+    const res = await loginUser(testRequest);
+    const resJSON: LoginResponse<LoginSuccess> = await res.json();
+    
+    expect(resJSON.success).toBeTruthy();
+    expect(Object.keys(resJSON.response).length).toEqual(2);
+    expect(resJSON.response.accessToken).toBeTypeOf('string');
+    expect(resJSON.response.accessToken.length).toBeGreaterThan(0);
+    expect(resJSON.response.refreshToken).toBeTypeOf('string');
+    expect(resJSON.response.refreshToken.length).toBeGreaterThan(0);
+});

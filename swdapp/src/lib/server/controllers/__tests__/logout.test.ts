@@ -1,31 +1,37 @@
-import type { LogOutRequest, LogOutResponse, LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
-import { beforeAll, expect, test, vi } from 'vitest';
-import { logOutUser, loginUser } from '../authController';
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import { logOutUser } from "../authController";
+
+import * as AuthService from '../../services/authorizationService';
+import type { LogOutRequest, LogOutResponse } from "$lib/server/customTypes/authTypes";
+
+const revokeRefTokenSpy = vi.spyOn(AuthService, 'revokeRefreshToken');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
         return {
             REFRESH_TOKEN_SECRET: 'test',
-            ACCESS_TOKEN_SECRET: 'test2'
-        }
+            ACCESS_TOKEN_SECRET: 'test2',
+        };
     });
-})
+});
 
-test('succesful user logout', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+afterAll(() => {
+    revokeRefTokenSpy.mockRestore();
+});
 
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+test('successfull user logout', async () => {
+    const testRequest: LogOutRequest = {
+        username: 'dummyUser',
+        refreshToken: ''
+    };
 
-    const testLogOutRequest: LogOutRequest = {
-        username: testLoginRequest.username,
-        refreshToken: loginRes.response.refreshToken
-    }
+    revokeRefTokenSpy.mockImplementation(async () => { return; });
 
-    expect(await (await logOutUser(testLogOutRequest)).json()).toEqual({
+    const res = await logOutUser(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
         success: true,
-        message: `Successfully logged out user ${testLogOutRequest.username}`
+        message: `Successfully logged out user ${testRequest.username}`
     } as LogOutResponse);
-})
+});

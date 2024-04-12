@@ -1,80 +1,89 @@
-import { beforeAll, expect, test, vi } from 'vitest';
-import { parseEnv } from './util/envMock';
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
+import { accessTokenStatus, loginUser } from "../authController";
 
-import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
-import { accessTokenStatus, logOutUser, loginUser } from '../authController';
-import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes';
-import { connect } from '../../database/mongo';
+import * as UserService from '../../services/userService';
+import * as AuthService from '../../services/authorizationService';
+import type { LoginRequest, LoginResponse, LoginSuccess } from "$lib/server/customTypes/authTypes";
+import * as bcrypt from "bcrypt";
+import type { GeneralAPIResponse } from "$lib/server/customTypes/generalTypes";
+
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+const isRefTokenValidSpy = vi.spyOn(AuthService, 'isRefreshTokenValid');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
-        const envVars = parseEnv('../swdapp/.env');
-
         return {
             REFRESH_TOKEN_SECRET: 'test',
             ACCESS_TOKEN_SECRET: 'test2',
-            MONGO_CLUSTER: envVars.MONGO_CLUSTER,
-            DB_NAME: envVars.DB_NAME,
-            CLUSTER_USER: envVars.CLUSTER_USER,
-            CLUSTER_PASS: envVars.CLUSTER_PASS
-        }
+        };
     });
+});
 
-    connect().then(() => { console.log("[TESTING_ENV]: connected to MongoDB") });
-})
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+    isRefTokenValidSpy.mockRestore();
+});
 
 test('Access token is still valid', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    const testTokenStatusRequest = {
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest = {
         accessToken: loginRes.response.accessToken,
         refreshToken: loginRes.response.refreshToken
-    }
+    };
 
-    const res = await (await accessTokenStatus(testTokenStatusRequest)).json();
+    isRefTokenValidSpy.mockImplementation(async () => { return true; });
 
-    expect(res.success).toBe(true);
-    expect(res.valid).toBe(true);
-    expect(res.message).toEqual('token is still valid');
-    expect(res.payload).toBeDefined();
+    const res = await accessTokenStatus(testRequest);
+    const resJSON = await res.json();
 
-    const logOut = await (await logOutUser({
-        username: testLoginRequest.username,
-        refreshToken: loginRes.response.refreshToken
-    })).json();
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.valid).toBeTruthy();
+    expect(resJSON.message).toEqual('token is still valid');
+    expect(resJSON.payload).toBeDefined();
+});
 
-    expect(logOut.success).toBeTruthy();
-})
+test('Access token has expired', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
-test('Access token is invalid', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser1',
-        password: 'unsecurePassword1'
-    }
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-    const testTokenStatusRequest = {
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest = {
         accessToken: loginRes.response.accessToken,
         refreshToken: loginRes.response.refreshToken + 'abcd'
-    }
+    };
 
-    const res = await (await accessTokenStatus(testTokenStatusRequest)).json();
+    isRefTokenValidSpy.mockImplementation(async () => { return false; });
 
-    expect(res.success).toBeTruthy();
-    expect(res.valid).toBeFalsy();
-    expect(res.message).toEqual('token has expired');
+    const res = await accessTokenStatus(testRequest);
+    const resJSON = await res.json();
 
-    const logOut = await (await logOutUser({
-        username: testLoginRequest.username,
-        refreshToken: loginRes.response.refreshToken
-    })).json();
-
-    expect(logOut.success).toBeTruthy();
-})
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.valid).toBeFalsy();
+    expect(resJSON.message).toEqual('token has expired');
+});
 
 test('Token verification failure', async () => {
     //@ts-expect-error
@@ -82,4 +91,4 @@ test('Token verification failure', async () => {
         success: false,
         message: "failed to verify token due to internal server error"
     } as GeneralAPIResponse);
-})
+});
