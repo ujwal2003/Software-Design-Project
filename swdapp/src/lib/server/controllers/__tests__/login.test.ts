@@ -1,5 +1,5 @@
 import type { LoginFailure, LoginRequest, LoginResponse, LoginSuccess } from "$lib/server/customTypes/authTypes";
-import { afterAll, beforeAll, describe, expect, test, vi } from "vitest";
+import { afterAll, beforeAll, expect, test, vi } from "vitest";
 
 import * as bcrypt from "bcrypt";
 
