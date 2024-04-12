@@ -91,6 +91,20 @@ test('successful purchase history retrieval with no receipts', async () => {
     expect(resJSON.purchaseHistory.length).toEqual(0);
 });
 
+test('failure due to invalid access token', async () => {
+    const testRequest: PurchaseHistoryRequest = {
+        username: 'dummyUser',
+        accessToken: ''
+    };
+
+    const res = await getReceipts(testRequest);
+    const resJSON: UnauthorizedResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.unauthorized).toBeTruthy();
+    expect(resJSON.message).toEqual('invalid access token');
+});
+
 test('failure due to profile not found', async () => {
     const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
