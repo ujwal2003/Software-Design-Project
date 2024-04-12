@@ -1,9 +1,18 @@
-import { beforeAll, expect, test, vi } from 'vitest';
-
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
+import * as bcrypt from "bcrypt";
+import crypto from "crypto";
+import * as UserService from '../../services/userService';
+import * as AuthService from "../../services/authorizationService";
+import * as PaymentService from "../../services/paymentService";
 import { makePaymentMethod } from '../profileController';
 import type { GeneralAPIResponse, MakePaymentRequest, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
+
+const userExistsSpy = vi.spyOn(UserService, 'userExists');
+const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
+const addRefTokenSpy = vi.spyOn(AuthService, 'addUserRefreshSession');
+const paySpy = vi.spyOn(PaymentService, 'makePayment');
 
 beforeAll(() => {
     vi.mock('$env/static/private', () => {
@@ -12,99 +21,96 @@ beforeAll(() => {
             ACCESS_TOKEN_SECRET: 'test2'
         }
     });
-})
+});
 
-test.skip('successful payment test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
+afterAll(() => {
+    userExistsSpy.mockRestore();
+    getCredsSpy.mockRestore();
+    addRefTokenSpy.mockRestore();
+    paySpy.mockRestore();
+});
+
+test('successful payment', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: MakePaymentRequest = {
-        username: 'dummyUser3',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
-        company: "Exxon",
-        price: 30
-    }
-    
-    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
-        success: true,
-        message: "Payment successful"
-    });
-    
+        company: 'dummy',
+        price: 30,
+        quoteID: crypto.randomBytes(24 / 2).toString('hex')
+    };
 
-})
+    (paySpy as any).mockImplementation(async () => { return true });
 
-test.skip('company not found payment test', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
+    const res = await makePaymentMethod(testRequest);
+    const resJSON: GeneralAPIResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.message).toEqual("Payment successful");
+});
+
+test('unsuccesful payment due to invalid access token', async () => {
+    const testRequest: MakePaymentRequest = {
+        username: 'dummyUser',
+        accessToken: '',
+        company: 'dummy',
+        price: 30,
+        quoteID: crypto.randomBytes(24 / 2).toString('hex')
+    };
+
+    const res = await makePaymentMethod(testRequest);
+    const resJSON: UnauthorizedResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.unauthorized).toBeTruthy();
+    expect(resJSON.message).toEqual("invalid access token");
+});
+
+test('unsuccesful payment due to no payment info set', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
 
     const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
 
     const testRequest: MakePaymentRequest = {
-        username: 'dummyUser3',
+        username: testLoginRequest.username,
         accessToken: loginRes.response.accessToken,
-        company: "NEW FANCY COMPANY",
-        price: 30
-    }
-    
-    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
-        success: false,
-        message: "Payment failed"
-    });
-})
+        company: 'dummy',
+        price: 30,
+        quoteID: crypto.randomBytes(24 / 2).toString('hex')
+    };
 
-test.skip('unsuccesful payment due to invalid access token', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser3',
-        password: 'unsecurePassword3'
-    }
+    paySpy.mockImplementation(async () => { return undefined });
 
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    const res = await makePaymentMethod(testRequest);
+    const resJSON: GeneralAPIResponse = await res.json();
 
-    const testRequest: MakePaymentRequest = {
-        username: 'dummyUser3',
-        accessToken: loginRes.response.accessToken + 'abcd',
-        company: "Exxon",
-        price: 30
-    }
+    expect(resJSON.success).toBeFalsy();
+    expect(resJSON.message).toEqual("Payment failed");
+});
 
-    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
-        success: true,
-        unauthorized: true,
-        message: 'invalid access token'
-    } as UnauthorizedResponse);
-})
-
-test.skip('unsuccesful payment due to internal error', async () => {
+test('unsuccesful payment due to internal error', async () => {
     //@ts-expect-error
     expect(await (await makePaymentMethod()).json()).toEqual({
         success: false,
         message: "Request failed due to error"
     } as GeneralAPIResponse);
-})
-
-test.skip('unsuccesful payment due to no payment info set', async () => {
-    const testLoginRequest: LoginRequest = {
-        username: 'dummyUser2',
-        password: 'unsecurePassword2'
-    }
-
-    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
-
-    const testRequest: MakePaymentRequest = {
-        username: 'dummyUser2',
-        accessToken: loginRes.response.accessToken,
-        company: "Exxon",
-        price: 30
-    }
-
-    expect(await (await makePaymentMethod(testRequest)).json()).toEqual({
-        success: false,
-        message: "Payment failed"
-    } as GeneralAPIResponse);
-})
+});
