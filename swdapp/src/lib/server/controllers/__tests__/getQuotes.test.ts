@@ -6,7 +6,7 @@ import * as AuthService from "../../services/authorizationService";
 import * as QuoteService from "../../services/quoteService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
-import type { GeneralAPIResponse, QuoteHistoryRequest } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, QuoteHistoryRequest, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
 
 const userExistsSpy = vi.spyOn(UserService, 'userExists');
 const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
@@ -64,20 +64,72 @@ test('successful quote history', async () => {
     expect(resJSON.quoteHistory[0]).toBeTypeOf('object');
 });
 
-test.todo('succesful quote history for user with now quotes', async () => {
-    //TODO implementation
+test('succesful quote history for user with no quotes', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: QuoteHistoryRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken
+    };
+
+    (quoteHistorySpy as any).mockImplementation(async () => { return []; });
+
+    const res = await getQuoteHistoryData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.quoteHistory.length).toEqual(0);
 });
 
-test.todo('failure to get quotes because user does not have a profile set', async () => {
-    //TODO implementation
+test('failure to get quotes because user does not have a profile set', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: QuoteHistoryRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken
+    };
+
+    quoteHistorySpy.mockImplementation(async () => {return null});
+
+    const res = await getQuoteHistoryData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON.success).toBeFalsy();
+    expect(resJSON.message).toEqual("Quote history not found");
 });
 
-test.todo('unsuccesful quote retrieval due to invalid access token', async () => {
-    //TODO implementation
-});
+test('unsuccesful quote retrieval due to invalid access token', async () => {
+    const testRequest: QuoteHistoryRequest = {
+        username: 'dummyUser',
+        accessToken: ''
+    };
 
-test.todo('unsuccesful quote retrieval due to internal error', async () => {
-    //TODO implementation
+    const res = await getQuoteHistoryData(testRequest);
+    const resJSON: UnauthorizedResponse = await res.json();
+
+    expect(resJSON.success).toBeTruthy();
+    expect(resJSON.unauthorized).toBeTruthy();
+    expect(resJSON.message).toEqual('invalid access token');
 });
 
 test('unsuccesful quote retrieval due to internal error', async () => {
