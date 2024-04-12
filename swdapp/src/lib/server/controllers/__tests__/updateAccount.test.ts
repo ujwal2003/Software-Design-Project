@@ -31,7 +31,7 @@ afterAll(() => {
     updatePaySpy.mockRestore();
 });
 
-test('successful account update test', async () => {
+test('successful account update', async () => {
     const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
 
     const salt = await bcrypt.genSalt();
@@ -94,6 +94,39 @@ test('succesful payment information update', async () => {
     expect(resJSON).toEqual({
         success: true,
         message: "Account update successful"
+    } as GeneralAPIResponse);
+});
+
+test('unsuccessful account update', async () => {
+    const testLoginRequest: LoginRequest = { username: 'dummyUser', password: 'pass1' };
+
+    const salt = await bcrypt.genSalt();
+    const hashedPass = await bcrypt.hash(testLoginRequest.password, salt);
+
+    (userExistsSpy as any).mockImplementation(async () => { return true; });
+    getCredsSpy.mockImplementation(async () => { return { username: 'user1', encryptedPass: hashedPass }; });
+    addRefTokenSpy.mockImplementation(async () => { return; });
+
+    const loginRes: LoginResponse<LoginSuccess> = await (await loginUser(testLoginRequest)).json();
+    expect(loginRes.success).toBeTruthy();
+
+    const testRequest: UpdateAccountRequest = {
+        username: testLoginRequest.username,
+        accessToken: loginRes.response.accessToken,
+        profileUpdates: {
+            firstName: 'coolName',
+            lastName: 'amazingLastName'
+        }
+    };
+
+    (updateAcctSpy as any).mockImplementation(async () => { return false; });
+
+    const res = await updateAccountData(testRequest);
+    const resJSON = await res.json();
+
+    expect(resJSON).toEqual({
+        success: false,
+        message: "Account update failed"
     } as GeneralAPIResponse);
 });
 
