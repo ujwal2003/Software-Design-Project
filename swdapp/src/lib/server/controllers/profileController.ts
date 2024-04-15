@@ -168,7 +168,8 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
                 // _id: (quote as any)._id,
                 generationDate: quote.generationDate,
                 gallonsRequested: quote.gallonsRequested,
-                priceCalculated: quote.priceCalculated
+                priceCalculated: quote.priceCalculated,
+                deliveryDate: quote.deliveryDate
             };
             return json(response, { status: 200 });
         } else {

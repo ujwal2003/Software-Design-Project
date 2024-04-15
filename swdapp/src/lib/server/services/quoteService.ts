@@ -31,7 +31,8 @@ export async function generateQuote(username: string, gallonsRequested: number, 
         // _id: crypto.randomBytes(24 / 2).toString('hex'),
         generationDate: new Date(),
         gallonsRequested: gallonsRequested,
-        priceCalculated: priceCalculated
+        priceCalculated: priceCalculated,
+        deliveryDate: new Date(deliveryDate)
     };
 
     let newQuote = await UserModel.findOneAndUpdate({ username: username }, 

@@ -66,7 +66,8 @@ export interface GenerateQuoteResponse {
     // _id: string,
     generationDate: Date,
     gallonsRequested: number,
-    priceCalculated: number
+    priceCalculated: number,
+    deliveryDate: Date
 }
 
 export interface UpdateAccountRequest {
