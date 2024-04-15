@@ -1,5 +1,3 @@
-import type { dummyQuoteSchema, dummyReceiptSchema } from '../dummyDatabase';
-
 export interface GeneralAPIResponse {
     success: boolean,
     message: string
