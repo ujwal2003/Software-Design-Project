@@ -85,6 +85,11 @@
 			loc: newQuote.deliveryAddress
 		};
 
+		if(new Date(newQuoteRequest.deliveryDate) < today) {
+			failureAlert('Delivery dates must be after today!');
+			return;
+		}
+
 		const genQuoteReq = await postRequest('../api/quotes/generate/', newQuoteRequest);
 		const genQuoteJSON = await genQuoteReq.json();
 
