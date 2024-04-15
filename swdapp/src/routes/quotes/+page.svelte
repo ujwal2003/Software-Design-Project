@@ -186,7 +186,8 @@
 							<TableData header>Gallons</TableData>
 							<TableData header>Suggested Price</TableData>
 							<TableData header>Total</TableData>
-							<TableData header>Purchase</TableData>
+							<TableData header>Delivery Date</TableData>
+							<!-- <TableData header>Purchase</TableData> -->
 						</TableSection>
 	
 						<TableSection style='body'>
@@ -197,9 +198,10 @@
 									<TableData>{quote.gallonsRequested}</TableData>
 									<TableData>${quote.priceCalculated} per gal</TableData>
 									<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
-									<TableData button on:tableBtnClick={() => handleQuotePurchase(quote._id)}>
+									<TableData>{quote.deliveryDate.slice(0, 10)}</TableData>
+									<!-- <TableData button on:tableBtnClick={() => handleQuotePurchase(quote._id)}>
 										Purchase Quote
-									</TableData>
+									</TableData> -->
 								</TableRow>
 							{/each}
 						</TableSection>

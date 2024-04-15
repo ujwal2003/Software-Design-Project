@@ -1,5 +1,3 @@
-import type { dummyQuoteSchema, dummyReceiptSchema } from '../dummyDatabase';
-
 export interface GeneralAPIResponse {
     success: boolean,
     message: string
@@ -68,7 +66,8 @@ export interface GenerateQuoteResponse {
     // _id: string,
     generationDate: Date,
     gallonsRequested: number,
-    priceCalculated: number
+    priceCalculated: number,
+    deliveryDate: Date
 }
 
 export interface UpdateAccountRequest {
