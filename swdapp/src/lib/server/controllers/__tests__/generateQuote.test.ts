@@ -56,7 +56,8 @@ test('successful quote generation', async () => {
         return {
             generationDate: new Date(),
             gallonsRequested: testRequest.gallonsRequested,
-            priceCalculated: Math.random()
+            priceCalculated: Math.random(),
+            deliveryDate: new Date(testRequest.deliveryDate)
         }
     });
 
@@ -123,7 +124,8 @@ test('invalid parameter type quote generation', async () => {
         return {
             generationDate: new Date(),
             gallonsRequested: testRequest.gallonsRequested,
-            priceCalculated: Math.random()
+            priceCalculated: Math.random(),
+            deliveryDate: new Date(testRequest.deliveryDate)
         }
     });
 

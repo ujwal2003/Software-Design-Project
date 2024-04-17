@@ -7,7 +7,7 @@ import * as QuoteService from "../../services/quoteService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 import type { GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
-import type { QuoteHistoryRequest } from "$lib/server/customTypes/QuoteHistoryRequest";
+import type { QuoteHistoryRequest } from '$lib/server/customTypes/quoteTypes';
 
 const userExistsSpy = vi.spyOn(UserService, 'userExists');
 const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
