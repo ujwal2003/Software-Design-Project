@@ -145,8 +145,21 @@
 						You must request more than 0 gallons!
 					</StatusText>
 				{/if}
-				<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
-				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+				<div class="flex gap-1">
+					<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
+					 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+
+					<button type="button" on:click={() => {newQuote.gallonsRequested += 10}}
+					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
+						+10
+					</button>
+
+					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10}}
+					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
+						-10
+					</button>
+				</div>
+				
 			  </div>
 
 			  <div class="mb-4">
