@@ -9,6 +9,7 @@
 	import { getCookie } from '$lib/cookieUtil';
 	import { getRequest, postRequest } from '$lib/requests';
 	import StatusText from '$lib/components/statusText.svelte';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
 	let locAddress: string = '';
 
@@ -136,8 +137,15 @@
 		</aside>
 
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
-			<p class="pl-8 pt-4 text-3xl">Generate Quote</p>
-			<form class="px-8 pt-8">
+			<div class="flex gap-3 pl-8 pt-4">
+				<p class="text-3xl">Generate Quote</p>
+
+				<LoadingSpinner>
+					Generating quote...
+				</LoadingSpinner>
+			</div>
+			
+			<form class="px-8 pt-4">
 			  <div class="mb-4">
 				<label for="gallonsRequested" class="block text-sm font-semibold mb-1">Gallons Requested:</label>
 				{#if newQuote.gallonsRequested <= 0}					
