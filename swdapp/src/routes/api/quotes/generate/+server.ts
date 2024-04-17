@@ -1,6 +1,7 @@
 import { json } from '@sveltejs/kit';
 import { generateQuoteData } from '$lib/server/controllers/profileController.js';
-import type { GenerateQuoteRequest, GeneralAPIResponse } from '$lib/server/customTypes/generalTypes.js';
+import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes.js';
+import type { GenerateQuoteRequest } from "$lib/server/customTypes/quoteTypes";
 
 export async function POST({ request }): Promise<Response> {
     try {

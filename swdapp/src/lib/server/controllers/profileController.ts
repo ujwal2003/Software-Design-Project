@@ -5,7 +5,11 @@ import { getQuoteHistory } from "../services/quoteService";
 import { makePayment } from "../services/paymentService";
 import { updatePayment } from "../services/paymentService";
 import { getPurchaseHistory } from "../services/paymentService";
-import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, QuoteHistoryRequest, QuoteHistoryResponse, PurchaseHistoryResponse, UnauthorizedResponse, GenerateQuoteRequest, GenerateQuoteResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
+import type { GeneralAPIResponse, ProfileRequest, ProfileResponse, PurchaseHistoryResponse, UnauthorizedResponse, UpdateAccountRequest, MakePaymentRequest } from '../customTypes/generalTypes';
+import type { GenerateQuoteResponse } from "../customTypes/quoteTypes";
+import type { GenerateQuoteRequest } from "../customTypes/quoteTypes";
+import type { QuoteHistoryResponse } from "../customTypes/quoteTypes";
+import type { QuoteHistoryRequest } from "../customTypes/quoteTypes";
 import { isAccessTokenValid_simple } from './authController';
 
 export async function getProfileData(requestBody: ProfileRequest): Promise<Response>{
