@@ -54,7 +54,7 @@
 
 		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
 		newQuote.deliveryAddress = locAddress;
-		addressValid = newQuote.deliveryAddress.replaceAll(",", '') == '' ? false : true;
+		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	});
 
 	let dateValid: boolean = newQuote.deliveryDate.length > 0 ? true : false;
@@ -66,7 +66,7 @@
 		if(newQuote.deliveryDate.length > 0)
 			dateValid = (selectedDate < today) ? false : true;
 		else dateValid = false;
-		addressValid = newQuote.deliveryAddress.replaceAll(",", '') == '' ? false : true;
+		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	}
 
 	async function handleQuoteSubmit() {
