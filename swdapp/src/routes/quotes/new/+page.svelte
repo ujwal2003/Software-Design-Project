@@ -20,6 +20,7 @@
 		totalAmountDue: 0
 	};
 
+	let addressValid: boolean;
 	onMount(async () => {
 		if(!await isClientAllowed('../')) {
 			failureAlert("You must be logged in to access this page. Please log in.");
@@ -53,16 +54,19 @@
 
 		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
 		newQuote.deliveryAddress = locAddress;
+		addressValid = newQuote.deliveryAddress.replaceAll(",", '') == '' ? false : true;
 	});
 
-	let dateValid: boolean = newQuote.deliveryDate ? true : false;
+	let dateValid: boolean = newQuote.deliveryDate.length > 0 ? true : false;
 	async function handleQuoteGeneration() {
 		const today = new Date();
 		let selectedDate = new Date(newQuote.deliveryDate);
 		selectedDate.setDate(selectedDate.getDate()+1);
-		dateValid = (selectedDate < today) ? false : true;
-
-		console.log(newQuote);
+		
+		if(newQuote.deliveryDate.length > 0)
+			dateValid = (selectedDate < today) ? false : true;
+		else dateValid = false;
+		addressValid = newQuote.deliveryAddress.replaceAll(",", '') == '' ? false : true;
 	}
 
 	async function handleQuoteSubmit() {
@@ -147,6 +151,11 @@
 
 			  <div class="mb-4">
 				<label for="deliveryAddress" class="block text-sm font-semibold mb-1">Delivery Address:</label>
+				{#if !addressValid}
+					<StatusText icon='error'>
+						{@html "Address not specified, please complete your <a href='/profile' style='text-decoration: underline;'>profile!</a>"}
+					</StatusText>
+				{/if}
 				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} 
 				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
 			  </div>
