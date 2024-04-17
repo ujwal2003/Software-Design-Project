@@ -1,9 +1,27 @@
 <script lang="ts">
     type Icon = 'warn' | 'error' | 'info' | 'success' | '';
     export let icon: Icon = '';
+    export let definedColor: Icon = '';
+
+    export let statusColor = '';
+
+    if(icon == 'warn' && !definedColor) {
+        statusColor = 'text-yellow-800';
+    } else if(icon == 'error' && !definedColor) {
+        statusColor = 'text-red-800';
+    } else if(icon == 'success' && !definedColor) {
+        statusColor = 'text-teal-800';
+    } else if(icon =='info' && !definedColor) {
+        statusColor = 'text-blue-600';
+    } else if(!icon && !definedColor) statusColor = '';
+
+    if(definedColor == 'warn') statusColor = 'text-yellow-800';
+    else if(definedColor == 'error') statusColor = 'text-red-800';
+    else if(definedColor == 'info') statusColor = 'text-blue-600';
+    else if(definedColor == 'success') statusColor = 'text-teal-800';
 </script>
 
-<div class="border-yellow-200 text-sm text-yellow-800 rounded-lg w-1/3 flex gap-1">
+<div class={`text-sm ${statusColor} rounded-lg w-1/3 flex gap-1`}>
     <div class="flex-shrink-0">
         {#if icon == 'warn'}
             <svg class="flex-shrink-0 size-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

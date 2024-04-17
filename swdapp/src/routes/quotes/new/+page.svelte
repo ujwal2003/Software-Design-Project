@@ -130,7 +130,7 @@
 			<form class="p-8">
 			  <div class="mb-4">
 				<label for="gallonsRequested" class="block text-sm font-semibold mb-2">Gallons Requested:</label>
-				<StatusText icon='info'></StatusText>
+				<StatusText icon='warn' definedColor='error'></StatusText>
 				<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
 				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
 			  </div>
