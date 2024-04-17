@@ -137,7 +137,7 @@
 
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Generate Quote</p>
-			<form class="p-8">
+			<form class="px-8 pt-8">
 			  <div class="mb-4">
 				<label for="gallonsRequested" class="block text-sm font-semibold mb-1">Gallons Requested:</label>
 				{#if newQuote.gallonsRequested <= 0}					
@@ -183,33 +183,39 @@
 				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} on:change={handleQuoteGeneration}
 				class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
 			  </div>
-
-			  <button type="button" on:click={() => {console.log("PLACEHOLDER")}} 
-				class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-				Generate Quote
-			  </button>
 			</form>
 
-			<div class="p-8 bg-white">
-			  <p class="font-semibold">Suggested Price Per Gallon:</p>
-			  <span class="block">
-				{#if newQuote.suggestedPrice}
-					${newQuote.suggestedPrice}
-				{:else}
-					generate a quote to see a price!
-				{/if}
-			  </span>
+			<div class="px-8 pt-2 bg-white">
+				<div class="flex gap-2">
+					<p class="font-semibold">Suggested Price Per Gallon:</p>
+					<span class="block">
+						{#if newQuote.suggestedPrice}
+							${newQuote.suggestedPrice}
+						{:else}
+							generate a quote to see a price!
+						{/if}
+					</span>
+				</div>
 
-			  <p class="font-semibold mt-2">Total Amount Due:</p>
-			  <span class="block">
-				{#if newQuote.totalAmountDue}
-					${newQuote.totalAmountDue}
-				{:else}
-					$0.00
-				{/if}
-			  </span>
+				<div class="flex gap-2">
+					<p class="font-semibold">Total Amount Due:</p>
+					<span class="block">
+						{#if newQuote.totalAmountDue}
+							${newQuote.totalAmountDue}
+						{:else}
+							$0.00
+						{/if}
+					</span>
+				</div>
+
+				<div class='mt-2'>
+					<button type="button" on:click={() => {console.log("PLACEHOLDER")}} 
+						class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+						Save Quote
+					</button>
+				</div>
 			</div>
-		  </section>
+		</section>
 	</main>
 
 	<nav>
