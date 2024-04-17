@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { generateQuoteData } from '$lib/server/controllers/profileController.js';
+import { generateQuoteData } from '$lib/server/controllers/quoteController';
 import type { GeneralAPIResponse } from '$lib/server/customTypes/generalTypes.js';
 import type { GenerateQuoteRequest } from "$lib/server/customTypes/quoteTypes";
 

@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import * as bcrypt from "bcrypt";
-import { getQuoteHistoryData } from '../profileController';
+import { getQuoteHistoryData } from '../quoteController';
 import * as UserService from '../../services/userService';
 import * as AuthService from "../../services/authorizationService";
 import * as QuoteService from "../../services/quoteService";

@@ -2,6 +2,7 @@ export interface QuoteHistoryRequest {
     username: string;
     accessToken: string;
 }
+
 export interface QuoteHistoryResponse {
     success: boolean
     quoteHistory: Array<any>
