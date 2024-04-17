@@ -46,6 +46,10 @@
 	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
 	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', CVV: ''};
 
+    // TODO
+    let username = ""
+    let password = ""
+
 	async function getUserData() {
 		try {
 			const cookie = getCookie('user_session');
@@ -91,6 +95,7 @@
                     state: '',
                     zip: ''
                 };
+
             } else {
                 userProfile = profileResJSON.profile ? {
                     firstName: profileResJSON.profile.firstName,
@@ -172,10 +177,22 @@
 	}
 
 	let nameFormDisabled: boolean = true;
+    let paymentFormDisabled: boolean = true;
+    let addressFormDisabled: boolean = true;
+    let credientialsFormDisabled: boolean = true;
 
     function handleEdit(section: string) {
         if (section === 'name') {
             nameFormDisabled = false;
+        }
+        else if (section === 'payment'){
+            paymentFormDisabled = false;
+        }
+        else if (section === 'address'){
+            addressFormDisabled = false;
+        }
+        else if (section === 'credientials'){
+            credientialsFormDisabled = false;
         }
     }
 
@@ -183,6 +200,21 @@
         if (section === 'name') {
             nameFormDisabled = true;
         }
+        else if (section === 'payment'){
+            paymentFormDisabled = true;
+        }
+        else if (section === 'address'){
+            addressFormDisabled = true;
+        }
+        else if (section === 'credientials'){
+            credientialsFormDisabled = true;
+        }
+
+        getUserData();
+    }
+
+    function deleteAccount(){
+        // TODO
     }
 
 	// Input TextBox Styling
@@ -289,7 +321,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-4 text-gray-800" for="card-name">Card Name</label>
                                     <input 
-                                        disabled={nameFormDisabled}
+                                        disabled={paymentFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="card-name"
@@ -299,7 +331,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="card-number">Card Number</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={paymentFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="card-number"
@@ -309,7 +341,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="expiration-date">Expiration Date</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={paymentFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="expiration-date"
@@ -319,7 +351,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="cvv">CVV</label>
                                     <input 
-                                        disabled={nameFormDisabled}
+                                        disabled={paymentFormDisabled}
                                         class={textBoxStyle} 
                                         type="text" 
                                         id="cvv" 
@@ -327,9 +359,9 @@
                                 </div>
 
                                 <div class="flex flex-row justify-end pt-4">
-                                    {#if nameFormDisabled}
+                                    {#if paymentFormDisabled}
                                         <button
-                                            on:click={() => handleEdit('name')}
+                                            on:click={() => handleEdit('payment')}
                                             type="button"
                                             class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
                                             >
@@ -338,7 +370,7 @@
                                         {:else}
                                         <div class="flex gap-x-2">
                                             <button
-                                                on:click={() => handleCancel('name')}
+                                                on:click={() => handleCancel('payment')}
                                                 type="button"
                                                 class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
                                             >
@@ -348,7 +380,7 @@
                                                 type="submit"
                                                 on:click={() => {
                                                     handleSubmit();
-                                                    handleCancel('name');
+                                                    handleCancel('payment');
                                                 }}
                                                 class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
                                             >
@@ -367,7 +399,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-4 text-gray-800" for="street">Address</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={addressFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="street"
@@ -377,7 +409,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="city">City</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={addressFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="city"
@@ -387,7 +419,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="state">State</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={addressFormDisabled}
                                         class={textBoxStyle}
                                         type="text"
                                         id="state"
@@ -397,7 +429,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-2 text-gray-800" for="zip">Zip Code</label>
                                     <input
-                                        disabled={nameFormDisabled}
+                                        disabled={addressFormDisabled}
                                         class={textBoxStyle}
                                         type="text" 
                                         id="zip" 
@@ -405,9 +437,9 @@
                                 </div>
 
                                 <div class="flex flex-row justify-end pt-4">
-                                    {#if nameFormDisabled}
+                                    {#if addressFormDisabled}
                                         <button
-                                            on:click={() => handleEdit('name')}
+                                            on:click={() => handleEdit('address')}
                                             type="button"
                                             class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
                                             >
@@ -416,7 +448,7 @@
                                         {:else}
                                         <div class="flex gap-x-2">
                                             <button
-                                                on:click={() => handleCancel('name')}
+                                                on:click={() => handleCancel('address')}
                                                 type="button"
                                                 class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
                                             >
@@ -426,7 +458,7 @@
                                                 type="submit"
                                                 on:click={() => {
                                                     handleSubmit();
-                                                    handleCancel('name');
+                                                    handleCancel('address');
                                                 }}
                                                 class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
                                             >
@@ -437,6 +469,83 @@
                                 </div>
                             </form>
                         </div>
+
+                        <!-- Credientials Card -->
+                        <div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
+                            <div class="text-lg font-bold text-black">User Credientials</div>
+                            <form on:submit={handleSubmit}>
+                                <div class="flex flex-col">
+                                    <label class="mt-4 text-gray-800" for="username">Username</label>
+                                    <input 
+                                        disabled={credientialsFormDisabled}
+                                        class={textBoxStyle}
+                                        type="text"
+                                        id="username"
+                                        bind:value={username}
+                                    />
+                                </div>
+                                <div class="flex flex-col">
+                                    <label class="mt-2 text-gray-800" for="password">Password</label>
+                                    <input
+                                        disabled={credientialsFormDisabled}
+                                        class={textBoxStyle}
+                                        type="password"
+                                        id="password"
+                                        bind:value={password}
+                                    />
+                                </div>
+
+                                <div class="flex flex-row justify-end pt-40">
+                                    {#if credientialsFormDisabled}
+                                    
+                                    <div class="flex gap-x-2">
+                                        <button
+                                            type="button"
+                                            on:click={deleteAccount}
+                                            class="inline-flex rounded-lg border border-transparent bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700"
+                                        >
+                                            Delete Account
+                                        </button>
+
+                                        <button
+                                            on:click={() => handleEdit('credientials')}
+                                            type="button"
+                                            class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
+                                            >
+                                            Edit
+                                        </button>
+                                    </div>
+                                        
+                                        
+                                        
+                                    {:else}
+                                        <div class="flex gap-x-2">
+                                            <button
+                                                on:click={() => handleCancel('credientials')}
+                                                type="button"
+                                                class="inline-flex rounded-lg border border-transparent bg-gray-300 px-4 py-3 text-sm font-semibold text-gray-800 hover:bg-gray-400"
+                                            >
+                                            Cancel
+                                            </button>
+                                            
+                                            <button
+                                                type="submit"
+                                                on:click={() => {
+                                                    handleSubmit();
+                                                    handleCancel('credientials');
+                                                }}
+                                                class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+                                            >
+                                                Submit
+                                            </button>
+                                            
+                                        </div>
+                                        
+                                    {/if}
+                                </div>
+                            </form>
+                        </div>`
+
                     </section>
                     <!-- * End Cards -->
                 </div>
