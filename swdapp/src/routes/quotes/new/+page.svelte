@@ -4,7 +4,7 @@
 
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/cookieUtil';
 	import { getRequest, postRequest } from '$lib/requests';
@@ -58,6 +58,7 @@
 		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	});
 
+	let loadQuote: boolean = false;
 	let dateValid: boolean = newQuote.deliveryDate.length > 0 ? true : false;
 	async function handleQuoteGeneration() {
 		const today = new Date();
@@ -68,56 +69,30 @@
 			dateValid = (selectedDate < today) ? false : true;
 		else dateValid = false;
 		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
+
+		if(!dateValid || !addressValid || newQuote.gallonsRequested <= 0)
+			return;
+
+		// loadQuote = true;
+		/**
+		 * TODO:
+		 * enable loading
+		 * fetch new quote (disable inputs while fetching)
+		 * disable load and enable inputs when new quote is generated
+		 * alert user that quote was fetched
+		*/
 	}
 
 	async function handleQuoteSubmit() {
-		if(newQuote.gallonsRequested <= 0 || !newQuote.deliveryAddress || !newQuote.deliveryDate) {
-			failureAlert('Form must be completely filled out!');
+		if(!dateValid || !addressValid || newQuote.gallonsRequested <= 0) {
+			failureAlert("Error: form is not correctly filled out; No quote to save!");
 			return;
 		}
 
-		const today = new Date();
-		let selectedDate = new Date(newQuote.deliveryDate);
-		selectedDate.setDate(selectedDate.getDate()+1);
+		genericAlert("Saving quote...");
 
-		if(selectedDate < today) {
-			failureAlert('You can only select dates after today!');
-			return;
-		}
-
-		const cookie = getCookie('user_session');
-		if(!cookie) {
-			failureAlert('Error, please log in again...');
-			goto('../login');
-			return;
-		}
-		const userCookieData = JSON.parse(cookie);
-
-		const newQuoteRequest = {
-			username: userCookieData.username,
-			accessToken: userCookieData.accessToken,
-			gallonsRequested: newQuote.gallonsRequested,
-			deliveryDate: newQuote.deliveryDate,
-			loc: newQuote.deliveryAddress
-		};
-
-		if(new Date(newQuoteRequest.deliveryDate) < today) {
-			failureAlert('Delivery dates must be after today!');
-			return;
-		}
-
-		const genQuoteReq = await postRequest('../api/quotes/generate/', newQuoteRequest);
-		const genQuoteJSON = await genQuoteReq.json();
-
-		if(!genQuoteJSON.success) {
-			failureAlert("failed to generate quote, please try again...");
-			return;
-		}
-
-		successAlert("Generated new quote...");
-
-		newQuote.suggestedPrice = parseFloat(genQuoteJSON.priceCalculated);
-		newQuote.totalAmountDue = newQuote.gallonsRequested * newQuote.suggestedPrice;
+		//TODO: fetch save quote endpoint
+		//TODO: success or failure alert depending on status
 	}
 </script>
 
@@ -140,9 +115,11 @@
 			<div class="flex gap-3 pl-8 pt-4">
 				<p class="text-3xl">Generate Quote</p>
 
-				<LoadingSpinner>
-					Generating quote...
-				</LoadingSpinner>
+				{#if loadQuote}				
+					<LoadingSpinner>
+						Generating quote...
+					</LoadingSpinner>
+				{/if}
 			</div>
 			
 			<form class="px-8 pt-4">
@@ -155,14 +132,15 @@
 				{/if}
 				<div class="flex gap-1">
 					<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
-					 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+					 disabled={false}
+					 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
 
-					<button type="button" on:click={() => {newQuote.gallonsRequested += 10}}
+					<button type="button" on:click={() => {newQuote.gallonsRequested += 10}} disabled={false}
 					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
 						+10
 					</button>
 
-					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10}}
+					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10}} disabled={false}
 					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
 						-10
 					</button>
@@ -189,7 +167,8 @@
 					</StatusText>
 				{/if}
 				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} on:change={handleQuoteGeneration}
-				class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
+				 disabled={false}
+				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
 			  </div>
 			</form>
 
@@ -217,8 +196,8 @@
 				</div>
 
 				<div class='mt-2'>
-					<button type="button" on:click={() => {console.log("PLACEHOLDER")}} 
-						class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+					<button type="button" on:click={handleQuoteSubmit} disabled={false}
+						class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none">
 						Save Quote
 					</button>
 				</div>
