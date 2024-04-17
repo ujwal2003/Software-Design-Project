@@ -21,7 +21,7 @@
     else if(definedColor == 'success') statusColor = 'text-teal-800';
 </script>
 
-<div class={`text-sm ${statusColor} rounded-lg w-1/3 flex gap-1`}>
+<div class={`text-sm ${statusColor} rounded-lg flex gap-1`}>
     <div class="flex-shrink-0">
         {#if icon == 'warn'}
             <svg class="flex-shrink-0 size-4 mt-0.5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -49,6 +49,6 @@
         {/if}
     </div>
     <p>
-        test
+        <slot></slot>
     </p>
 </div>

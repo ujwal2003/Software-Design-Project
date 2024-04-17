@@ -55,7 +55,13 @@
 		newQuote.deliveryAddress = locAddress;
 	});
 
+	let dateValid: boolean = newQuote.deliveryDate ? true : false;
 	async function handleQuoteGeneration() {
+		const today = new Date();
+		let selectedDate = new Date(newQuote.deliveryDate);
+		selectedDate.setDate(selectedDate.getDate()+1);
+		dateValid = (selectedDate < today) ? false : true;
+
 		console.log(newQuote);
 	}
 
@@ -129,20 +135,29 @@
 			<p class="pl-8 pt-4 text-3xl">Generate Quote</p>
 			<form class="p-8">
 			  <div class="mb-4">
-				<label for="gallonsRequested" class="block text-sm font-semibold mb-2">Gallons Requested:</label>
-				<StatusText icon='warn' definedColor='error'></StatusText>
+				<label for="gallonsRequested" class="block text-sm font-semibold mb-1">Gallons Requested:</label>
+				{#if newQuote.gallonsRequested <= 0}					
+					<StatusText icon='error'>
+						You must request more than 0 gallons!
+					</StatusText>
+				{/if}
 				<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
 				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
 			  </div>
 
 			  <div class="mb-4">
-				<label for="deliveryAddress" class="block text-sm font-semibold mb-2">Delivery Address:</label>
+				<label for="deliveryAddress" class="block text-sm font-semibold mb-1">Delivery Address:</label>
 				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} 
 				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
 			  </div>
 
 			  <div class="mb-4">
-				<label for="deliveryDate" class="block text-sm font-semibold mb-2">Delivery Date:</label>
+				<label for="deliveryDate" class="block text-sm font-semibold mb-1">Delivery Date:</label>
+				{#if !dateValid}
+					<StatusText icon='error'>
+						You must select a date after today!
+					</StatusText>
+				{/if}
 				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} on:change={handleQuoteGeneration}
 				class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
 			  </div>
