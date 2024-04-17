@@ -24,3 +24,5 @@ export interface GenerateQuoteResponse {
     priceCalculated: number
     deliveryDate: Date
 }
+
+export type SaveQuoteRequest = Omit<GenerateQuoteResponse, "success">

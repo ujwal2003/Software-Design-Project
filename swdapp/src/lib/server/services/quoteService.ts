@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import { userExists } from "./userService";
 import { UserModel } from "../database/models/userModel";
+import type { SaveQuoteRequest } from "../customTypes/quoteTypes";
 
 
 export async function getQuoteHistory(username: string) {
@@ -34,15 +35,22 @@ export async function generateQuote(username: string, gallonsRequested: number, 
         priceCalculated: priceCalculated,
         deliveryDate: new Date(deliveryDate)
     };
+    
+    return quote;
+}
 
+export async function saveQuote(username: string, quoteObj: SaveQuoteRequest) {
     let newQuote = await UserModel.findOneAndUpdate({ username: username }, 
         {
             $push: {
-                'profile.quoteHistory': quote
+                'profile.quoteHistory': quoteObj
             }
         },
         { new: true }
     );
-    
-    return quote;
+
+    if(!newQuote)
+        return false;
+
+    return true;
 }
