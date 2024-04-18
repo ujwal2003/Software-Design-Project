@@ -105,7 +105,15 @@
 			loc: newQuote.deliveryAddress
 		});
 
-		console.log(getQuote);
+		const getQuoteJSON = await getQuote.json();
+
+		if(!getQuote.ok || !getQuoteJSON.success) {
+			failureAlert("Error: failed to generate quote, please try again...");
+			return;
+		}
+
+		newQuote.suggestedPrice = getQuoteJSON.priceCalculated;
+		newQuote.totalAmountDue = newQuote.gallonsRequested * getQuoteJSON.priceCalculated;
 
 		loadQuote = false;
 		gallonsInputDisabled = false;
