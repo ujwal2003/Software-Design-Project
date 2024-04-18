@@ -1,7 +1,8 @@
 import crypto from "crypto";
-import { userExists } from "./userService";
+import { getProfile, userExists } from "./userService";
 import { UserModel } from "../database/models/userModel";
 import type { SaveQuoteRequest } from "../customTypes/quoteTypes";
+import { QuotesModel } from "../database/models/quotesModel";
 
 
 export async function getQuoteHistory(username: string) {
@@ -10,19 +11,23 @@ export async function getQuoteHistory(username: string) {
     if(!user)
         return null;
 
-    if(!user.profile)
+    let profile = await getProfile(username);
+
+    if(!profile)
         return null;
 
-    return user.profile.quoteHistory;
+    const quoteHistory = await QuotesModel.find({ username: username });
+    
+    return quoteHistory;
 }
 
 export async function generateQuote(username: string, gallonsRequested: number, deliveryDate: string, loc: string) {
     let user = await userExists(username);
-
     if(!user)
         return null;
 
-    if(!user.profile)
+    let profile = await getProfile(username);
+    if(!profile)
         return null;
 
     const current_price = 1.50;
@@ -30,9 +35,11 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     let rate_history_factor: number;
     let gal_requested_factor: number;
     const company_profit_factor = 0.10;
+    let state = profile.state;
+    let hasQuotes: boolean;
 
-    let state = user.profile.state;
-    let hasQuotes = user.profile.quoteHistory.length > 0;
+    const quoteHistDB = await getQuoteHistory(username);
+    hasQuotes = quoteHistDB ? true : false;
 
     if(!state)
         return null;
@@ -57,14 +64,13 @@ export async function generateQuote(username: string, gallonsRequested: number, 
 }
 
 export async function saveQuote(username: string, quoteObj: Omit<SaveQuoteRequest, "username" | "accessToken">) {
-    let newQuote = await UserModel.findOneAndUpdate({ username: username }, 
-        {
-            $push: {
-                'profile.quoteHistory': quoteObj
-            }
-        },
-        { new: true }
-    );
+    let newQuote = await QuotesModel.create({
+        username: username,
+        generationDate: quoteObj.generationDate,
+        gallonsRequested: quoteObj.gallonsRequested,
+        priceCalculated: quoteObj.priceCalculated,
+        deliveryDate: quoteObj.deliveryDate
+    });
 
     if(!newQuote)
         return false;
