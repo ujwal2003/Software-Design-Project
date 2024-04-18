@@ -83,15 +83,6 @@
 		if(!dateValid || !addressValid || newQuote.gallonsRequested <= 0)
 			return;
 
-		// loadQuote = true;
-		/**
-		 * TODO:
-		 * enable loading
-		 * fetch new quote (disable inputs while fetching)
-		 * disable load and enable inputs when new quote is generated
-		 * alert user that quote was fetched
-		*/
-
 		loadQuote = true;
 		gallonsInputDisabled = true;
 		deliveryInputDisabled = true;
@@ -131,10 +122,32 @@
 			return;
 		}
 
-		genericAlert("Saving quote...");
+		if(!newQuote.suggestedPrice) {
+			failureAlert("Error: No quote found, please generate a quote first!");
+			return;
+		}
 
-		//TODO: fetch save quote endpoint
-		//TODO: success or failure alert depending on status
+		genericAlert("Saving quote...");
+		submitButtonDisabled = true;
+
+		const saveQuote = await postRequest('../api/quotes/save/', {
+			username: logged_in_user,
+			accessToken: access_token,
+			generationDate: new Date(),
+			gallonsRequested: newQuote.gallonsRequested,
+			priceCalculated: newQuote.suggestedPrice,
+			deliveryDate: new Date(newQuote.deliveryDate)
+		});
+
+		const saveQuoteJSON = await saveQuote.json();
+
+		if(!saveQuote.ok || !saveQuoteJSON.success) {
+			failureAlert("Error: failed to submit quote, please try again...");
+			return;
+		}
+		
+		successAlert("Succesfully saved quote!");
+		submitButtonDisabled = false;
 	}
 </script>
 
