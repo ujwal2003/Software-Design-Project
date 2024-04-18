@@ -30,7 +30,7 @@ export async function updatePayment(username: string, cardName?: string, cardNum
         updateObj = {
             cardName: '',
             creditCardNumber: '',
-            cardExpiration: new Date(-8640000000000000),
+            cardExpiration: new Date("1920-01-01"),
             cardCVV: ''
         };
 

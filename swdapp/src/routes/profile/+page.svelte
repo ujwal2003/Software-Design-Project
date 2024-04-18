@@ -415,7 +415,7 @@
                             <div class="text-lg font-bold text-black">Address</div>
                             <form on:submit={handleSubmit}>
                                 <div class="flex flex-col">
-                                    <label class="mt-4 text-gray-800" for="street">Address</label>
+                                    <label class="mt-4 text-gray-800" for="street">Street</label>
                                     <input
                                         disabled={addressFormDisabled}
                                         class={textBoxStyle}
