@@ -20,4 +20,4 @@ const quotesSchema = new mongoose.Schema(
     }
 );
 
-const QuotesModel = mongoose.model('Quotes', quotesSchema);
+export const QuotesModel = mongoose.model('Quotes', quotesSchema);
