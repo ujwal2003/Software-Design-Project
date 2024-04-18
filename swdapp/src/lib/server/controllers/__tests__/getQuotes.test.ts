@@ -1,12 +1,13 @@
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import * as bcrypt from "bcrypt";
-import { getQuoteHistoryData } from '../profileController';
+import { getQuoteHistoryData } from '../quoteController';
 import * as UserService from '../../services/userService';
 import * as AuthService from "../../services/authorizationService";
 import * as QuoteService from "../../services/quoteService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
-import type { GeneralAPIResponse, QuoteHistoryRequest, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import type { QuoteHistoryRequest } from '$lib/server/customTypes/quoteTypes';
 
 const userExistsSpy = vi.spyOn(UserService, 'userExists');
 const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');

@@ -1,12 +1,14 @@
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import * as bcrypt from "bcrypt";
-import { generateQuoteData } from '../profileController';
+import { generateQuoteData } from '../quoteController';
 import * as UserService from '../../services/userService';
 import * as AuthService from "../../services/authorizationService";
 import * as QuoteService from "../../services/quoteService";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
-import type { GeneralAPIResponse, GenerateQuoteRequest, GenerateQuoteResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, UnauthorizedResponse } from '$lib/server/customTypes/generalTypes';
+import type { GenerateQuoteResponse } from "$lib/server/customTypes/quoteTypes";
+import type { GenerateQuoteRequest } from "$lib/server/customTypes/quoteTypes";
 
 const userExistsSpy = vi.spyOn(UserService, 'userExists');
 const getCredsSpy = vi.spyOn(AuthService, 'getUserCredentials');
@@ -54,7 +56,8 @@ test('successful quote generation', async () => {
         return {
             generationDate: new Date(),
             gallonsRequested: testRequest.gallonsRequested,
-            priceCalculated: Math.random()
+            priceCalculated: Math.random(),
+            deliveryDate: new Date(testRequest.deliveryDate)
         }
     });
 
@@ -121,7 +124,8 @@ test('invalid parameter type quote generation', async () => {
         return {
             generationDate: new Date(),
             gallonsRequested: testRequest.gallonsRequested,
-            priceCalculated: Math.random()
+            priceCalculated: Math.random(),
+            deliveryDate: new Date(testRequest.deliveryDate)
         }
     });
 
