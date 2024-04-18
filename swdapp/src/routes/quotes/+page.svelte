@@ -15,12 +15,15 @@
 	import TableSection from '$lib/components/preline-table/tableSection.svelte';
 	import TableData from '$lib/components/preline-table/tableData.svelte';
 	import TableRow from '$lib/components/preline-table/tableRow.svelte';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
+	let loadingVisible = false;
 	onMount(async () => {
 		if(!await isClientAllowed()) {
 			failureAlert("You must be logged in to access this page. Please log in.");
 			goto('/login');
 		}
+
 		await fetchQuoteHistory();
 		getUserData();
 	});
@@ -48,6 +51,7 @@
 	let quotes: any[] = [];
 
 	async function fetchQuoteHistory() {
+		loadingVisible = true;
 		try {
 			const cookie = getCookie('user_session');
 
@@ -71,15 +75,18 @@
 			}
 
 			quotes = quoteResJSON.quoteHistory;
+			loadingVisible = false;
 			return;
 
 		} catch (error) {
 			console.error("Error fetching quote history:", error);
+			loadingVisible = false;
 			return [];
 		}
 	}
 
 	async function getUserData() {
+		loadingVisible = true;
 		try {
 			const cookie = getCookie('user_session');
 
@@ -112,6 +119,7 @@
 		} catch (error) {
 			console.error("Error fetching user data:", error);
 		}
+		loadingVisible = false;
 	}
 
 	function handleQuotePurchase(quoteID: string) {
@@ -158,7 +166,7 @@
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
 			<p class="pl-8 pt-4 text-3xl">Fuel Quote History</p>
 
-			<div class="pl-8 py-2">
+			<div class="pl-8 py-2 flex gap-4">
 				<button type="button" class="py-3 px-4 inline-flex items-center gap-x-2 text-xs font-semibold rounded-lg border border-transparent bg-gray-800 text-white 
 				hover:border-gray-800 hover:text-gray-800 hover:bg-transparent" on:click={() => {createQuoteBttn()}}>
 					Create Quote
@@ -175,6 +183,10 @@
 						stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg
 					>
 				</button>
+
+				{#if loadingVisible}
+					<LoadingSpinner>Loading quotes...</LoadingSpinner>
+				{/if}
 			</div>
 			
 			<div class="flex h-screen flex-row mt-2 ml-8">
