@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { postRequest, patchRequest, getRequest } from '$lib/requests';
 	import { deleteCookie, getCookie } from '$lib/cookieUtil';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
 	onMount(async () => {
 		try {
@@ -50,7 +51,10 @@
     let username = ""
     let password = ""
 
+    let loadingVisible = false;
+    let isUpdatingData = false;
 	async function getUserData() {
+        loadingVisible = true;
 		try {
 			const cookie = getCookie('user_session');
 
@@ -124,10 +128,13 @@
             failureAlert('Error, please log in again...');
             goto('/login');
 		}
+        loadingVisible = false;
 	}
 
 	// Input Form Handling
 	async function handleSubmit() {
+        isUpdatingData = true;
+        loadingVisible = true;
 		try {
 			const updatedProfileData = {
 				firstName: userProfile.firstName,
@@ -174,6 +181,9 @@
 			console.error("Error updating profile and payment information:", error);
 			failureAlert("Failed to update profile and payment information due to an error");
 		}
+
+        isUpdatingData = false;
+        loadingVisible = false;
 	}
 
 	let nameFormDisabled: boolean = true;
@@ -240,7 +250,15 @@
 
         <!-- * Main Content -->
         <div class="flex w-5/6 grow flex-col flex-wrap bg-[#F0F5F8] pb-10">
-            <p class="pl-8 pt-4 text-3xl">Dashboard</p>
+            <div class="flex gap-4 pl-8 pt-4 ">
+                <p class="text-3xl">Dashboard</p>
+                {#if loadingVisible}
+                    <LoadingSpinner>
+                        {isUpdatingData ? 'Updating' : 'Loading'} data...
+                    </LoadingSpinner>
+                {/if}
+            </div>
+
             <div class="flex w-5/6 flex-col">
                 <div class="pl-7 pt-4">
                     <!-- * Cards -->
