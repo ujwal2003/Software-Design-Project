@@ -41,6 +41,12 @@ const paymentInfoSchema = new mongoose.Schema(
 
 const profileSchema = new mongoose.Schema(
     {
+        username: {
+            type: String,
+            unique: true,
+            required: [true, "username is required!"]
+        },
+
         firstName: { type: String },
         middleName: { type: String },
         lastName: { type: String },
