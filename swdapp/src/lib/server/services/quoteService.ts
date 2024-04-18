@@ -56,7 +56,7 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     return quote;
 }
 
-export async function saveQuote(username: string, quoteObj: SaveQuoteRequest) {
+export async function saveQuote(username: string, quoteObj: Omit<SaveQuoteRequest, "username" | "accessToken">) {
     let newQuote = await UserModel.findOneAndUpdate({ username: username }, 
         {
             $push: {

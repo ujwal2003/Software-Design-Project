@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
-import { generateQuote, getQuoteHistory } from "../services/quoteService";
+import { generateQuote, getQuoteHistory, saveQuote } from "../services/quoteService";
 import type { GeneralAPIResponse, UnauthorizedResponse } from '../customTypes/generalTypes';
-import type { GenerateQuoteRequest, GenerateQuoteResponse, QuoteHistoryResponse } from "../customTypes/quoteTypes";
+import type { GenerateQuoteRequest, GenerateQuoteResponse, QuoteHistoryResponse, SaveQuoteRequest } from "../customTypes/quoteTypes";
 import type { QuoteHistoryRequest } from "../customTypes/quoteTypes";
 import { isAccessTokenValid_simple } from './authController';
 
@@ -96,3 +96,39 @@ export async function generateQuoteData(requestBody: GenerateQuoteRequest): Prom
     }
 }
 
+export async function saveQuoteData(requestBody: SaveQuoteRequest): Promise<Response> {
+    try {
+        if(!await isAccessTokenValid_simple(requestBody.accessToken)) {
+            return json({
+                success: true,
+                unauthorized: true,
+                message: 'invalid access token'
+            } as UnauthorizedResponse, { status: 401 });
+        }
+
+        const save = await saveQuote(requestBody.username, {
+            gallonsRequested: requestBody.gallonsRequested,
+            deliveryDate: requestBody.deliveryDate,
+            generationDate: requestBody.generationDate,
+            priceCalculated: requestBody.priceCalculated
+        });
+
+        if(save) {
+            return json({
+                success: true,
+                message: 'succesfully saved quote'
+            } as GeneralAPIResponse, { status: 200 });
+        } else {
+            return json({
+                success: false,
+                message: 'failed to save quote due to internal error'
+            } as GeneralAPIResponse, { status: 500 });
+        }
+    } catch (error) {
+        console.log("[SERVER] error on POST /api/quotes/save", error);
+        return json({
+            success: false,
+            message: "Request failed due to error"
+        } as GeneralAPIResponse, { status: 500 });
+    }
+}
