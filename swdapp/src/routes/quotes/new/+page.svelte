@@ -10,6 +10,7 @@
 	import { getRequest, postRequest } from '$lib/requests';
 	import StatusText from '$lib/components/statusText.svelte';
 	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
+	import { debounce } from '$lib/debounce';
 
 	let locAddress: string = '';
 
@@ -20,6 +21,9 @@
 		suggestedPrice: 0.0,
 		totalAmountDue: 0
 	};
+
+	let logged_in_user: string;
+	let access_token: string;
 
 	let addressValid: boolean;
 	onMount(async () => {
@@ -36,6 +40,8 @@
 		}
 
 		let profileReq = JSON.parse(cookie);
+		logged_in_user = profileReq.username;
+		access_token = profileReq.accessToken;
 		// const profileAPIRes = await postRequest('../api/profile/info', profileReq);
 		const profileAPIRes = await getRequest(`../api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
 
@@ -57,6 +63,10 @@
 		newQuote.deliveryAddress = locAddress;
 		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	});
+
+	let gallonsInputDisabled = false;
+	let deliveryInputDisabled = false;
+	let submitButtonDisabled = false;
 
 	let loadQuote: boolean = false;
 	let dateValid: boolean = newQuote.deliveryDate.length > 0 ? true : false;
@@ -81,6 +91,30 @@
 		 * disable load and enable inputs when new quote is generated
 		 * alert user that quote was fetched
 		*/
+
+		loadQuote = true;
+		gallonsInputDisabled = true;
+		deliveryInputDisabled = true;
+		submitButtonDisabled = true;
+
+		const getQuote = await postRequest('../api/quotes/generate/', {
+			username: logged_in_user,
+			accessToken: access_token,
+			gallonsRequested: newQuote.gallonsRequested,
+			deliveryDate: newQuote.deliveryDate,
+			loc: newQuote.deliveryAddress
+		});
+
+		console.log(getQuote);
+
+		loadQuote = false;
+		gallonsInputDisabled = false;
+		deliveryInputDisabled = false;
+		submitButtonDisabled = false;
+	}
+
+	async function handleQuoteGeneration_debounce() {
+		debounce(handleQuoteGeneration, 800);
 	}
 
 	async function handleQuoteSubmit() {
@@ -131,16 +165,16 @@
 					</StatusText>
 				{/if}
 				<div class="flex gap-1">
-					<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration}
-					 disabled={false}
+					<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration_debounce}
+					 disabled={gallonsInputDisabled}
 					 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
 
-					<button type="button" on:click={() => {newQuote.gallonsRequested += 10}} disabled={false}
+					<button type="button" on:click={() => {newQuote.gallonsRequested += 10; handleQuoteGeneration_debounce()}} disabled={gallonsInputDisabled}
 					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
 						+10
 					</button>
 
-					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10}} disabled={false}
+					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10; handleQuoteGeneration_debounce()}} disabled={gallonsInputDisabled}
 					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
 						-10
 					</button>
@@ -167,7 +201,7 @@
 					</StatusText>
 				{/if}
 				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} on:change={handleQuoteGeneration}
-				 disabled={false}
+				 disabled={deliveryInputDisabled}
 				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
 			  </div>
 			</form>
@@ -196,7 +230,7 @@
 				</div>
 
 				<div class='mt-2'>
-					<button type="button" on:click={handleQuoteSubmit} disabled={false}
+					<button type="button" on:click={handleQuoteSubmit} disabled={submitButtonDisabled}
 						class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none">
 						Save Quote
 					</button>
