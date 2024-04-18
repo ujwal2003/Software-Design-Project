@@ -72,20 +72,25 @@ export async function updateAccount(username: string, firstName?: string, middle
         }
     }
 
+    
     updateObj = updateObj ? updateObj : {};
-
+    
     if(updateObj) {
         if(!profile) {
             (updateObj as any)['purchaseHistory'] = [];
+            (updateObj as any)['paymentInfo'] = null;
         } else {
             (updateObj as any)['purchaseHistory'] = profile.purchaseHistory;
+            (updateObj as any)['paymentInfo'] = profile.paymentInfo;
         }
 
-        let updatedProfile = await UserModel.findOneAndUpdate({ username: username }, {
-            $set: { profile: updateObj }
+        (updateObj as any)['username'] = username;
+        
+        let updatedProfile = await ProfileModel.findOneAndUpdate({ username: username }, {
+            $set: { ...updateObj }
         });
 
-        return updateParams;
+        return updatedProfile;
     }
 
     return profile;
