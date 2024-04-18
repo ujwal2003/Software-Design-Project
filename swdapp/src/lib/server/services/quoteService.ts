@@ -25,8 +25,25 @@ export async function generateQuote(username: string, gallonsRequested: number, 
     if(!user.profile)
         return null;
 
-    //TODO: implement pricing module, for now it's a random constant
-    const priceCalculated = Math.random();
+    const current_price = 1.50;
+    let location_factor: number;
+    let rate_history_factor: number;
+    let gal_requested_factor: number;
+    const company_profit_factor = 0.10;
+
+    let state = user.profile.state;
+    let hasQuotes = user.profile.quoteHistory.length > 0;
+
+    if(!state)
+        return null;
+    state = state.toLocaleLowerCase();
+
+    location_factor = (state == 'tx' || state == 'texas') ? 0.02 : 0.04;
+    rate_history_factor = hasQuotes ? 0.01 : 0.00;
+    gal_requested_factor = (gallonsRequested > 1000) ? 0.02 : 0.03;
+
+    const margin = current_price * (location_factor - rate_history_factor + gal_requested_factor + company_profit_factor);
+    const priceCalculated = current_price + margin;
 
     const quote = {
         // _id: crypto.randomBytes(24 / 2).toString('hex'),

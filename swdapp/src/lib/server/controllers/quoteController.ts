@@ -41,6 +41,7 @@ export async function getQuoteHistoryData(requestBody: QuoteHistoryRequest): Pro
         } as GeneralAPIResponse, { status: 500 });
     }
 }
+
 export async function generateQuoteData(requestBody: GenerateQuoteRequest): Promise<Response> {
     try {
         const { username, accessToken, gallonsRequested, deliveryDate, loc } = requestBody;
