@@ -60,3 +60,25 @@ export const genericAlert = (msg: string) => toast.push({
 
     dismissable: true
 });
+
+export const genericShortAlert = (msg: string) => toast.push({
+    component: {
+        src: PrelineToast,
+        props: {
+            toastText: msg,
+            toastType: "custom"
+        }
+    },
+
+    theme: {
+        '--toastBackground': 'rgb(219 234 254)',
+        '--toastBorder': 'solid 0.02rem',
+        '--toastBorderRadius': '0.5rem',
+        '--toastColor': 'rgb(30 64 175)',
+        '--toastBarBackground': 'rgb(96 165 250)',
+        '--toastBarHeight': 0
+    },
+
+    dismissable: true,
+    duration: 980
+});

@@ -25,4 +25,4 @@ export interface GenerateQuoteResponse {
     deliveryDate: Date
 }
 
-export type SaveQuoteRequest = Omit<GenerateQuoteResponse, "success"> & QuoteHistoryRequest
+export type SaveQuoteRequest = Omit<GenerateQuoteResponse, "success"> & QuoteHistoryRequest & {location: string}

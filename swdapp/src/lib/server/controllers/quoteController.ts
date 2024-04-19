@@ -110,7 +110,8 @@ export async function saveQuoteData(requestBody: SaveQuoteRequest): Promise<Resp
             gallonsRequested: requestBody.gallonsRequested,
             deliveryDate: requestBody.deliveryDate,
             generationDate: requestBody.generationDate,
-            priceCalculated: requestBody.priceCalculated
+            priceCalculated: requestBody.priceCalculated,
+            location: requestBody.location
         });
 
         if(save) {

@@ -1,6 +1,4 @@
-import crypto from "crypto";
 import { getProfile, userExists } from "./userService";
-import { UserModel } from "../database/models/userModel";
 import type { SaveQuoteRequest } from "../customTypes/quoteTypes";
 import { QuotesModel } from "../database/models/quotesModel";
 
@@ -69,7 +67,8 @@ export async function saveQuote(username: string, quoteObj: Omit<SaveQuoteReques
         generationDate: quoteObj.generationDate,
         gallonsRequested: quoteObj.gallonsRequested,
         priceCalculated: quoteObj.priceCalculated,
-        deliveryDate: quoteObj.deliveryDate
+        deliveryDate: quoteObj.deliveryDate,
+        location: quoteObj.location
     });
 
     if(!newQuote)

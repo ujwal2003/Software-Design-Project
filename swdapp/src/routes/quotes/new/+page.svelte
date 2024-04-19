@@ -59,7 +59,7 @@
 			return;
 		}
 
-		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
+		locAddress = `${profileResJSON.profile.street}, ${profileResJSON.profile.zip}, ${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
 		newQuote.deliveryAddress = locAddress;
 		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	});
@@ -136,7 +136,8 @@
 			generationDate: new Date(),
 			gallonsRequested: newQuote.gallonsRequested,
 			priceCalculated: newQuote.suggestedPrice,
-			deliveryDate: new Date(newQuote.deliveryDate)
+			deliveryDate: new Date(newQuote.deliveryDate),
+			location: newQuote.deliveryAddress
 		});
 
 		const saveQuoteJSON = await saveQuote.json();

@@ -13,7 +13,8 @@ const quotesSchema = new mongoose.Schema(
 
         gallonsRequested: { type: Number },
         priceCalculated: { type: Number },
-        deliveryDate: { type: Date }
+        deliveryDate: { type: Date },
+        location: { type: String }
     },
     {
         timestamps: true

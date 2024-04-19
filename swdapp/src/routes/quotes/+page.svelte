@@ -4,7 +4,7 @@
 	
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, genericShortAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	
 	import { getRequest, postRequest } from '$lib/requests';
@@ -206,7 +206,11 @@
 							{#each quotes as quote}
 								<TableRow>
 									<TableData>{quote.generationDate.slice(0, 10)}</TableData>
-									<TableData>{userAddress.city}, {userAddress.state}</TableData>
+									<TableData>
+										<button on:click={() => {genericShortAlert(quote.location.toString())}}>
+											{quote.location.split(',')[2]}, {quote.location.split(',')[3]}
+										</button>
+									</TableData>
 									<TableData>{quote.gallonsRequested}</TableData>
 									<TableData>${quote.priceCalculated} per gal</TableData>
 									<TableData>${quote.priceCalculated*quote.gallonsRequested}</TableData>
