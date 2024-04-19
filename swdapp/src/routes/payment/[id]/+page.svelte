@@ -131,8 +131,7 @@
 
 	function calcPrice(gallons: number, price: number){
 		let subtotal = gallons * price;
-		let tax = 0.0625 * subtotal;
-		return subtotal + tax;
+		return subtotal;
 	}
 
 	async function purchaseQuote() {
@@ -148,7 +147,7 @@
 		const username = makePaymentReq.username;
     	let accessToken = makePaymentReq.accessToken;
 
-		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, company: "Exxon", price: calcPrice(quote.gallonsRequested, quote.priceCalculated), quoteID: id});
+		const makePaymentAPIRes = await postRequest('../api/payment/pay', {username: username, accessToken: accessToken, price: calcPrice(quote.gallonsRequested, quote.priceCalculated), quoteID: id});
 		const makePaymentResJSON = await makePaymentAPIRes.json();
 		
 		if(!makePaymentResJSON.success) {
