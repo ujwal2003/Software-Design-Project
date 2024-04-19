@@ -7,6 +7,10 @@ const receiptSchema = new mongoose.Schema(
             required: [true, "quoteID is required!"] 
         },
 
+        price: {
+            type: Number
+        },
+
         purchaseDate: { 
             type: Date,
             required: [true, "purchaseDate is required!"] 
