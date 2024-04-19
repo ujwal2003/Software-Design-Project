@@ -109,7 +109,7 @@ export async function makePayment(username: string, price: number, companyName: 
         purchaseDate: new Date(),
         deliveryDate: new Date(),
         tax: (0.0625 * price),
-        price: price - (0.0625 * price)
+        price: price + (0.0625 * price)
     };
 
     let newPayment = await ProfileModel.findOneAndUpdate({ username: username },
