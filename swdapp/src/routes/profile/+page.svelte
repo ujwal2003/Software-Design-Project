@@ -197,9 +197,16 @@
     async function handleCredsSubmit(cred: string) {
         if(cred == 'username') {
             console.log("New Username:", username);
+            //TODO fetch endpoint for updating username
         } else if(cred == 'password') {
             console.log("New Password:", newPassword);
+            //TODO fetch endpoint for updating password
         }
+
+        //TODO alert (success) user to login again
+        //TODO fetch log out request
+        //TODO delete the cookie
+        //TODO redirect to verify login page
     }
 
 	let nameFormDisabled: boolean = true;
