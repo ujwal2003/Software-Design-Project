@@ -15,6 +15,13 @@ export async function updateCredUsername(requestBody: UpdateUsernameRequest): Pr
             } as GeneralAPIResponse, {status: 500});
         }
 
+        if(await userExists(requestBody.newUsername)) {
+            return json({
+                success: false,
+                message: `${requestBody.newUsername} is an existing user, please choose a different username`
+            } as GeneralAPIResponse, {status: 500});
+        }
+
         let updatedUsername = await updateUsername(requestBody.currentUsername, requestBody.newUsername);
         if(!updatedUsername) {
             return json({
