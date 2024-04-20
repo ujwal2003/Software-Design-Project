@@ -5,12 +5,13 @@
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
-	import { postRequest, patchRequest, getRequest } from '$lib/requests';
+	import { postRequest, patchRequest, getRequest, deleteRequest } from '$lib/requests';
 	import { deleteCookie, getCookie } from '$lib/cookieUtil';
 	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
     // TODO
     let username = ""
+    let oldUsername = ""
     let currPassword = ""
     let newPassword = ""
 
@@ -33,6 +34,7 @@
         const sessionData = JSON.parse((cookieData as string));
         const sessionUsername = sessionData.username;
         username = sessionUsername;
+        oldUsername = sessionUsername;
 	});
 
 	interface UserProfile {
@@ -194,19 +196,81 @@
         loadingVisible = false;
 	}
 
-    async function handleCredsSubmit(cred: string) {
-        if(cred == 'username') {
-            console.log("New Username:", username);
-            //TODO fetch endpoint for updating username
-        } else if(cred == 'password') {
-            console.log("New Password:", newPassword);
-            //TODO fetch endpoint for updating password
+    async function logOutUser() {
+        const cookie = getCookie('user_session');
+        if (!cookie) {
+            return;
         }
 
-        //TODO alert (success) user to login again
-        //TODO fetch log out request
-        //TODO delete the cookie
-        //TODO redirect to verify login page
+        const tokenData = JSON.parse(cookie);
+
+        const res = await (await (deleteRequest(`api/auth/logout/`, {
+            username: oldUsername,
+            refreshToken: tokenData.refreshToken
+        }))).json();
+        deleteCookie('user_session');
+    }
+
+    async function handleCredsSubmit(cred: string) {
+        const cookie = getCookie('user_session');
+        if (!cookie) {
+            return;
+        }
+
+        const tokenData = JSON.parse(cookie);
+
+        if(cred == 'username') {
+            // console.log("New Username:", username);
+            if(!username) {
+                failureAlert("Username cannot be empty!");
+                username = oldUsername;
+                return;
+            }
+
+            if(!currPassword) {
+                failureAlert("Password cannot be empty!");
+                username = oldUsername;
+                return;
+            }
+
+            const usernameUpdateRes = await patchRequest('api/auth/update/username', {
+                currentUsername: oldUsername,
+                newUsername: username,
+                accessToken: tokenData.accessToken
+            });
+
+            const usernameUpdateJSON = await usernameUpdateRes.json();
+
+            if(!usernameUpdateJSON.success) {
+                failureAlert(usernameUpdateJSON.message);
+                return;
+            }
+
+        } else if(cred == 'password') {
+            // console.log("New Password:", newPassword);
+            if(!newPassword || !currPassword) {
+                failureAlert("Password cannot be empty!");
+                return;
+            }
+
+            const passwordUpdateReq = await patchRequest('api/auth/update/password', {
+                username: oldUsername,
+                currentPassword: currPassword,
+                newPassword: newPassword,
+                accessToken: tokenData.accessToken
+            });
+
+            const passwordUpdateJSON = await passwordUpdateReq.json();
+
+            if(!passwordUpdateJSON.success) {
+                failureAlert(passwordUpdateJSON.message);
+                return;
+            }
+        }
+
+        successAlert("Credentials updated, please log in again...");
+        await logOutUser();
+        goto('login');
     }
 
 	let nameFormDisabled: boolean = true;
@@ -526,7 +590,7 @@
                                 <div class="flex flex-col">
                                     <label class="mt-4 text-gray-800" for="username">Username</label>
                                     <input 
-                                        disabled={credientialsFormDisabled}
+                                        disabled={credientialsFormDisabled || isEditingPassword}
                                         class={textBoxStyle}
                                         type="text"
                                         id="username"
