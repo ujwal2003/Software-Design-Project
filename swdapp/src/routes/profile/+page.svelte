@@ -264,6 +264,8 @@
 
             if(!passwordUpdateJSON.success) {
                 failureAlert(passwordUpdateJSON.message);
+                newPassword = '';
+                currPassword = '';
                 return;
             }
         }
