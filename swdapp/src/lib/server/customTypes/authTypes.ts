@@ -43,3 +43,17 @@ export interface LogOutResponse {
     success: boolean,
     message: string
 };
+
+// update
+export interface UpdateUsernameRequest {
+    currentUsername: string,
+    newUsername: string,
+    accessToken: string
+}
+
+export interface UpdatePasswordRequest {
+    username: string,
+    currentPassword: string,
+    newPassword: string,
+    accessToken: string
+}

@@ -5,9 +5,17 @@
 	import { isClientAllowed } from '$lib/protected';
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
-	import { postRequest, patchRequest, getRequest } from '$lib/requests';
+	import { postRequest, patchRequest, getRequest, deleteRequest } from '$lib/requests';
 	import { deleteCookie, getCookie } from '$lib/cookieUtil';
 	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
+
+    // TODO
+    let username = ""
+    let oldUsername = ""
+    let currPassword = ""
+    let newPassword = ""
+
+    let isEditingPassword = false;
 
 	onMount(async () => {
 		try {
@@ -21,6 +29,12 @@
             failureAlert('Error, please log in...');
             goto('/login');
         }
+
+        const cookieData = getCookie('user_session');
+        const sessionData = JSON.parse((cookieData as string));
+        const sessionUsername = sessionData.username;
+        username = sessionUsername;
+        oldUsername = sessionUsername;
 	});
 
 	interface UserProfile {
@@ -46,10 +60,6 @@
 	let userProfile : UserProfile = { firstName: '', middleName: '', lastName: ''};
 	let userAddress : UserAddress = { street: '', city: '', state: '', zip: ''};
 	let userPayment : UserPayment = { cardName: '', cardNumber: '', expirationDate: '', CVV: ''};
-
-    // TODO
-    let username = ""
-    let password = ""
 
     let loadingVisible = false;
     let isUpdatingData = false;
@@ -186,6 +196,83 @@
         loadingVisible = false;
 	}
 
+    async function logOutUser() {
+        const cookie = getCookie('user_session');
+        if (!cookie) {
+            return;
+        }
+
+        const tokenData = JSON.parse(cookie);
+
+        const res = await (await (deleteRequest(`api/auth/logout/`, {
+            username: oldUsername,
+            refreshToken: tokenData.refreshToken
+        }))).json();
+        deleteCookie('user_session');
+    }
+
+    async function handleCredsSubmit(cred: string) {
+        const cookie = getCookie('user_session');
+        if (!cookie) {
+            return;
+        }
+
+        const tokenData = JSON.parse(cookie);
+
+        if(cred == 'username') {
+            // console.log("New Username:", username);
+            if(!username) {
+                failureAlert("Username cannot be empty!");
+                username = oldUsername;
+                return;
+            }
+
+            if(!currPassword) {
+                failureAlert("Password cannot be empty!");
+                username = oldUsername;
+                return;
+            }
+
+            const usernameUpdateRes = await patchRequest('api/auth/update/username', {
+                currentUsername: oldUsername,
+                newUsername: username,
+                accessToken: tokenData.accessToken
+            });
+
+            const usernameUpdateJSON = await usernameUpdateRes.json();
+
+            if(!usernameUpdateJSON.success) {
+                failureAlert(usernameUpdateJSON.message);
+                return;
+            }
+
+        } else if(cred == 'password') {
+            // console.log("New Password:", newPassword);
+            if(!newPassword || !currPassword) {
+                failureAlert("Password cannot be empty!");
+                return;
+            }
+
+            const passwordUpdateReq = await patchRequest('api/auth/update/password', {
+                username: oldUsername,
+                currentPassword: currPassword,
+                newPassword: newPassword,
+                accessToken: tokenData.accessToken
+            });
+
+            const passwordUpdateJSON = await passwordUpdateReq.json();
+
+            if(!passwordUpdateJSON.success) {
+                failureAlert(passwordUpdateJSON.message);
+                return;
+            }
+        }
+
+        successAlert("Credentials updated, please log in again...");
+        await logOutUser();
+        goto('login');
+    }
+
 	let nameFormDisabled: boolean = true;
     let paymentFormDisabled: boolean = true;
     let addressFormDisabled: boolean = true;
@@ -204,6 +291,13 @@
         else if (section === 'credientials'){
             credientialsFormDisabled = false;
         }
+        else if (section === 'username') {
+            credientialsFormDisabled = false;
+        }
+        else if (section === 'password') {
+            credientialsFormDisabled = false;
+            isEditingPassword = true;
+        }
     }
 
     function handleCancel(section: string) {
@@ -218,6 +312,7 @@
         }
         else if (section === 'credientials'){
             credientialsFormDisabled = true;
+            isEditingPassword = false;
         }
 
         getUserData();
@@ -491,46 +586,72 @@
                         <!-- Credientials Card -->
                         <div class="flex h-[26rem] w-[30rem] flex-col rounded-xl bg-white px-8 py-5">
                             <div class="text-lg font-bold text-black">User Credientials</div>
-                            <form on:submit={handleSubmit}>
+                            <form>
                                 <div class="flex flex-col">
                                     <label class="mt-4 text-gray-800" for="username">Username</label>
                                     <input 
-                                        disabled={credientialsFormDisabled}
+                                        disabled={credientialsFormDisabled || isEditingPassword}
                                         class={textBoxStyle}
                                         type="text"
                                         id="username"
                                         bind:value={username}
                                     />
                                 </div>
+
                                 <div class="flex flex-col">
-                                    <label class="mt-2 text-gray-800" for="password">Password</label>
+                                    <label class="mt-2 text-gray-800" for="password">
+                                        {!credientialsFormDisabled ? 'Enter Current Password' : 'Password'}
+                                    </label>
                                     <input
                                         disabled={credientialsFormDisabled}
                                         class={textBoxStyle}
                                         type="password"
                                         id="password"
-                                        bind:value={password}
+                                        bind:value={currPassword}
                                     />
                                 </div>
 
-                                <div class="flex flex-row justify-end pt-40">
+                                {#if isEditingPassword}
+                                    <div class="flex flex-col">
+                                        <label class="mt-2 text-gray-800" for="password">
+                                            Enter New Password
+                                        </label>
+                                        <input
+                                            class={textBoxStyle}
+                                            type="password"
+                                            id="password"
+                                            bind:value={newPassword}
+                                        />
+                                    </div>
+                                {/if}
+
+
+                                <div class="flex flex-row justify-end pt-10">
                                     {#if credientialsFormDisabled}
                                     
                                     <div class="flex gap-x-2">
-                                        <button
+                                        <!-- <button
                                             type="button"
                                             on:click={deleteAccount}
                                             class="inline-flex rounded-lg border border-transparent bg-red-600 px-4 py-3 text-sm font-semibold text-white hover:bg-red-700"
                                         >
                                             Delete Account
-                                        </button>
+                                        </button> -->
 
                                         <button
-                                            on:click={() => handleEdit('credientials')}
+                                            on:click={() => handleEdit('username')}
                                             type="button"
                                             class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
                                             >
-                                            Edit
+                                            Edit Username
+                                        </button>
+
+                                        <button
+                                            on:click={() => handleEdit('password')}
+                                            type="button"
+                                            class="inline-flex gap-x-2 rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900 disabled:pointer-events-none disabled:opacity-50"
+                                            >
+                                            Edit Password
                                         </button>
                                     </div>
                                         
@@ -546,23 +667,36 @@
                                             Cancel
                                             </button>
                                             
-                                            <button
-                                                type="submit"
-                                                on:click={() => {
-                                                    handleSubmit();
-                                                    handleCancel('credientials');
-                                                }}
-                                                class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
-                                            >
-                                                Submit
-                                            </button>
+                                            {#if isEditingPassword}
+                                                <button
+                                                        type="submit"
+                                                        on:click={() => {
+                                                            handleCredsSubmit('password');
+                                                            handleCancel('credientials');
+                                                        }}
+                                                        class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+                                                    >
+                                                        Submit
+                                                </button>
+                                            {:else}
+                                                <button
+                                                    type="submit"
+                                                    on:click={() => {
+                                                        handleCredsSubmit('username');
+                                                        handleCancel('credientials');
+                                                    }}
+                                                    class="inline-flex rounded-lg border border-transparent bg-gray-800 px-4 py-3 text-sm font-semibold text-white hover:bg-gray-900"
+                                                >
+                                                    Submit
+                                                </button>
+                                            {/if}
                                             
                                         </div>
                                         
                                     {/if}
                                 </div>
                             </form>
-                        </div>`
+                        </div>
 
                     </section>
                     <!-- * End Cards -->

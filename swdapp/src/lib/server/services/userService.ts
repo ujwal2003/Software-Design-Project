@@ -1,4 +1,5 @@
 import { ProfileModel } from "../database/models/profileModel";
+import { QuotesModel } from "../database/models/quotesModel";
 import { UserModel } from "../database/models/userModel";
 
 export async function userExists(username: string) {
@@ -96,3 +97,34 @@ export async function updateAccount(username: string, firstName?: string, middle
     return profile;
 }
 
+export async function updateUsername(currUsername: string, newUsername: string) {
+    let user = await userExists(currUsername);
+    if (!user)
+        return false;
+
+    let updatedUsername = await UserModel.findOneAndUpdate({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    let profileUpdateUsername = await ProfileModel.findOneAndUpdate({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    let quotesUpdateUsername = await QuotesModel.updateMany({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    return true;
+}
+
+export async function updateEncryptedPassword(username: string, newEncryptedPass: string) {
+    let user = await userExists(username);
+    if (!user)
+        return null;
+
+    let updatedPass = await UserModel.findOneAndUpdate({ username: username }, {
+        $set: { encryptedPassword: newEncryptedPass }
+    });
+
+    return updatedPass;
+}
