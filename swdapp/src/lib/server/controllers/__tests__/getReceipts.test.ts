@@ -5,7 +5,8 @@ import * as UserService from '../../services/userService';
 import * as AuthService from "../../services/authorizationService";
 import * as PaymentService from "../../services/paymentService";
 import { getReceipts } from '../profileController';
-import type { QuoteHistoryRequest, GeneralAPIResponse, UnauthorizedResponse, PurchaseHistoryRequest, PurchaseHistoryResponse } from '$lib/server/customTypes/generalTypes';
+import type { GeneralAPIResponse, UnauthorizedResponse, PurchaseHistoryRequest, PurchaseHistoryResponse } from '$lib/server/customTypes/generalTypes';
+import type { QuoteHistoryRequest } from "$lib/server/customTypes/quoteTypes";
 import type { LoginRequest, LoginResponse, LoginSuccess } from '$lib/server/customTypes/authTypes';
 import { loginUser } from '../authController';
 

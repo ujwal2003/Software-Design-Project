@@ -10,6 +10,7 @@
 	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { postRequest } from '$lib/requests';
 	import { goto } from '$app/navigation';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
 	const regTopDescription = 'Make a new account to access gas savings you could only dream of!';
 	const regBottomDescription = 'Already have an account? <a href="/login"><u>Log in here.</u></a>';
@@ -27,9 +28,12 @@
 		}
 	}
 
+	let loadingVisible = false;
 	async function handleRegistrationSubmit() {
+		loadingVisible = true;
 		if(!registerRequest.username || !registerRequest.password) {
 			failureAlert("Registration form must be completely filled out!");
+			loadingVisible = false;
 			return;
 		}
 
@@ -39,14 +43,17 @@
 		if(!resJSON.success) {
 			if(resJSON.response.failType == "exists") {
 				failureAlert(resJSON.response.message);
+				loadingVisible = false;
 				return;
 			}
 
 			failureAlert("Registration failed due to error, please try again");
+			loadingVisible = false;
 			return;
 		}
 
 		successAlert('Registration Succesful! Redirecting...');
+		loadingVisible = false;
 		goto('/login/verify/');
 	}
 </script>
@@ -69,6 +76,14 @@
 	<!-- right side -->
 	<section class="flex h-screen w-1/2 flex-wrap items-center justify-center bg-[#F0F5F8]">
 		<div class="w-1/2">
+			{#if loadingVisible}			
+				<div class="mb-2">
+					<LoadingSpinner>
+						Registering...
+					</LoadingSpinner>
+				</div>
+			{/if}
+
 			<SubmitForm>
 				<FormText title>Create Account</FormText>
 				<FormText description>{regTopDescription}</FormText>

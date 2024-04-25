@@ -1,6 +1,5 @@
-import crypto from "crypto";
-import { userExists } from "./userService";
-import { UserModel } from "../database/models/userModel";
+import { getProfile, userExists } from "./userService";
+import { ProfileModel } from "../database/models/profileModel";
 
 
 export async function getPurchaseHistory(username: string) {
@@ -9,32 +8,37 @@ export async function getPurchaseHistory(username: string) {
     if(!user)
         return null;
 
-    if(!user.profile)
+    let profile = await getProfile(username);
+
+    if(!profile)
         return null;
 
-    return user.profile.purchaseHistory;
+    return profile.purchaseHistory;
 }
 
 export async function updatePayment(username: string, cardName?: string, cardNum?: string, cvv?: string, expiry?: Date) {
     let user = await userExists(username);
+    let profile = await getProfile(username);
 
-    if (!user || !user.profile)
+    if (!user || !profile)
         return false;
 
-    let userPayment = user.profile.paymentInfo;
+    let userPayment = profile.paymentInfo;
     let updateObj = {};
 
     if (!userPayment) {
         updateObj = {
             cardName: '',
             creditCardNumber: '',
-            cardExpiration: new Date(-8640000000000000),
+            cardExpiration: new Date("1920-01-01"),
             cardCVV: ''
         };
 
-        let newPaymentProfile = await UserModel.findOneAndUpdate({ username: username }, {
-            $set: { 'profile.paymentInfo': updateObj }
+        let newPaymentProfile = await ProfileModel.findOneAndUpdate({ username: username }, {
+            $set: { paymentInfo: updateObj }
         });
+
+        return true;
     }
 
     updateObj = {};
@@ -63,8 +67,8 @@ export async function updatePayment(username: string, cardName?: string, cardNum
 
     updateObj = updateObj ? updateObj : {};
     if(updateObj) {
-        let updatedPaymentProfile = await UserModel.findOneAndUpdate({ username: username }, {
-            'profile.paymentInfo': updateObj
+        let updatedPaymentProfile = await ProfileModel.findOneAndUpdate({ username: username }, {
+            paymentInfo: updateObj
         })
     }
 
@@ -73,12 +77,13 @@ export async function updatePayment(username: string, cardName?: string, cardNum
 
 export async function makePayment(username: string, price: number, companyName: string, quoteID: string) {
     let user = await userExists(username);
+    let profile = await getProfile(username);
 
-    if(!user || !user.profile)
+    if(!user || !profile)
         return;
 
-    const paymentInfo = user.profile.purchaseHistory ? user.profile.paymentInfo : null;
-    let purchaseHistory = user ? user.profile.purchaseHistory : null;
+    const paymentInfo = profile.purchaseHistory ? profile.paymentInfo : null;
+    let purchaseHistory = user ? profile.purchaseHistory : null;
 
     if (!paymentInfo) {
         return;
@@ -99,18 +104,18 @@ export async function makePayment(username: string, price: number, companyName: 
     // company.revenue += price;
 
     let purchase = {
-        _id: crypto.randomBytes(24 / 2).toString('hex'),
+        // _id: crypto.randomBytes(24 / 2).toString('hex'),
         quoteID: quoteID,
         purchaseDate: new Date(),
         deliveryDate: new Date(),
         tax: (0.0625 * price),
-        price: price - (0.0625 * price)
+        price: price + (0.0625 * price)
     };
 
-    let newPayment = await UserModel.findOneAndUpdate({ username: username },
+    let newPayment = await ProfileModel.findOneAndUpdate({ username: username },
         {
             $push: {
-                'profile.purchaseHistory': purchase
+                'purchaseHistory': purchase
             }
         },
         { new: true }

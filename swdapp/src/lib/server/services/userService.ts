@@ -1,3 +1,5 @@
+import { ProfileModel } from "../database/models/profileModel";
+import { QuotesModel } from "../database/models/quotesModel";
 import { UserModel } from "../database/models/userModel";
 
 export async function userExists(username: string) {
@@ -10,17 +12,22 @@ export async function addUser(username: string, encryptedPass: string) {
     const newUser = await UserModel.create({
         username: username,
         encryptedPassword: encryptedPass,
-        isAdmin: false,
-        profile: null
+        isAdmin: false
     });
 
     return newUser;
 }
 
-export async function getProfile(username: string){
+export async function getProfile(username: string) {
     let user = await userExists(username);
+    if(!user)
+        return null;
 
-    return user ? user.profile : null;
+    let profile = await ProfileModel.findOne({ username: username });
+    if(!profile)
+        return null;
+
+    return profile;
 }
 
 export async function updateAccount(username: string, firstName?: string, middleName?: string, lastName?: string, city?: string, state?: string, street?: string, zip?: string) {
@@ -32,25 +39,28 @@ export async function updateAccount(username: string, firstName?: string, middle
 
     let updateObj = {};
     
-    let profile = user.profile;
+    let profile = await getProfile(username);
 
     if (!profile) {
         updateObj = {
-            firstName: '',
-            middleName: '',
-            lastName: '',
-            city: '',
-            state: '',
-            street: '',
-            zip: '',
-            quoteHistory: [],
+            username: username,
+            firstName: firstName ? firstName : '',
+            middleName: middleName ? middleName : '',
+            lastName: lastName ? lastName : '',
+            city: city ? city : '',
+            state: state ? state : '',
+            street: street ? street : '',
+            zip: zip ? zip : '',
             purchaseHistory: [],
             paymentInfo: null
         }
 
-        let newProfile = await UserModel.findOneAndUpdate({ username: username }, {
-            $set: { profile: updateObj }
-        });
+        // let newProfile = await UserModel.findOneAndUpdate({ username: username }, {
+        //     $set: { profile: updateObj }
+        // });
+
+        let newProfile = await ProfileModel.create(updateObj);
+        return newProfile;
     }
 
     updateObj = {};
@@ -63,22 +73,58 @@ export async function updateAccount(username: string, firstName?: string, middle
         }
     }
 
+    
     updateObj = updateObj ? updateObj : {};
-
+    
     if(updateObj) {
         if(!profile) {
-            (updateObj as any)['quoteHistory'] = [];
             (updateObj as any)['purchaseHistory'] = [];
+            (updateObj as any)['paymentInfo'] = null;
         } else {
-            (updateObj as any)['quoteHistory'] = profile.quoteHistory;
             (updateObj as any)['purchaseHistory'] = profile.purchaseHistory;
+            (updateObj as any)['paymentInfo'] = profile.paymentInfo;
         }
 
-        let updatedProfile = await UserModel.findOneAndUpdate({ username: username }, {
-            $set: { profile: updateObj }
+        (updateObj as any)['username'] = username;
+        
+        let updatedProfile = await ProfileModel.findOneAndUpdate({ username: username }, {
+            $set: { ...updateObj }
         });
+
+        return updatedProfile;
     }
 
     return profile;
 }
 
+export async function updateUsername(currUsername: string, newUsername: string) {
+    let user = await userExists(currUsername);
+    if (!user)
+        return false;
+
+    let updatedUsername = await UserModel.findOneAndUpdate({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    let profileUpdateUsername = await ProfileModel.findOneAndUpdate({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    let quotesUpdateUsername = await QuotesModel.updateMany({ username: currUsername }, {
+        $set: { username: newUsername }
+    });
+
+    return true;
+}
+
+export async function updateEncryptedPassword(username: string, newEncryptedPass: string) {
+    let user = await userExists(username);
+    if (!user)
+        return null;
+
+    let updatedPass = await UserModel.findOneAndUpdate({ username: username }, {
+        $set: { encryptedPassword: newEncryptedPass }
+    });
+
+    return updatedPass;
+}

@@ -6,6 +6,7 @@
 	import { postRequest } from '$lib/requests';
 	import { deleteCookie, setCookie } from '$lib/cookieUtil';
 	import { goto } from '$app/navigation';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
 
 	const loginTopDescription =
 		'Once you login you can create new quotes, and set your quote search settings!';
@@ -22,11 +23,14 @@
 		loginVals = e.detail;
 	}
 
+	let loginLoadingVisible = false;
 	async function handleLoginSubmit() {
 		if(loginVals.length < 2 || !loginVals[0].inputValue || !loginVals[1].inputValue) {
 			failureAlert('login fields cannot be empty!');
 			return;
 		}
+
+		loginLoadingVisible = true;
 
 		const loginReq = {
 			username: loginVals[0].inputValue,
@@ -38,6 +42,7 @@
 		
 		if(!loginResJSON.success) {
 			const failReason = loginResJSON.response.failType;
+			loginLoadingVisible = false;
 
 			if(failReason == "invalid_user") {
 				failureAlert(`${loginReq.username} not found, please register first if you do not have an account.`);
@@ -60,6 +65,7 @@
 			refreshToken: loginResJSON.response.refreshToken
 		}));
 
+		loginLoadingVisible = false;
 		goto('/profile');
 	}
 </script>
@@ -82,6 +88,12 @@
 	<!-- right side -->
 	<section class="flex w-1/2 flex-wrap items-center justify-center bg-[#F0F5F8]">
 		<div class="w-1/2">
+			{#if loginLoadingVisible}			
+				<div class="mb-2">
+					<LoadingSpinner>Logging in...</LoadingSpinner>
+				</div>
+			{/if}
+
 			<InputForm
 				numInputs={2}
 				labels={['Username', 'Password']}

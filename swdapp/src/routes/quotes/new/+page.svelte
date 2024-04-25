@@ -4,10 +4,13 @@
 
 	import { onMount } from 'svelte';
 	import { isClientAllowed } from '$lib/protected';
-	import { failureAlert, successAlert } from '$lib/components/toasts/customToasts';
+	import { failureAlert, genericAlert, successAlert } from '$lib/components/toasts/customToasts';
 	import { goto } from '$app/navigation';
 	import { getCookie } from '$lib/cookieUtil';
 	import { getRequest, postRequest } from '$lib/requests';
+	import StatusText from '$lib/components/statusText.svelte';
+	import LoadingSpinner from '$lib/components/loadingSpinner.svelte';
+	import { debounce } from '$lib/debounce';
 
 	let locAddress: string = '';
 
@@ -19,6 +22,10 @@
 		totalAmountDue: 0
 	};
 
+	let logged_in_user: string;
+	let access_token: string;
+
+	let addressValid: boolean;
 	onMount(async () => {
 		if(!await isClientAllowed('../')) {
 			failureAlert("You must be logged in to access this page. Please log in.");
@@ -33,6 +40,8 @@
 		}
 
 		let profileReq = JSON.parse(cookie);
+		logged_in_user = profileReq.username;
+		access_token = profileReq.accessToken;
 		// const profileAPIRes = await postRequest('../api/profile/info', profileReq);
 		const profileAPIRes = await getRequest(`../api/profile/info/${profileReq.username}`, {'access-token': profileReq.accessToken});
 
@@ -50,53 +59,96 @@
 			return;
 		}
 
-		locAddress = `${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
+		locAddress = `${profileResJSON.profile.street}, ${profileResJSON.profile.zip}, ${profileResJSON.profile.city}, ${profileResJSON.profile.state}`;
 		newQuote.deliveryAddress = locAddress;
+		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 	});
 
-	async function handleQuoteSubmit() {
-		if(newQuote.gallonsRequested <= 0 || !newQuote.deliveryAddress || !newQuote.deliveryDate) {
-			failureAlert('Form must be completely filled out!');
-			return;
-		}
+	let gallonsInputDisabled = false;
+	let deliveryInputDisabled = false;
+	let submitButtonDisabled = false;
 
+	let loadQuote: boolean = false;
+	let dateValid: boolean = newQuote.deliveryDate.length > 0 ? true : false;
+	async function handleQuoteGeneration() {
 		const today = new Date();
 		let selectedDate = new Date(newQuote.deliveryDate);
 		selectedDate.setDate(selectedDate.getDate()+1);
+		
+		if(newQuote.deliveryDate.length > 0)
+			dateValid = (selectedDate < today) ? false : true;
+		else dateValid = false;
+		addressValid = newQuote.deliveryAddress.replaceAll(", ", '') == '' ? false : true;
 
-		if(selectedDate < today) {
-			failureAlert('You can only select dates after today!');
+		if(!dateValid || !addressValid || newQuote.gallonsRequested <= 0)
 			return;
-		}
 
-		const cookie = getCookie('user_session');
-		if(!cookie) {
-			failureAlert('Error, please log in again...');
-			goto('../login');
-			return;
-		}
-		const userCookieData = JSON.parse(cookie);
+		loadQuote = true;
+		gallonsInputDisabled = true;
+		deliveryInputDisabled = true;
+		submitButtonDisabled = true;
 
-		const newQuoteRequest = {
-			username: userCookieData.username,
-			accessToken: userCookieData.accessToken,
+		const getQuote = await postRequest('../api/quotes/generate/', {
+			username: logged_in_user,
+			accessToken: access_token,
 			gallonsRequested: newQuote.gallonsRequested,
 			deliveryDate: newQuote.deliveryDate,
 			loc: newQuote.deliveryAddress
-		};
+		});
 
-		const genQuoteReq = await postRequest('../api/quotes/generate/', newQuoteRequest);
-		const genQuoteJSON = await genQuoteReq.json();
+		const getQuoteJSON = await getQuote.json();
 
-		if(!genQuoteJSON.success) {
-			failureAlert("failed to generate quote, please try again...");
+		if(!getQuote.ok || !getQuoteJSON.success) {
+			failureAlert("Error: failed to generate quote, please try again...");
 			return;
 		}
 
-		successAlert("Generated new quote...");
+		newQuote.suggestedPrice = getQuoteJSON.priceCalculated;
+		newQuote.totalAmountDue = newQuote.gallonsRequested * getQuoteJSON.priceCalculated;
 
-		newQuote.suggestedPrice = parseFloat(genQuoteJSON.priceCalculated);
-		newQuote.totalAmountDue = newQuote.gallonsRequested * newQuote.suggestedPrice;
+		loadQuote = false;
+		gallonsInputDisabled = false;
+		deliveryInputDisabled = false;
+		submitButtonDisabled = false;
+	}
+
+	async function handleQuoteGeneration_debounce() {
+		debounce(handleQuoteGeneration, 800);
+	}
+
+	async function handleQuoteSubmit() {
+		if(!dateValid || !addressValid || newQuote.gallonsRequested <= 0) {
+			failureAlert("Error: form is not correctly filled out; No quote to save!");
+			return;
+		}
+
+		if(!newQuote.suggestedPrice) {
+			failureAlert("Error: No quote found, please generate a quote first!");
+			return;
+		}
+
+		genericAlert("Saving quote...");
+		submitButtonDisabled = true;
+
+		const saveQuote = await postRequest('../api/quotes/save/', {
+			username: logged_in_user,
+			accessToken: access_token,
+			generationDate: new Date(),
+			gallonsRequested: newQuote.gallonsRequested,
+			priceCalculated: newQuote.suggestedPrice,
+			deliveryDate: new Date(newQuote.deliveryDate),
+			location: newQuote.deliveryAddress
+		});
+
+		const saveQuoteJSON = await saveQuote.json();
+
+		if(!saveQuote.ok || !saveQuoteJSON.success) {
+			failureAlert("Error: failed to submit quote, please try again...");
+			return;
+		}
+		
+		successAlert("Succesfully saved quote!");
+		submitButtonDisabled = false;
 	}
 </script>
 
@@ -116,47 +168,97 @@
 		</aside>
 
 		<section class="h-screen w-5/6 bg-[#F0F5F8]">
-			<p class="pl-8 pt-4 text-3xl">Generate Quote</p>
-			<form class="p-8">
-			  <div class="mb-4">
-				<label for="gallonsRequested" class="block text-sm font-semibold mb-2">Gallons Requested:</label>
-				<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
-			  </div>
+			<div class="flex gap-3 pl-8 pt-4">
+				<p class="text-3xl">Generate Quote</p>
 
-			  <div class="mb-4">
-				<label for="deliveryAddress" class="block text-sm font-semibold mb-2">Delivery Address:</label>
-				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
-			  </div>
-
-			  <div class="mb-4">
-				<label for="deliveryDate" class="block text-sm font-semibold mb-2">Delivery Date:</label>
-				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200">
-			  </div>
-
-			  <button type="button" on:click={handleQuoteSubmit} class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-				Generate Quote
-			  </button>
-			</form>
-			<div class="p-8 bg-white mt-8">
-			  <p class="font-semibold">Suggested Price Per Gallon:</p>
-			  <span class="block">
-				{#if newQuote.suggestedPrice}
-					${newQuote.suggestedPrice}
-				{:else}
-					generate a quote to see a price!
+				{#if loadQuote}				
+					<LoadingSpinner>
+						Generating quote...
+					</LoadingSpinner>
 				{/if}
-			  </span>
-
-			  <p class="font-semibold mt-4">Total Amount Due:</p>
-			  <span class="block">
-				{#if newQuote.totalAmountDue}
-					${newQuote.totalAmountDue}
-				{:else}
-					$0.00
-				{/if}
-			  </span>
 			</div>
-		  </section>
+			
+			<form class="px-8 pt-4">
+			  <div class="mb-4">
+				<label for="gallonsRequested" class="block text-sm font-semibold mb-1">Gallons Requested:</label>
+				{#if newQuote.gallonsRequested <= 0}					
+					<StatusText icon='error'>
+						You must request more than 0 gallons!
+					</StatusText>
+				{/if}
+				<div class="flex gap-1">
+					<input type="number" id="gallonsRequested" bind:value={newQuote.gallonsRequested} on:input={handleQuoteGeneration_debounce}
+					 disabled={gallonsInputDisabled}
+					 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
+
+					<button type="button" on:click={() => {newQuote.gallonsRequested += 10; handleQuoteGeneration_debounce()}} disabled={gallonsInputDisabled}
+					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
+						+10
+					</button>
+
+					<button type="button" on:click={() => {newQuote.gallonsRequested -= 10; handleQuoteGeneration_debounce()}} disabled={gallonsInputDisabled}
+					 class="py-3 px-4 inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-blue-600 hover:text-blue-600 disabled:opacity-50 disabled:pointer-events-none">
+						-10
+					</button>
+				</div>
+				
+			  </div>
+
+			  <div class="mb-4">
+				<label for="deliveryAddress" class="block text-sm font-semibold mb-1">Delivery Address:</label>
+				{#if !addressValid}
+					<StatusText icon='error'>
+						{@html "Address not specified, please complete your <a href='/profile' style='text-decoration: underline;'>profile!</a>"}
+					</StatusText>
+				{/if}
+				<input type="text" id="deliveryAddress" bind:value={newQuote.deliveryAddress} 
+				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400" disabled>
+			  </div>
+
+			  <div class="mb-4">
+				<label for="deliveryDate" class="block text-sm font-semibold mb-1">Delivery Date:</label>
+				{#if !dateValid}
+					<StatusText icon='error'>
+						You must select a date after today!
+					</StatusText>
+				{/if}
+				<input type="date" id="deliveryDate" bind:value={newQuote.deliveryDate} on:change={handleQuoteGeneration}
+				 disabled={deliveryInputDisabled}
+				 class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:opacity-85 disabled:text-gray-400">
+			  </div>
+			</form>
+
+			<div class="px-8 pt-2 bg-white">
+				<div class="flex gap-2">
+					<p class="font-semibold">Suggested Price Per Gallon:</p>
+					<span class="block">
+						{#if newQuote.suggestedPrice}
+							${newQuote.suggestedPrice}
+						{:else}
+							generate a quote to see a price!
+						{/if}
+					</span>
+				</div>
+
+				<div class="flex gap-2">
+					<p class="font-semibold">Total Amount Due:</p>
+					<span class="block">
+						{#if newQuote.totalAmountDue}
+							${newQuote.totalAmountDue}
+						{:else}
+							$0.00
+						{/if}
+					</span>
+				</div>
+
+				<div class='mt-2'>
+					<button type="button" on:click={handleQuoteSubmit} disabled={submitButtonDisabled}
+						class="w-full py-3 px-4 inline-flex items-center justify-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none">
+						Save Quote
+					</button>
+				</div>
+			</div>
+		</section>
 	</main>
 
 	<nav>
